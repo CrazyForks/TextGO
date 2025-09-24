@@ -171,7 +171,7 @@
     </button>
 
     <!-- 内容区域 -->
-    <div class="h-full overflow-auto" data-tauri-drag-region>
+    <div class="h-full overflow-auto">
       {#if chatMode}
         {#if log?.streaming}
           <div class="loading mb-2 loading-sm loading-dots opacity-70"></div>
@@ -199,7 +199,8 @@
 
 <style>
   :global {
-    html {
+    html,
+    body {
       background: transparent;
     }
   }
