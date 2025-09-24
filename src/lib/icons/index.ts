@@ -1,0 +1,9 @@
+export { default as GitHub } from './GitHub.svelte';
+export { default as JavaScript } from './JavaScript.svelte';
+export { default as Markdown } from './Markdown.svelte';
+export { default as Moon } from './Moon.svelte';
+export { default as NoData } from './NoData.svelte';
+export { default as Python } from './Python.svelte';
+export { default as Regexp } from './Regexp.svelte';
+export { default as Sun } from './Sun.svelte';
+export { default as Tensorflow } from './Tensorflow.svelte';

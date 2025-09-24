@@ -1,0 +1,55 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "TextGO",
+  "version": "0.1.0",
+  "identifier": "top.xylitol.textgo",
+  "build": {
+    "beforeDevCommand": "pnpm dev",
+    "beforeBuildCommand": "pnpm build",
+    "devUrl": "http://localhost:1420",
+    "frontendDist": "../build"
+  },
+  "app": {
+    "macOSPrivateApi": true,
+    "withGlobalTauri": false,
+    "windows": [
+      {
+        "label": "main",
+        "title": "Main",
+        "width": 768,
+        "height": 565,
+        "minWidth": 768,
+        "minHeight": 565,
+        "visible": false,
+        "fullscreen": false,
+        "skipTaskbar": true,
+        "hiddenTitle": true,
+        "titleBarStyle": "Overlay",
+        "trafficLightPosition": { "x": 16, "y": 21 }
+      },
+      {
+        "label": "popup",
+        "title": "Popup",
+        "url": "/popup",
+        "width": 500,
+        "height": 400,
+        "visible": false,
+        "fullscreen": false,
+        "skipTaskbar": true,
+        "hiddenTitle": true,
+        "titleBarStyle": "Transparent",
+        "transparent": true,
+        "decorations": false,
+        "alwaysOnTop": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": ["icons/icon.icns", "icons/icon.ico"]
+  }
+}
