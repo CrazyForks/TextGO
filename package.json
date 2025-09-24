@@ -28,7 +28,6 @@
     "@codemirror/view": "^6.38.3",
     "@fontsource-variable/noto-sans": "^5.2.10",
     "@fontsource-variable/noto-sans-sc": "^5.2.8",
-    "@fontsource/audiowide": "^5.2.7",
     "@tauri-apps/api": "^2.8.0",
     "@tauri-apps/plugin-clipboard-manager": "^2.3.0",
     "@tauri-apps/plugin-global-shortcut": "^2.3.0",

@@ -12,7 +12,6 @@
   --sans:
     ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   --font-sans: 'Noto Sans Variable', 'Noto Sans SC Variable', var(--sans);
-  --font-title: 'Audiowide', var(--sans);
 
   --color-active: color-mix(in oklab, var(--color-primary) 30%, var(--color-neutral) 70%);
   --color-content: color-mix(in oklab, var(--color-primary) 30%, var(--color-base-content) 70%);
@@ -93,7 +92,7 @@
     .modal-corner {
       @apply absolute top-3 right-2;
       > button {
-        @apply btn btn-circle size-8 btn-subtle font-title text-lg;
+        @apply btn btn-circle size-8 btn-subtle font-mono text-lg;
       }
     }
     .modal-action {

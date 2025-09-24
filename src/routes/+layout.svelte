@@ -3,7 +3,6 @@
   // 导入字体
   import '@fontsource-variable/noto-sans';
   import '@fontsource-variable/noto-sans-sc';
-  import '@fontsource/audiowide';
   // 导入样式
   import 'tippy.js/animations/scale.css';
   import 'tippy.js/dist/tippy.css';
