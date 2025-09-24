@@ -7,17 +7,14 @@
   import { Window } from '@tauri-apps/api/window';
   import { marked } from 'marked';
   import ollama from 'ollama/browser';
-  import { ChatText, FileJs, FilePy, Robot, X } from 'phosphor-svelte';
+  import { X } from 'phosphor-svelte';
   import { onMount, untrack } from 'svelte';
-  import { fade } from 'svelte/transition';
 
   let log: Log | null = $state(null);
   let chatMode: boolean = $derived.by(() => log?.actionType === 'prompt');
   let autoScroll = $state(true);
   let mainElement: HTMLElement | null = $state(null);
   let scrollInterval: ReturnType<typeof setInterval> | undefined = $state();
-  let clipboardExpanded = $state(false);
-  let selectionExpanded = $state(false);
 
   // 关闭窗口函数
   async function closeWindow() {
@@ -152,7 +149,7 @@
   });
 
   onMount(() => {
-    // 监听主进程发送的 show-log 事件
+    // 监听主进程发送的事件
     const unlisten = listen<Log>('log', (event) => {
       log = event.payload;
     });
@@ -163,7 +160,7 @@
 </script>
 
 {#key log?.id}
-  <div class="relative size-full rounded-lg border border-white/30 bg-white/20 shadow-xl backdrop-blur-md">
+  <main class="h-screen w-screen bg-base-100">
     <!-- 关闭按钮 -->
     <button
       onclick={closeWindow}
@@ -174,7 +171,7 @@
     </button>
 
     <!-- 内容区域 -->
-    <div class="h-full overflow-auto p-4 pt-12" data-tauri-drag-region>
+    <div class="h-full overflow-auto" data-tauri-drag-region>
       {#if chatMode}
         {#if log?.streaming}
           <div class="loading mb-2 loading-sm loading-dots opacity-70"></div>
@@ -187,29 +184,23 @@
           <div class="text-sm text-white/60 italic">等待回复...</div>
         {/if}
       {:else}
-        <div class="h-full">
-          <CodeMirror
-            minHeight="calc(100vh - 3rem)"
-            maxHeight="calc(100vh - 3rem)"
-            language={chatMode ? markdown() : undefined}
-            darkMode={true}
-            document={log?.result}
-          />
-        </div>
+        <CodeMirror
+          minHeight="calc(100vh - 33px)"
+          maxHeight="calc(100vh - 33px)"
+          class="rounded-t-none"
+          language={chatMode ? markdown() : undefined}
+          darkMode={true}
+          document={log?.result}
+        />
       {/if}
     </div>
-  </div>
+  </main>
 {/key}
 
 <style>
   :global {
     html {
-      background: rgba(255, 255, 255, 0.1); /* 半透明白色背景 */
-      backdrop-filter: blur(10px); /* 磨砂效果 */
-      -webkit-backdrop-filter: blur(10px); /* Safari 兼容 */
-      border-radius: 12px; /* 圆角 */
-      border: 1px solid rgba(255, 255, 255, 0.2); /* 边框 */
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); /* 阴影 */
+      background: transparent;
     }
   }
 </style>

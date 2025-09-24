@@ -114,7 +114,7 @@
         icon={ArrowCircleUp}
         weight="bold"
         text="上移"
-        class={selectedId ? 'text-content' : 'btn-disabled'}
+        class={selectedId ? 'text-surface' : 'btn-disabled'}
         onclick={() => {
           if (!selectedId) {
             return;
@@ -132,7 +132,7 @@
         icon={ArrowCircleDown}
         weight="bold"
         text="下移"
-        class={selectedId ? 'text-content' : 'btn-disabled'}
+        class={selectedId ? 'text-surface' : 'btn-disabled'}
         onclick={() => {
           if (!selectedId) {
             return;
@@ -159,7 +159,7 @@
   </div>
   <ul class="list scrollbar-none overflow-y-auto bg-base-100 [&_.list-row]:min-h-10 [&_.list-row]:py-1">
     {#if data.length === 0}
-      <li class="list-row items-center gap-1 text-content/40">
+      <li class="list-row items-center gap-1 text-surface/35">
         <Sparkle class="size-4" />{hint || '暂无数据'}
       </li>
     {/if}

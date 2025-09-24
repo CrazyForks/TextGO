@@ -6,7 +6,7 @@
   const osType = type();
 </script>
 
-<div class="flex items-center gap-1 text-active {_class}">
+<div class="flex items-center gap-1 text-emphasis {_class}">
   <kbd class="kbd px-1.5 kbd-sm">
     {#if osType === 'macos'}
       <Command class="size-[14px]" />

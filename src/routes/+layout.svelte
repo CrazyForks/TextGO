@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { Alert, Confirm } from '$lib/components';
   import type { Snippet } from 'svelte';
   // 导入字体
   import '@fontsource-variable/noto-sans';
@@ -12,3 +13,9 @@
 </script>
 
 {@render children()}
+
+<!-- 全局提示组件 -->
+<Alert />
+
+<!-- 全局确认组件 -->
+<Confirm />

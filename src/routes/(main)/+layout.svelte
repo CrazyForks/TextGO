@@ -1,7 +1,7 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
   import { page } from '$app/state';
-  import { Alert, Button, Confirm, Title } from '$lib/components';
+  import { Button, Title } from '$lib/components';
   import { GitHub, Moon, Sun } from '$lib/icons';
   import { listen } from '@tauri-apps/api/event';
   import { openUrl } from '@tauri-apps/plugin-opener';
@@ -72,7 +72,7 @@
   });
 </script>
 
-<main class="flex h-screen flex-col bg-base-300">
+<main class="flex h-screen w-screen flex-col bg-base-300">
   <div class="overflow-auto overscroll-none">
     <Title class="sticky top-0 z-99 bg-base-300/80 backdrop-blur-sm {titleBorder ? 'border-b' : ''}">
       {#snippet fallback()}
@@ -122,9 +122,3 @@
     </div>
   </div>
 </main>
-
-<!-- 全局提示组件 -->
-<Alert />
-
-<!-- 全局确认组件 -->
-<Confirm />
