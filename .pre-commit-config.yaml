@@ -1,0 +1,44 @@
+default_install_hook_types: [pre-commit, commit-msg]
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-json
+        exclude: ^(static/model.json|.vscode/.*.json|tsconfig.json)
+      - id: check-toml
+      - id: check-yaml
+      - id: mixed-line-ending
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-added-large-files
+        args: ['--maxkb=2048']
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v4.9.1
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+        additional_dependencies:
+          - prettier@3.6.2
+          - prettier-plugin-svelte@3.4.0
+          - prettier-plugin-tailwindcss@0.7.1
+        args: [--config, ./.prettierrc, --ignore-path, ./.prettierignore, --write, ./src]
+  - repo: local
+    hooks:
+      - id: cargo-fmt
+        name: cargo-fmt
+        types: [rust]
+        language: system
+        entry: cargo fmt
+        args: [--manifest-path, ./src-tauri/Cargo.toml]
+        pass_filenames: false
+      - id: cargo-clippy
+        name: cargo-clippy
+        types: [rust]
+        language: system
+        entry: cargo clippy
+        args: [--manifest-path, ./src-tauri/Cargo.toml, --, -D, warnings]
+        pass_filenames: false

@@ -1,0 +1,838 @@
+import * as tf from '@tensorflow/tfjs';
+
+/**
+ * 模型存储键名常量
+ */
+const STORAGE = {
+  CLASSIFIER: 'classifier',
+  CONFIG: 'classifier_config',
+  TOKENIZER: 'classifier_tokenizer'
+} as const;
+
+/**
+ * 模型缓存接口
+ */
+interface ModelCache {
+  model: tf.LayersModel;
+  tokenizer: Map<string, number>;
+  config: {
+    maxSequenceLength: number;
+    embeddingDim: number;
+    modelTrained: boolean;
+    tokenizerSize: number;
+  };
+  lastUsed: number; // 最后使用时间，用于缓存清理
+}
+
+/**
+ * 全局模型缓存 Map
+ * key: 模型ID, value: 模型缓存对象
+ */
+const MODEL_CACHE = new Map<string, ModelCache>();
+
+/**
+ * 基于合成负样本的文本分类器
+ */
+export class Classifier {
+  private model: tf.LayersModel | null = null;
+  private tokenizer: Map<string, number> = new Map();
+  private maxSequenceLength = 50; // 缩短序列长度，适合少量样本
+  private embeddingDim = 32; // 嵌入维度
+  private modelTrained = false;
+  private id: string; // 模型ID
+
+  // 创建一个新的分类器实例
+  constructor(id: string) {
+    this.id = id;
+  }
+
+  // 训练单类别文本分类模型
+  async trainModel(positiveTrainingData: string[] | string) {
+    console.debug('Preparing training data for single-class model...');
+
+    // 0. 验证和预处理训练数据
+    const processedData = Classifier.validateTrainingData(positiveTrainingData);
+    if (!processedData) {
+      throw new Error('训练数据格式无效或没有足够的样本');
+    }
+
+    try {
+      // 1. 构建词汇表
+      this.buildVocabulary(processedData);
+
+      // 2. 生成负样本并准备训练数据
+      const { inputs, labels } = this.prepareTrainingData(processedData);
+
+      console.debug(`Input shape: ${inputs.shape}, dtype: ${inputs.dtype}`);
+      console.debug(`Labels shape: ${labels.shape}, dtype: ${labels.dtype}`);
+
+      // 3. 创建模型
+      this.model = this.createModel();
+
+      // 4. 训练
+      console.debug('Starting to train single-class model...');
+      const history = await this.model.fit(inputs, labels, {
+        epochs: 50, // 增加训练轮数
+        batchSize: 8, // 小批量训练
+        validationSplit: 0.2,
+        shuffle: true,
+        verbose: 1,
+        callbacks: {
+          onEpochEnd: (epoch, logs) => {
+            console.debug(`Epoch ${epoch + 1}: loss=${logs?.loss?.toFixed(4)}, acc=${logs?.acc?.toFixed(4)}`);
+            if (logs?.val_loss) {
+              console.debug(`  val_loss=${logs.val_loss.toFixed(4)}, val_acc=${logs?.val_acc?.toFixed(4)}`);
+            }
+          }
+        }
+      });
+
+      // 5. 清理张量内存
+      inputs.dispose();
+      labels.dispose();
+
+      // 6. 保存模型和分词器
+      this.modelTrained = true;
+      await this.saveModel();
+
+      console.debug('Single-class model trained successfully!');
+      return history;
+    } catch (error) {
+      console.error(`Training failed: ${error}`);
+      this.debugInfo();
+      throw error;
+    }
+  }
+
+  // 创建单类别分类模型
+  private createModel(): tf.LayersModel {
+    console.debug(`Creating single-class model, vocabulary size: ${this.tokenizer.size}`);
+
+    const model = tf.sequential({
+      layers: [
+        // 嵌入层
+        tf.layers.embedding({
+          inputDim: this.tokenizer.size + 1,
+          outputDim: this.embeddingDim,
+          inputLength: this.maxSequenceLength
+        }),
+
+        // 全局平均池化
+        tf.layers.globalAveragePooling1d(),
+
+        // 隐藏层
+        tf.layers.dense({ units: 16, activation: 'relu' }),
+        tf.layers.dropout({ rate: 0.3 }),
+
+        // 输出层: 单个神经元，sigmoid激活函数用于二分类
+        tf.layers.dense({
+          units: 1,
+          activation: 'sigmoid'
+        })
+      ]
+    });
+
+    // 使用二分类损失函数
+    model.compile({
+      optimizer: tf.train.adam(0.001),
+      loss: 'binaryCrossentropy',
+      metrics: ['accuracy']
+    });
+
+    return model;
+  }
+
+  // 构建词汇表（只处理正向样本）
+  private buildVocabulary(positiveData: string[]) {
+    const vocabulary = new Set<string>();
+
+    // 提取特征词汇
+    positiveData.forEach((text) => {
+      const tokens = this.tokenizeText(text);
+      tokens.forEach((token) => vocabulary.add(token));
+    });
+
+    // 构建映射
+    let tokenIndex = 1; // 0 保留给未知词
+    vocabulary.forEach((token) => {
+      this.tokenizer.set(token, tokenIndex++);
+    });
+
+    console.debug(`Vocabulary size: ${this.tokenizer.size}`);
+  }
+
+  // 通用文本标记化（适用于任意类型的文本模式）
+  private tokenizeText(text: string): string[] {
+    // 提取模式特征
+    const patternFeatures = this.extractPatternFeatures(text);
+
+    // 多粒度标记化
+    const tokens = new Set<string>();
+
+    // 1. 字符级特征
+    const charFeatures = this.extractCharacterFeatures(text);
+    charFeatures.forEach((feature) => tokens.add(feature));
+
+    // 2. N-gram特征（字符级）
+    const charNgrams = this.extractCharNgrams(text, 2, 4);
+    charNgrams.forEach((ngram) => tokens.add(ngram));
+
+    // 3. 词级特征
+    const wordTokens = this.extractWordTokens(text);
+    wordTokens.forEach((token) => tokens.add(token));
+
+    // 4. 模式特征
+    patternFeatures.forEach((feature) => tokens.add(feature));
+
+    // 5. 位置特征
+    const positionFeatures = this.extractPositionFeatures(text);
+    positionFeatures.forEach((feature) => tokens.add(feature));
+
+    return Array.from(tokens);
+  }
+
+  // 提取通用模式特征（适用于各种文本类型）
+  private extractPatternFeatures(text: string): string[] {
+    const features: string[] = [];
+
+    // 长度特征
+    if (text.length <= 5) features.push('VERY_SHORT');
+    else if (text.length <= 10) features.push('SHORT');
+    else if (text.length <= 20) features.push('MEDIUM');
+    else if (text.length <= 50) features.push('LONG');
+    else features.push('VERY_LONG');
+
+    // 数字模式
+    if (/^\d+$/.test(text)) {
+      features.push('ALL_DIGITS');
+      // 添加具体长度特征（常见长度范围）
+      const len = text.length;
+      if (len >= 4 && len <= 20) {
+        features.push(`DIGITS_${len}`);
+      }
+    }
+    if (/^\d{4}-\d{2}-\d{2}$/.test(text)) features.push('DATE_FORMAT');
+    if (/^\d{4}\d{2}\d{2}$/.test(text)) features.push('DATE_COMPACT');
+
+    // 字母数字混合模式
+    if (/^[A-Z0-9-]+$/.test(text.toUpperCase())) features.push('ALPHANUMERIC_DASH');
+    if (/^[A-Z0-9]+$/.test(text.toUpperCase())) features.push('ALPHANUMERIC');
+    if (/^[A-Z]+\d+$/.test(text.toUpperCase())) features.push('LETTERS_THEN_DIGITS');
+    if (/^\d+[A-Z]+$/.test(text.toUpperCase())) features.push('DIGITS_THEN_LETTERS');
+
+    // 分隔符模式
+    if (text.includes('-')) features.push('HAS_DASH');
+    if (text.includes('_')) features.push('HAS_UNDERSCORE');
+    if (text.includes('.')) features.push('HAS_DOT');
+    if (text.includes('/')) features.push('HAS_SLASH');
+    if (text.includes(':')) features.push('HAS_COLON');
+    if (text.includes(' ')) features.push('HAS_SPACE');
+
+    // 大小写模式
+    if (/^[A-Z]+$/.test(text)) features.push('ALL_UPPERCASE');
+    if (/^[a-z]+$/.test(text)) features.push('ALL_LOWERCASE');
+    if (/^[A-Z][a-z]+$/.test(text)) features.push('TITLE_CASE');
+    if (/[A-Z]/.test(text) && /[a-z]/.test(text)) features.push('MIXED_CASE');
+
+    // 重复字符模式
+    if (/(.)\1{2,}/.test(text)) features.push('HAS_REPEATED_CHARS');
+    if (/^(.+)\1+$/.test(text)) features.push('REPEATING_PATTERN');
+
+    // 特殊字符
+    if (/[!@#$%^&*(),.?":{}|<>]/.test(text)) features.push('HAS_SPECIAL_CHARS');
+    if (/^[\u4e00-\u9fa5]+$/.test(text)) features.push('ALL_CHINESE');
+    if (/[\u4e00-\u9fa5]/.test(text)) features.push('HAS_CHINESE');
+
+    return features;
+  }
+
+  // 提取字符级特征
+  private extractCharacterFeatures(text: string): string[] {
+    const features: string[] = [];
+    const chars = text.toLowerCase().split('');
+
+    // 字符类型统计
+    const digitCount = chars.filter((c) => /\d/.test(c)).length;
+    const letterCount = chars.filter((c) => /[a-z]/.test(c)).length;
+    const spaceCount = chars.filter((c) => c === ' ').length;
+    const specialCount = chars.filter((c) => !/[a-z0-9\s]/.test(c)).length;
+
+    // 比例特征
+    const total = text.length;
+    if (digitCount / total > 0.5) features.push('MOSTLY_DIGITS');
+    if (letterCount / total > 0.5) features.push('MOSTLY_LETTERS');
+    if (spaceCount / total > 0.1) features.push('MANY_SPACES');
+    if (specialCount / total > 0.1) features.push('MANY_SPECIAL');
+
+    // 首尾字符
+    if (text.length > 0) {
+      const first = text[0];
+      const last = text[text.length - 1];
+
+      if (/\d/.test(first)) features.push('STARTS_WITH_DIGIT');
+      if (/[A-Za-z]/.test(first)) features.push('STARTS_WITH_LETTER');
+      if (/\d/.test(last)) features.push('ENDS_WITH_DIGIT');
+      if (/[A-Za-z]/.test(last)) features.push('ENDS_WITH_LETTER');
+    }
+
+    return features;
+  }
+
+  // 提取字符N-gram特征
+  private extractCharNgrams(text: string, minN: number, maxN: number): string[] {
+    const ngrams: string[] = [];
+    const normalizedText = text.toLowerCase();
+
+    for (let n = minN; n <= maxN; n++) {
+      for (let i = 0; i <= normalizedText.length - n; i++) {
+        const ngram = normalizedText.substring(i, i + n);
+        ngrams.push(`NGRAM_${n}_${ngram}`);
+      }
+    }
+
+    return ngrams;
+  }
+
+  // 提取词级特征
+  private extractWordTokens(text: string): string[] {
+    const tokens: string[] = [];
+
+    // 按各种分隔符分割
+    const words = text
+      .toLowerCase()
+      .split(/[\s\-_./\\:,;!?]+/)
+      .filter((word) => word.length > 0);
+
+    words.forEach((word) => {
+      if (word.length <= 15) {
+        // 限制词长度避免过长token
+        tokens.push(`WORD_${word}`);
+      }
+    });
+
+    // 词数特征
+    if (words.length === 1) tokens.push('SINGLE_WORD');
+    else if (words.length <= 3) tokens.push('FEW_WORDS');
+    else if (words.length <= 10) tokens.push('MANY_WORDS');
+    else tokens.push('VERY_MANY_WORDS');
+
+    return tokens;
+  }
+
+  // 提取位置特征
+  private extractPositionFeatures(text: string): string[] {
+    const features: string[] = [];
+
+    // 数字位置特征
+    const digitPositions = [];
+    for (let i = 0; i < text.length; i++) {
+      if (/\d/.test(text[i])) {
+        digitPositions.push(i);
+      }
+    }
+
+    if (digitPositions.length > 0) {
+      const firstDigit = digitPositions[0];
+      const lastDigit = digitPositions[digitPositions.length - 1];
+
+      if (firstDigit === 0) features.push('DIGITS_AT_START');
+      if (lastDigit === text.length - 1) features.push('DIGITS_AT_END');
+      if (firstDigit > 0 && lastDigit < text.length - 1) features.push('DIGITS_IN_MIDDLE');
+    }
+
+    // 连续数字段
+    const digitSegments = text.match(/\d+/g) || [];
+    digitSegments.forEach((segment) => {
+      const len = segment.length;
+      if (len === 2) features.push('TWO_DIGIT_SEGMENT');
+      else if (len === 3) features.push('THREE_DIGIT_SEGMENT');
+      else if (len === 4) features.push('FOUR_DIGIT_SEGMENT');
+      else if (len >= 5) features.push('LONG_DIGIT_SEGMENT');
+    });
+
+    return features;
+  }
+
+  // 准备单类别训练数据
+  private prepareTrainingData(positiveData: string[]) {
+    const sequences: number[][] = [];
+    const labels: number[] = [];
+
+    // 处理正向样本
+    positiveData.forEach((text) => {
+      const tokens = this.tokenizeText(text);
+      const sequence = tokens.map((token) => this.tokenizer.get(token) || 0).slice(0, this.maxSequenceLength);
+
+      // 填充或截断到固定长度
+      while (sequence.length < this.maxSequenceLength) {
+        sequence.push(0);
+      }
+
+      sequences.push(sequence);
+      labels.push(1); // 正向样本标记为1
+    });
+
+    // 生成负向样本（通过随机化和噪声添加）
+    const negativeCount = Math.min(positiveData.length, 20); // 限制负样本数量
+    for (let i = 0; i < negativeCount; i++) {
+      const negativeSequence = this.generateNegativeSample();
+      sequences.push(negativeSequence);
+      labels.push(0); // 负向样本标记为0
+    }
+
+    // 转换为张量
+    const inputTensor = tf.tensor2d(sequences, [sequences.length, this.maxSequenceLength], 'float32');
+    const labelsTensor = tf.tensor1d(labels, 'float32');
+
+    console.debug(`Creating tensors - Input: shape=${inputTensor.shape}, dtype=${inputTensor.dtype}`);
+    console.debug(`Creating tensors - Labels: shape=${labelsTensor.shape}, dtype=${labelsTensor.dtype}`);
+    console.debug(`Creating tensors - Samples: positive=${positiveData.length}, negative=${negativeCount}`);
+
+    return {
+      inputs: inputTensor,
+      labels: labelsTensor
+    };
+  }
+
+  // 生成负样本
+  private generateNegativeSample(): number[] {
+    const sequence: number[] = [];
+    const vocabSize = this.tokenizer.size;
+
+    // 生成随机序列
+    for (let i = 0; i < this.maxSequenceLength; i++) {
+      if (Math.random() < 0.3) {
+        // 30% 概率添加随机词汇
+        sequence.push(Math.floor(Math.random() * vocabSize) + 1);
+      } else {
+        // 70% 概率填充为0
+        sequence.push(0);
+      }
+    }
+
+    return sequence;
+  }
+
+  // 预测文本是否属于目标类别
+  predict(text: string): number {
+    if (!this.model || !this.modelTrained) {
+      console.warn('Model not loaded or not trained');
+      return 0;
+    }
+
+    const tokens = this.tokenizeText(text);
+    console.debug(`Extracted tokens: ${tokens.slice(0, 10).join(', ')}`);
+
+    const sequence = tokens.map((token) => this.tokenizer.get(token) || 0).slice(0, this.maxSequenceLength);
+    console.debug(`Token sequence (first 10): ${sequence.slice(0, 10).join(', ')}`);
+    console.debug(`Non-zero token count: ${sequence.filter((x) => x > 0).length}`);
+
+    // 填充到固定长度
+    while (sequence.length < this.maxSequenceLength) {
+      sequence.push(0);
+    }
+
+    // 检查序列是否全为0
+    const nonZeroCount = sequence.filter((x) => x > 0).length;
+    if (nonZeroCount === 0) {
+      console.warn(`Input text contains no known tokens: text="${text}"`);
+      console.debug(`Tokenizer size: ${this.tokenizer.size}`);
+      console.debug(`Extracted tokens (first 10): ${tokens.slice(0, 10).join(', ')}`);
+      console.debug(
+        `Vocab sample: ${Array.from(this.tokenizer.entries())
+          .slice(0, 5)
+          .map(([k, v]) => `${k}:${v}`)
+          .join(', ')}`
+      );
+
+      // 尝试找到至少一个匹配的token
+      const matchingTokens = tokens.filter((token) => this.tokenizer.has(token));
+      console.debug(`Matching tokens found: ${matchingTokens.slice(0, 5).join(', ')}`);
+
+      if (matchingTokens.length === 0) {
+        console.warn('No matching tokens found');
+        return 0;
+      }
+    }
+
+    try {
+      // 使用 float32 保持与训练时的一致性
+      const input = tf.tensor2d([sequence], [1, this.maxSequenceLength], 'float32');
+      const prediction = this.model.predict(input) as tf.Tensor;
+      const confidence = prediction.dataSync()[0]; // sigmoid输出的概率值
+
+      console.debug(`Raw prediction confidence: ${confidence}`);
+
+      // 清理内存
+      input.dispose();
+      prediction.dispose();
+
+      return confidence;
+    } catch (error) {
+      console.error(`Prediction error: ${error}`);
+      return 0;
+    }
+  }
+
+  // 保存模型
+  async saveModel() {
+    if (!this.model) {
+      console.warn('No model to save');
+      return;
+    }
+
+    try {
+      const storageKey = `${STORAGE.CLASSIFIER}_${this.id}`;
+      await this.model.save(`localstorage://${storageKey}`);
+
+      // 保存分词器和配置
+      const tokenizerData = Array.from(this.tokenizer.entries());
+
+      localStorage.setItem(`${STORAGE.TOKENIZER}_${this.id}`, JSON.stringify(tokenizerData));
+
+      const config = {
+        maxSequenceLength: this.maxSequenceLength,
+        embeddingDim: this.embeddingDim,
+        modelTrained: this.modelTrained,
+        tokenizerSize: this.tokenizer.size
+      };
+
+      localStorage.setItem(`${STORAGE.CONFIG}_${this.id}`, JSON.stringify(config));
+
+      // 添加到缓存
+      MODEL_CACHE.set(this.id, {
+        model: this.model,
+        tokenizer: new Map(this.tokenizer),
+        config: { ...config },
+        lastUsed: Date.now()
+      });
+
+      console.debug(`Model saved and cached successfully, tokenizer size: ${this.tokenizer.size}`);
+    } catch (error) {
+      console.error(`Failed to save model: ${error}`);
+      throw error;
+    }
+  }
+
+  // 加载模型
+  async loadModel(): Promise<boolean> {
+    try {
+      console.debug('Attempting to load model...');
+
+      // 首先检查缓存
+      const cached = MODEL_CACHE.get(this.id);
+      if (cached) {
+        console.debug(`Loading model from cache: ${this.id}`);
+        this.model = cached.model;
+        this.tokenizer = new Map(cached.tokenizer);
+        this.maxSequenceLength = cached.config.maxSequenceLength;
+        this.embeddingDim = cached.config.embeddingDim;
+        this.modelTrained = cached.config.modelTrained;
+
+        // 更新最后使用时间
+        cached.lastUsed = Date.now();
+        return true;
+      }
+
+      // 缓存中没有，从localStorage加载
+      // 检查本地存储中是否有模型数据
+      const tokenizerData = localStorage.getItem(`${STORAGE.TOKENIZER}_${this.id}`);
+      const configData = localStorage.getItem(`${STORAGE.CONFIG}_${this.id}`);
+
+      if (!tokenizerData || !configData) {
+        console.debug('No saved model data found in localStorage');
+        return false;
+      }
+
+      // 加载TensorFlow模型
+      const storageKey = `${STORAGE.CLASSIFIER}_${this.id}`;
+      this.model = await tf.loadLayersModel(`localstorage://${storageKey}`);
+      console.debug('TensorFlow model loaded successfully');
+
+      // 恢复分词器
+      const tokenizerEntries = JSON.parse(tokenizerData);
+      this.tokenizer = new Map(tokenizerEntries);
+      console.debug(`Tokenizer restored, size: ${this.tokenizer.size}`);
+
+      // 恢复配置
+      const config = JSON.parse(configData);
+      this.maxSequenceLength = config.maxSequenceLength;
+      this.embeddingDim = config.embeddingDim;
+      this.modelTrained = config.modelTrained;
+
+      console.debug(`Config restored - Max sequence length: ${this.maxSequenceLength}`);
+      console.debug(`Config restored - Embedding dim: ${this.embeddingDim}`);
+      console.debug(`Config restored - Model trained: ${this.modelTrained}`);
+
+      // 验证数据完整性
+      if (config.tokenizerSize && config.tokenizerSize !== this.tokenizer.size) {
+        console.warn(`Tokenizer size mismatch: expected=${config.tokenizerSize}, actual=${this.tokenizer.size}`);
+      }
+
+      // 添加到缓存
+      MODEL_CACHE.set(this.id, {
+        model: this.model,
+        tokenizer: new Map(this.tokenizer),
+        config: {
+          maxSequenceLength: this.maxSequenceLength,
+          embeddingDim: this.embeddingDim,
+          modelTrained: this.modelTrained,
+          tokenizerSize: this.tokenizer.size
+        },
+        lastUsed: Date.now()
+      });
+
+      // 测试模型是否正常工作
+      const testTokens = Array.from(this.tokenizer.keys()).slice(0, 3);
+      if (testTokens.length > 0) {
+        console.debug(`Loaded tokenizer sample tokens: ${testTokens.join(', ')}`);
+      }
+
+      console.debug(`Model loaded and cached successfully: ${this.id}`);
+      return true;
+    } catch (error) {
+      console.error(`Failed to load model: ${error}`);
+
+      // 清理可能部分加载的数据
+      this.model = null;
+      this.tokenizer.clear();
+      this.modelTrained = false;
+
+      return false;
+    }
+  }
+
+  // 调试方法: 检查数据和模型状态
+  debugInfo() {
+    console.debug(`=== Classifier Debug Info ===`);
+    console.debug(`Model ID: ${this.id}`);
+    console.debug(`Tokenizer size: ${this.tokenizer.size}`);
+    console.debug(`Max sequence length: ${this.maxSequenceLength}`);
+    console.debug(`Embedding dim: ${this.embeddingDim}`);
+    console.debug(`Model exists: ${!!this.model}`);
+    console.debug(`Trained: ${this.modelTrained}`);
+
+    if (this.tokenizer.size > 0) {
+      console.debug(
+        `Sample tokens: ${Array.from(this.tokenizer.entries())
+          .slice(0, 10)
+          .map(([k, v]) => `${k}:${v}`)
+          .join(', ')}`
+      );
+    }
+
+    console.debug(`TensorFlow.js backend: ${tf.getBackend()}`);
+    console.debug(`Memory: ${JSON.stringify(tf.memory())}`);
+  }
+
+  // 验证训练数据格式
+  static validateTrainingData(data: string[] | string): string[] | null {
+    let processedData: string[] = [];
+
+    // 处理输入数据类型
+    if (typeof data === 'string') {
+      // 如果是字符串，按换行符分割
+      processedData = data
+        .split('\n')
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0);
+    } else if (Array.isArray(data)) {
+      // 如果是数组，直接使用
+      processedData = [...data];
+    } else {
+      console.error('Training data must be string or string array');
+      return null;
+    }
+
+    // 过滤无效文本
+    let validData = processedData.filter((item) => {
+      if (!item || typeof item !== 'string' || item.trim().length === 0) {
+        console.debug(`Filtering invalid text: ${item}`);
+        return false;
+      }
+      return true;
+    });
+
+    // 去除重复数据
+    validData = Array.from(new Set(validData));
+
+    // 检查最终样本数量
+    if (validData.length < 3) {
+      console.error(`Training requires at least 3 positive samples, got ${validData.length} valid samples`);
+      return null;
+    }
+
+    console.debug(`Training data validated: ${validData.length} positive samples`);
+    return validData;
+  }
+
+  // 获取模型详细信息（包括存储大小和词汇表数量）
+  static getModelInfo(id: string): {
+    sizeKB: number;
+    vocabulary: number;
+  } {
+    let sizeKB = 0;
+    let vocabulary = 0;
+
+    if (typeof window !== 'undefined' && window.localStorage) {
+      try {
+        // 获取词汇表大小
+        const configKey = `${STORAGE.CONFIG}_${id}`;
+        const configData = localStorage.getItem(configKey);
+        if (configData) {
+          const config = JSON.parse(configData);
+          // 词汇表的大小和分词器大小相同
+          vocabulary = config.tokenizerSize || 0;
+        }
+        // 计算 TensorFlow.js 模型文件大小
+        let totalSize = 0;
+        const modelPrefix = `tensorflowjs_models/${STORAGE.CLASSIFIER}_${id}`;
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith(modelPrefix)) {
+            const value = localStorage.getItem(key);
+            if (value) {
+              // 计算 UTF-16 编码的字节大小（JavaScript 字符串是 UTF-16）
+              totalSize += key.length * 2 + value.length * 2;
+            }
+          }
+        }
+        sizeKB = parseFloat((totalSize / 1024).toFixed(2));
+      } catch (error) {
+        console.error(`Failed to get model info: ${error}`);
+      }
+    }
+
+    return { sizeKB, vocabulary };
+  }
+
+  // 清除保存的模型数据
+  static clearSavedModel(id: string) {
+    try {
+      // 从缓存中移除并清理资源
+      const cached = MODEL_CACHE.get(id);
+      if (cached) {
+        if (cached.model && typeof cached.model.dispose === 'function') {
+          cached.model.dispose();
+        }
+        MODEL_CACHE.delete(id);
+        console.debug(`Cleared model from cache: ${id}`);
+      }
+
+      localStorage.removeItem(`${STORAGE.CONFIG}_${id}`);
+      localStorage.removeItem(`${STORAGE.TOKENIZER}_${id}`);
+
+      // 清除TensorFlow模型
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const keys = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith(`tensorflowjs_models/${STORAGE.CLASSIFIER}_${id}`)) {
+            keys.push(key);
+          }
+        }
+        keys.forEach((key) => localStorage.removeItem(key));
+      }
+
+      console.debug('Cleared saved model data from localStorage');
+    } catch (error) {
+      console.error(`Failed to clear saved model: ${error}`);
+    }
+  }
+
+  // 清除当前实例的保存模型数据
+  clearSavedModel() {
+    Classifier.clearSavedModel(this.id);
+  }
+
+  // 静态方法: 从缓存创建分类器实例
+  static fromCache(id: string, cached: ModelCache): Classifier {
+    const classifier = new Classifier(id);
+    classifier.model = cached.model;
+    classifier.tokenizer = new Map(cached.tokenizer);
+    classifier.maxSequenceLength = cached.config.maxSequenceLength;
+    classifier.embeddingDim = cached.config.embeddingDim;
+    classifier.modelTrained = cached.config.modelTrained;
+    return classifier;
+  }
+}
+
+/**
+ * 全局预测函数
+ * 参数为模型ID和文本，实现直接从缓存Map中获取模型比对，没有的话再尝试从localStorage加载
+ *
+ * @param modelId - 模型ID
+ * @param text - 要预测的文本
+ * @returns 预测结果（正类概率）
+ */
+export async function predict(modelId: string, text: string): Promise<number | null> {
+  try {
+    // 首先尝试从缓存获取
+    let cached = MODEL_CACHE.get(modelId);
+
+    if (!cached) {
+      // 缓存中没有，尝试加载
+      console.debug(`Model not in cache, attempting to load: ${modelId}`);
+      const classifier = new Classifier(modelId);
+      const loadSuccess = await classifier.loadModel();
+
+      if (!loadSuccess) {
+        console.warn(`Unable to load model: ${modelId}`);
+        return null;
+      }
+
+      // 加载成功后再次从缓存获取
+      cached = MODEL_CACHE.get(modelId);
+      if (!cached) {
+        console.error(`Model not found in cache after loading: ${modelId}`);
+        return null;
+      }
+    }
+
+    // 更新最后使用时间
+    cached.lastUsed = Date.now();
+
+    // 检查模型是否已训练
+    if (!cached.config.modelTrained) {
+      console.warn(`Model not trained yet: ${modelId}`);
+      return null;
+    }
+
+    // 使用缓存的模型进行预测
+    const classifier = Classifier.fromCache(modelId, cached);
+    const result = classifier.predict(text);
+    return result;
+  } catch (error) {
+    console.error(`Prediction failed: ${error}`);
+    return null;
+  }
+}
+
+/**
+ * 清理缓存中过期的模型（超过指定时间未使用）
+ *
+ * @param maxAge - 最大存活时间（毫秒），默认1小时
+ */
+export function cleanupCache(maxAge: number = 60 * 60 * 1000) {
+  const now = Date.now();
+  const toDelete: string[] = [];
+
+  for (const [id, entry] of MODEL_CACHE.entries()) {
+    if (now - entry.lastUsed > maxAge) {
+      toDelete.push(id);
+    }
+  }
+
+  for (const id of toDelete) {
+    const cached = MODEL_CACHE.get(id);
+    if (cached && cached.model && typeof cached.model.dispose === 'function') {
+      cached.model.dispose();
+    }
+    MODEL_CACHE.delete(id);
+    console.debug(`Cleaning up expired cached model: ${id}`);
+  }
+
+  if (toDelete.length > 0) {
+    console.debug(`Cleaned up ${toDelete.length} expired models`);
+  }
+}

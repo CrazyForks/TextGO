@@ -1,0 +1,143 @@
+import type { IconComponentProps } from 'phosphor-svelte';
+import type { Component } from 'svelte';
+
+/**
+ * 将类型 T 中的所有属性转换为可为空
+ */
+export type Optional<T> = {
+  [P in keyof T]?: T[P] | null;
+};
+
+/**
+ * 将类型 T 自身转换为可为空
+ */
+type Nullable<T> = T | null | undefined;
+
+/**
+ * 选项值
+ */
+export type OptionValue = string | number | boolean | null | undefined;
+
+/**
+ * 选项
+ */
+export type Option = {
+  /** 选项值 */
+  value: OptionValue;
+  /** 选项标签 */
+  label: string;
+  /** 是否禁用 */
+  disabled?: boolean;
+  /** 正则表达式 */
+  pattern?: RegExp;
+  /** 选项图标 */
+  icon?: Component<IconComponentProps>;
+};
+
+/**
+ * 触发记录
+ */
+export type Entry = {
+  /** 记录标识 */
+  id: string;
+  /** 触发键位 */
+  key: string;
+  /** 触发时间 */
+  datetime: string;
+  /** 剪贴板文本 */
+  clipboard: string;
+  /** 选中的文本 */
+  selection: string;
+  /** 文本类型 */
+  caseLabel?: string;
+  /** 触发动作 */
+  actionLabel?: string;
+  /** 动作类型 */
+  actionType?: 'script' | 'prompt';
+  /** 执行结果 (脚本返回值/提示词) */
+  result?: string;
+  /** 脚本语言 */
+  scriptLang?: 'javascript' | 'python';
+  /** 静默执行 */
+  quietMode?: boolean;
+  /** 模型供应 */
+  provider?: 'ollama' | 'lmstudio';
+  /** 模型名称 */
+  model?: string;
+  /** 系统提示词 */
+  systemPrompt?: string;
+  /** 响应内容 */
+  response?: string;
+};
+
+/**
+ * 规则
+ */
+export type Rule = {
+  /** 规则标识 */
+  id: string;
+  /** 绑定的快捷键 */
+  key: string;
+  /** 绑定的文本类型 */
+  case: string;
+  caseLabel?: string;
+  /** 要执行动作的标识 */
+  action: string;
+  actionLabel?: string;
+};
+
+/**
+ * 脚本
+ */
+export type Script = {
+  /** 脚本标识 */
+  id: string;
+  /** 脚本语言 */
+  lang: 'javascript' | 'python';
+  /** 脚本内容 */
+  script: string;
+  /** 静默执行 */
+  quietMode?: boolean;
+};
+
+/**
+ * 提示词
+ */
+export type Prompt = {
+  /** 提示词标识 */
+  id: string;
+  /** 模型供应 */
+  provider: 'ollama' | 'lmstudio';
+  /** 模型名称 */
+  model: string;
+  /** 提示词内容 */
+  prompt: string;
+  /** 系统提示词 */
+  systemPrompt?: string;
+};
+
+/**
+ * 分类模型
+ */
+export type Model = {
+  /** 分类模型标识 */
+  id: string;
+  /** 训练样本 */
+  sample: string;
+  /** 置信度阈值 */
+  threshold: number;
+  /** 模型是否已训练 */
+  modelTrained?: boolean;
+};
+
+/**
+ * 正则表达式
+ */
+export type Regexp = {
+  /** 正则标识 */
+  id: string;
+  /** 正则模式 */
+  pattern: string;
+  /** 正则修饰符 */
+  flags?: string;
+};
