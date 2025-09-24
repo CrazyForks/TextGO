@@ -1,6 +1,6 @@
 <script lang="ts">
   import { beforeNavigate, goto } from '$app/navigation';
-  import { CodeMirror, confirm } from '$lib/components';
+  import { Button, CodeMirror, confirm } from '$lib/components';
   import type { Log } from '$lib/types';
   import { markdown } from '@codemirror/lang-markdown';
   import { listen } from '@tauri-apps/api/event';
@@ -160,18 +160,12 @@
 </script>
 
 {#key log?.id}
-  <main class="h-screen w-screen bg-base-100">
-    <!-- 关闭按钮 -->
-    <button
-      onclick={closeWindow}
-      class="group absolute top-3 right-3 z-50 rounded-full bg-black/20 p-2 transition-colors duration-200 hover:bg-black/30"
-      title="关闭窗口"
-    >
-      <X size={16} class="text-white/80 group-hover:text-white" />
-    </button>
-
-    <!-- 内容区域 -->
-    <div class="h-full overflow-auto">
+  <main class="h-screen w-screen overflow-hidden">
+    <div class="flex h-8 items-center justify-between" data-tauri-drag-region>
+      <span class="text-sm font-semibold italic">{log?.actionLabel}</span>
+      <Button icon={X} onclick={closeWindow} />
+    </div>
+    <div class="size-full overflow-auto">
       {#if chatMode}
         {#if log?.streaming}
           <div class="loading mb-2 loading-sm loading-dots opacity-70"></div>
@@ -185,23 +179,14 @@
         {/if}
       {:else}
         <CodeMirror
-          minHeight="calc(100vh - 33px)"
-          maxHeight="calc(100vh - 33px)"
-          class="rounded-t-none"
+          minHeight="calc(100vh - 2rem)"
+          maxHeight="calc(100vh - 2rem)"
+          class="rounded-none border-none"
+          panelClass="hidden"
           language={chatMode ? markdown() : undefined}
-          darkMode={true}
           document={log?.result}
         />
       {/if}
     </div>
   </main>
 {/key}
-
-<style>
-  :global {
-    html,
-    body {
-      background: transparent;
-    }
-  }
-</style>

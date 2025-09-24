@@ -10,7 +10,6 @@
     "frontendDist": "../build"
   },
   "app": {
-    "macOSPrivateApi": true,
     "withGlobalTauri": false,
     "windows": [
       {
@@ -31,16 +30,14 @@
         "label": "popup",
         "title": "Popup",
         "url": "/popup",
-        "width": 500,
-        "height": 400,
-        "minWidth": 500,
-        "minHeight": 400,
+        "width": 400,
+        "height": 300,
+        "minWidth": 400,
+        "minHeight": 300,
         "visible": false,
         "fullscreen": false,
-        "decorations": false,
         "skipTaskbar": true,
         "hiddenTitle": true,
-        "transparent": true,
         "alwaysOnTop": true
       }
     ],
