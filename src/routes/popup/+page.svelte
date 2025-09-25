@@ -161,7 +161,7 @@
 
 {#key log?.id}
   <main class="h-screen w-screen overflow-hidden" data-theme="dracula">
-    <div class="flex h-7 items-center justify-between pr-1 pl-18" data-tauri-drag-region>
+    <div class="flex h-7 items-center justify-between bg-base-300 pr-1 pl-18" data-tauri-drag-region>
       <span class="text-sm font-semibold italic">{log?.actionLabel}</span>
       <Button icon={CopySimple} onclick={closeWindow} />
     </div>
