@@ -107,9 +107,19 @@ export function persisted<T>(key: string, initial: T, options?: Options<T>) {
         .catch((error) => {
           console.error(error);
         });
+
+      if (snapshot) {
+        localStorage.setItem(key, JSON.stringify(snapshot));
+      }
     });
     // 确保不被清理
     return () => {};
+  });
+
+  window.addEventListener('storage', (event) => {
+    if (event.key === key && event.newValue) {
+      state = JSON.parse(event.newValue);
+    }
   });
 
   return {
