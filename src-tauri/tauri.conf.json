@@ -38,7 +38,8 @@
         "fullscreen": false,
         "skipTaskbar": true,
         "hiddenTitle": true,
-        "alwaysOnTop": true
+        "alwaysOnTop": true,
+        "titleBarStyle": "Overlay"
       }
     ],
     "security": {

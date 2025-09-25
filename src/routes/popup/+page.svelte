@@ -7,7 +7,7 @@
   import { Window } from '@tauri-apps/api/window';
   import { marked } from 'marked';
   import ollama from 'ollama/browser';
-  import { X } from 'phosphor-svelte';
+  import { CopySimple } from 'phosphor-svelte';
   import { onMount, untrack } from 'svelte';
 
   let log: Log | null = $state(null);
@@ -160,10 +160,10 @@
 </script>
 
 {#key log?.id}
-  <main class="h-screen w-screen overflow-hidden">
-    <div class="flex h-8 items-center justify-between" data-tauri-drag-region>
+  <main class="h-screen w-screen overflow-hidden" data-theme="dracula">
+    <div class="flex h-7 items-center justify-between pr-1 pl-18" data-tauri-drag-region>
       <span class="text-sm font-semibold italic">{log?.actionLabel}</span>
-      <Button icon={X} onclick={closeWindow} />
+      <Button icon={CopySimple} onclick={closeWindow} />
     </div>
     <div class="size-full overflow-auto">
       {#if chatMode}
