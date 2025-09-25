@@ -20,11 +20,10 @@
         "minWidth": 768,
         "minHeight": 565,
         "visible": false,
-        "fullscreen": false,
         "skipTaskbar": true,
         "hiddenTitle": true,
         "titleBarStyle": "Overlay",
-        "trafficLightPosition": { "x": 16, "y": 21 }
+        "trafficLightPosition": { "x": 16, "y": 20 }
       },
       {
         "label": "popup",
@@ -35,7 +34,6 @@
         "minWidth": 400,
         "minHeight": 300,
         "visible": false,
-        "fullscreen": false,
         "skipTaskbar": true,
         "hiddenTitle": true,
         "alwaysOnTop": true,
@@ -49,6 +47,9 @@
   "bundle": {
     "active": true,
     "targets": "all",
-    "icon": ["icons/icon.icns", "icons/icon.ico"]
+    "icon": ["icons/icon.icns", "icons/icon.ico"],
+    "macOS": {
+      "minimumSystemVersion": "11.0"
+    }
   }
 }
