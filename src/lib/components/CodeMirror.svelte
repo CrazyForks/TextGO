@@ -158,7 +158,7 @@
   } from '@codemirror/language';
   import { lintKeymap } from '@codemirror/lint';
   import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
-  import { EditorState } from '@codemirror/state';
+  import { Compartment, EditorState } from '@codemirror/state';
   import { oneDark } from '@codemirror/theme-one-dark';
   import {
     crosshairCursor,
@@ -320,6 +320,16 @@
    * 使用深色主题的扩展
    */
   const darkModeHandler: Extension = darkMode ? oneDark : [];
+  const editorTheme = new Compartment();
+
+  $effect(() => {
+    console.log('Reconfigure theme:', darkMode);
+    if (editorView) {
+      editorView.dispatch({
+        effects: editorTheme.reconfigure(darkMode ? oneDark : [])
+      });
+    }
+  });
 
   /**
    * 使编辑器只读的扩展
@@ -350,7 +360,7 @@
           languageSupport,
           updateListener,
           tabKeyHandler,
-          darkModeHandler,
+          editorTheme.of(darkModeHandler),
           readOnlyHandler,
           placeholderHandler
         ]
