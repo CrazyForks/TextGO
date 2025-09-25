@@ -14,6 +14,8 @@ export const theme = persisted<string>('theme', 'light', {
     // 动态设置根元素的 data-theme 属性以应用主题
     const root = document.documentElement;
     root.setAttribute('data-theme', theme);
+    // 此处设置的主题是应用范围的，而不是特定于当前窗口
+    Window.getCurrent().setTheme(theme === 'light' ? 'light' : 'dark');
   }
 });
 

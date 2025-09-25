@@ -6,10 +6,11 @@
   "windows": ["main", "popup"],
   "permissions": [
     "core:default",
+    "core:window:allow-hide",
     "core:window:allow-show",
     "core:window:allow-set-focus",
+    "core:window:allow-set-theme",
     "core:window:allow-start-dragging",
-    "core:window:allow-hide",
     "os:default",
     "store:default",
     "opener:default",
