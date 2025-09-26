@@ -1,7 +1,7 @@
 import { hotkeyManager } from '$lib/components/Hotkey.svelte';
 import { LOGS_KEY, MODELS_KEY, PROMPTS_KEY, SCRIPTS_KEY, SHORTCUTS_KEY } from '$lib/constants';
 import type { Hotkey, Log, Model, Prompt, Script } from '$lib/types';
-import { Window } from '@tauri-apps/api/window';
+import { getCurrentWindow } from '@tauri-apps/api/window';
 import { LazyStore } from '@tauri-apps/plugin-store';
 import { untrack } from 'svelte';
 
@@ -15,7 +15,7 @@ export const theme = persisted<string>('theme', 'light', {
     const root = document.documentElement;
     root.setAttribute('data-theme', theme);
     // 此处设置的主题是应用范围的，而不是特定于当前窗口
-    Window.getCurrent().setTheme(theme === 'light' ? 'light' : 'dark');
+    getCurrentWindow().setTheme(theme === 'light' ? 'light' : 'dark');
   }
 });
 
@@ -26,7 +26,7 @@ export const shortcuts = persisted<Record<string, Hotkey[]>>(
   {
     onload: async (shortcuts) => {
       // 主窗口初始化时注册所有快捷键
-      if (Window.getCurrent().label === 'main') {
+      if (getCurrentWindow().label === 'main') {
         for (const hotkey of Object.values(shortcuts).flat()) {
           await hotkeyManager.register(hotkey);
         }

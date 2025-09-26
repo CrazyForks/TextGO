@@ -4,7 +4,7 @@
   import type { Log } from '$lib/types';
   import { markdown } from '@codemirror/lang-markdown';
   import { listen } from '@tauri-apps/api/event';
-  import { Window } from '@tauri-apps/api/window';
+  import { getCurrentWindow } from '@tauri-apps/api/window';
   import { marked } from 'marked';
   import ollama from 'ollama/browser';
   import { CopySimple } from 'phosphor-svelte';
@@ -23,7 +23,7 @@
   // 关闭窗口函数
   async function closeWindow() {
     try {
-      const appWindow = Window.getCurrent();
+      const appWindow = getCurrentWindow();
       await appWindow.hide();
     } catch (error) {
       console.error('Failed to close window:', error);
