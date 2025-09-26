@@ -1,5 +1,5 @@
 <script lang="ts" module>
-  import { escapeHTML } from '$lib/utils';
+  import { escapeHTML, freeze, unfreeze } from '$lib/utils';
   import { Warning, type IconComponentProps } from 'phosphor-svelte';
   import { tick, type Component } from 'svelte';
   import { SvelteMap } from 'svelte/reactivity';
@@ -21,7 +21,7 @@
   /**
    * 确认消息的响应式映射
    */
-  const messages = new SvelteMap<string, Message>();
+  export const messages = new SvelteMap<string, Message>();
 
   /**
    * 显示确认消息对话框
@@ -33,7 +33,12 @@
     messages.set(id, msg);
     // 等待对话框被添加到DOM中
     tick().then(() => {
-      (document.getElementById(id) as HTMLDialogElement | null)?.showModal();
+      const dialog = document.getElementById(id) as HTMLDialogElement | null;
+      if (!dialog) {
+        return;
+      }
+      dialog.showModal();
+      freeze();
     });
   }
 
@@ -52,6 +57,7 @@
     if (msg) {
       callback?.();
       messages.delete(id);
+      unfreeze();
     }
   }
 

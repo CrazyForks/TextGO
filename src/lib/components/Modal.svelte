@@ -23,11 +23,12 @@
   /**
    * Reactive map of modal dialogs.
    */
-  const modals = new SvelteMap<string, ModalProps>();
+  export const modals = new SvelteMap<string, ModalProps>();
 </script>
 
 <script lang="ts">
   import { Alert } from '$lib/components';
+  import { freeze, unfreeze } from '$lib/utils';
   import { tick } from 'svelte';
   import { fade } from 'svelte/transition';
 
@@ -40,7 +41,13 @@
    */
   export function show() {
     modals.set(id, { onclose });
-    tick().then(() => dialog?.showModal());
+    tick().then(() => {
+      if (!dialog) {
+        return;
+      }
+      dialog.showModal();
+      freeze();
+    });
   }
 
   /**
@@ -56,6 +63,7 @@
     if (modal) {
       modal.onclose?.();
       modals.delete(id);
+      unfreeze();
     }
   }
 

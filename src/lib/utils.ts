@@ -1,6 +1,9 @@
 import type { ActionReturn } from 'svelte/action';
 import type { Instance, Props } from 'tippy.js';
 import tippy from 'tippy.js';
+import { getCurrentWindow } from '@tauri-apps/api/window';
+import { messages } from '$lib/components/Confirm.svelte';
+import { modals } from '$lib/components/Modal.svelte';
 
 /**
  * 防抖函数
@@ -162,4 +165,15 @@ export function formatISO8601(str: string | null | undefined): string {
     `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}` +
     ` ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`
   );
+}
+
+export function freeze(): Promise<void> {
+  return getCurrentWindow().setResizable(false);
+}
+
+export function unfreeze(): Promise<void> {
+  if (messages.size === 0 && modals.size === 0) {
+    return getCurrentWindow().setResizable(true);
+  }
+  return Promise.reject();
 }
