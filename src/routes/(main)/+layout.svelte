@@ -73,7 +73,7 @@
 </script>
 
 <main class="h-screen w-screen overflow-auto overscroll-none bg-base-300">
-  <Title class="sticky top-0 z-99 bg-base-300/80 backdrop-blur-sm {titleBorder ? 'border-b' : ''}">
+  <Title class="sticky top-0 z-101 bg-base-300/80 backdrop-blur-sm {titleBorder ? 'border-b' : ''}">
     {#snippet fallback()}
       <!-- 导航菜单 -->
       <span class="mx-auto flex gap-2 pl-16">

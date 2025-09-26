@@ -12,7 +12,7 @@ export const load: LayoutLoad = async () => {
   // 设置 Tippy.js 全局默认属性
   // https://atomiks.github.io/tippyjs/v6/methods/#setdefaultprops
   tippy.setDefaultProps({
-    zIndex: 98,
+    zIndex: 100,
     maxWidth: 300,
     arrow: false,
     theme: 'neutral',

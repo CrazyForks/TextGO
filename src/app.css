@@ -80,10 +80,6 @@
     }
   }
 
-  .collapse-title {
-    @apply flex items-center gap-1 bg-base-150 !py-2 text-sm text-base-content/80 [&:after]:!top-[1.2rem];
-  }
-
   .modal-box {
     @apply mt-4 flex !max-h-[90%] flex-col gap-4 !overscroll-none !p-3;
     > form {
@@ -102,6 +98,15 @@
       }
     }
   }
+
+  .collapse-title {
+    @apply flex items-center gap-1 bg-base-150 !py-2 text-sm text-base-content/80 [&:after]:!top-[1.2rem];
+  }
+}
+
+@utility btn-submit {
+  --btn-color: var(--color-emphasis);
+  --btn-fg: var(--color-neutral-content);
 }
 
 @utility btn-subtle {
@@ -109,11 +114,6 @@
   &:is(:disabled, [disabled], .btn-disabled) {
     background-color: transparent !important;
   }
-}
-
-@utility btn-submit {
-  --btn-color: var(--color-emphasis);
-  --btn-fg: var(--color-neutral-content);
 }
 
 @utility gradient {
