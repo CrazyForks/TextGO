@@ -30,7 +30,7 @@
   let modelUpdater: Model;
 </script>
 
-<div class="mx-auto flex flex-col gap-2">
+<div class="flex flex-col gap-2">
   <Setting icon={FingerprintSimple} title="文本类型" tip="自定义可识别的文本类型">
     <List
       icon={Sphere}

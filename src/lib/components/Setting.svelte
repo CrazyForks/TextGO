@@ -23,7 +23,7 @@
   let { children, icon, title, tip, class: _class }: SettingProps = $props();
 </script>
 
-<div class="w-full rounded-box border bg-base-100 p-4 shadow-xs {_class}">
+<div class="rounded-container {_class}">
   <div class="flex items-center justify-between">
     <span class="flex items-center gap-2">
       {#if icon}

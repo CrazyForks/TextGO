@@ -1,13 +1,11 @@
 <script lang="ts">
-  import { beforeNavigate, goto } from '$app/navigation';
   import { page } from '$app/state';
-  import { CodeMirror, confirm } from '$lib/components';
+  import { CodeMirror } from '$lib/components';
   import { logs } from '$lib/states.svelte';
   import type { Log } from '$lib/types';
   import { formatISO8601 } from '$lib/utils';
   import { markdown } from '@codemirror/lang-markdown';
   import { marked } from 'marked';
-  import ollama from 'ollama/browser';
   import {
     CaretDown,
     CaretRight,
@@ -20,7 +18,7 @@
     Robot,
     Textbox
   } from 'phosphor-svelte';
-  import { onMount, untrack } from 'svelte';
+  import { onMount } from 'svelte';
   import { fade } from 'svelte/transition';
 
   let log: Log | undefined = $derived(logs.current.find((l) => l.id === page.params.record));
@@ -89,68 +87,10 @@
       }
     };
   });
-
-  $effect(() => {
-    if (chatMode && log && log.result && log.streaming === undefined) {
-      untrack(async () => {
-        try {
-          // 如果是聊天模式，请求 ollama 接口并获取回复
-          log.streaming = true;
-          // 开始自动滚动
-          startAutoScroll();
-          const messages = [{ role: 'user', content: log.result! }];
-          if (log.systemPrompt && log.systemPrompt.trim().length > 0) {
-            // 加入系统提示词
-            messages.unshift({ role: 'system', content: log.systemPrompt });
-          }
-          const response = await ollama.chat({
-            model: 'gemma3:4b',
-            messages: messages,
-            stream: true
-          });
-          // 保存回复内容
-          log.response = '';
-          for await (const part of response) {
-            if (log?.leaving) {
-              // 已经确认离开，停止接收
-              break;
-            }
-            log.response += part.message.content;
-          }
-        } catch (error) {
-          console.error(error);
-        } finally {
-          log.streaming = false;
-          // 停止自动滚动
-          stopAutoScroll();
-        }
-      });
-    }
-  });
-
-  // 路由跳转前，如果有对话正在进行中，弹出确认对话框
-  beforeNavigate(({ to, cancel }) => {
-    if (log?.leaving) {
-      // 已经确认离开，直接放行
-      return;
-    }
-    if (log?.streaming) {
-      cancel();
-      confirm({
-        message: 'AI 正在生成回复，确定要离开吗？',
-        onconfirm: () => {
-          ollama.abort();
-          log.leaving = true;
-          log.streaming = false;
-          to && goto(to.url);
-        }
-      });
-    }
-  });
 </script>
 
 {#key log?.id}
-  <ul class="timeline timeline-vertical timeline-compact h-[calc(100dvh-2rem)] p-2 timeline-snap-icon" in:fade>
+  <ul class="timeline timeline-vertical timeline-compact timeline-snap-icon" in:fade>
     <li>
       <div class="timeline-middle">
         <Lightning class="size-5 opacity-60" />
@@ -166,7 +106,7 @@
         <div class="timeline-middle">
           <ClipboardText class="size-5" />
         </div>
-        <div class="timeline-end mb-8 pt-1">
+        <div class="timeline-end mb-8 w-[calc(100%-2rem)] pt-1">
           <div class="flex items-center">
             <button class="flex cursor-pointer items-center" onclick={() => (clipboardExpanded = !clipboardExpanded)}>
               <span class="text-sm font-semibold italic">剪贴版</span>
@@ -181,7 +121,7 @@
           </div>
           {#if clipboardExpanded}
             <div
-              class="m-2 max-h-48 w-[calc(100vw-15rem)] overflow-auto text-xs whitespace-pre opacity-80"
+              class="m-2 max-h-48 overflow-auto text-xs whitespace-pre opacity-80"
               transition:fade={{ duration: 200 }}
             >
               {log.clipboard}
@@ -197,7 +137,7 @@
         <div class="timeline-middle">
           <Textbox class="size-5" />
         </div>
-        <div class="timeline-end mb-8 pt-1">
+        <div class="timeline-end mb-8 w-[calc(100%-2rem)] pt-1">
           <div class="flex items-center">
             <button class="flex cursor-pointer items-center" onclick={() => (selectionExpanded = !selectionExpanded)}>
               <span class="text-sm font-semibold italic">选中文本</span>
@@ -218,7 +158,7 @@
           </div>
           {#if selectionExpanded}
             <div
-              class="m-2 max-h-96 w-[calc(100vw-15rem)] overflow-auto text-xs whitespace-pre opacity-80"
+              class="m-2 max-h-96 overflow-auto text-xs whitespace-pre opacity-80"
               transition:fade={{ duration: 200 }}
             >
               {log.selection}
@@ -239,9 +179,9 @@
           <FilePy class="size-5" />
         {/if}
       </div>
-      <div class="timeline-end pt-[1px] {chatMode ? 'mb-2' : 'mb-8'}">
+      <div class="timeline-end w-[calc(100%-2rem)] pt-[1px] {chatMode ? 'mb-2' : 'mb-8'}">
         <time class="text-sm font-semibold italic">{log?.actionLabel}</time>
-        <div class="mt-2 w-[calc(100vw-15rem)]">
+        <div class="mt-2">
           <CodeMirror language={chatMode ? markdown() : undefined} darkMode={!chatMode} document={log?.result} />
         </div>
       </div>
@@ -255,9 +195,9 @@
         <div class="timeline-middle">
           <Robot class="size-5" />
         </div>
-        <div class="timeline-end mb-8 pt-[1px]">
+        <div class="timeline-end mb-8 w-[calc(100%-2rem)] pt-[1px]">
           <time class="text-sm font-semibold italic">AI 回复</time>
-          <div class="mt-2 w-[calc(100vw-15rem)] rounded-box border bg-base-150 p-4">
+          <div class="mt-2 rounded-box border bg-base-150 p-4">
             {#if log?.streaming}
               <div class="loading mb-2 loading-sm loading-dots opacity-70"></div>
             {/if}

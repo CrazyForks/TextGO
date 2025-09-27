@@ -121,6 +121,9 @@
           }
         } catch (error) {
           console.error(error);
+          if (error instanceof Error) {
+            log.response = error.message;
+          }
         } finally {
           log.streaming = false;
           // 停止自动滚动
@@ -158,6 +161,7 @@
       log = event.payload;
     });
     return () => {
+      log = null;
       unlisten.then((fn) => fn());
     };
   });
@@ -165,26 +169,28 @@
 
 {#key log?.id}
   <main class="h-screen w-screen overflow-hidden">
-    <div class="flex h-7 items-center justify-between bg-base-300 pr-1 pl-18" data-tauri-drag-region>
-      <span class="text-sm font-semibold italic">{log?.actionLabel}</span>
+    <div class="flex h-8 items-center justify-between bg-base-300 pr-2 pl-20" data-tauri-drag-region>
+      <span class="text-sm font-semibold">{log?.actionLabel}</span>
       <Button icon={CopySimple} onclick={closeWindow} />
     </div>
     <div class="size-full overflow-auto">
       {#if chatMode}
-        {#if log?.streaming}
-          <div class="loading mb-2 loading-sm loading-dots opacity-70"></div>
-        {/if}
-        {#if log?.response}
-          <div class="prose prose-sm max-w-none text-white/90">
-            {@html marked(log.response + (log?.streaming ? ' |' : ''))}
-          </div>
-        {:else if !log?.streaming}
-          <div class="text-sm text-white/60 italic">等待回复...</div>
-        {/if}
+        <div class="p-2">
+          {#if log?.streaming}
+            <div class="loading mb-2 loading-sm loading-dots opacity-70"></div>
+          {/if}
+          {#if log?.response}
+            <div class="prose prose-sm max-w-none text-base-content/90">
+              {@html marked(log.response + (log?.streaming ? ' |' : ''))}
+            </div>
+          {:else if !log?.streaming}
+            <div class="text-sm text-base-content/60 italic">等待回复...</div>
+          {/if}
+        </div>
       {:else}
         <CodeMirror
-          minHeight="calc(100vh - 2rem)"
-          maxHeight="calc(100vh - 2rem)"
+          minHeight="calc(100vh - 2.25rem)"
+          maxHeight="calc(100vh - 2.25rem)"
           class="rounded-none border-none"
           panelClass="hidden"
           language={chatMode ? markdown() : undefined}
