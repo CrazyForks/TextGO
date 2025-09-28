@@ -11,7 +11,7 @@
 
 </div>
 
-TextGO is a cross-platform global hotkey application designed for modern text workers. It can automatically identify the type of text you select and trigger corresponding custom actions, thereby reducing the burden of memorizing hotkeys and improving work efficiency.
+`TextGO` is a cross-platform global hotkey application designed for modern text workers. It can automatically identify the type of text you select and trigger corresponding custom actions, thereby reducing the burden of memorizing hotkeys and improving work efficiency.
 
 <div align="center">
   <img src="concept.jpg" alt="concept" width="1024">
@@ -27,7 +27,7 @@ TextGO is a cross-platform global hotkey application designed for modern text wo
 
 ## Use Cases
 
-Here are the features you can achieve using TextGO:
+Here are the features you can achieve using `TextGO`:
 
 - **Format Conversion**: Identify text with fixed rules and convert it to the format you need.
 - **Text Generation**: Embed selected text into custom templates through scripts.
