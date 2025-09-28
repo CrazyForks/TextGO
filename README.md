@@ -9,42 +9,44 @@
 
 </div>
 
-TextGO 是一款跨平台的全局快捷键应用，专为现代文字工作者设计。它可以通过识别您选中的文本类型并触发相应的自定义动作，从而减少记忆快捷键的负担，提升工作效率。
+###### 📖 English / [简体中文](README.zh-CN.md)
+
+TextGO is a cross-platform global hotkey application designed for modern text workers. It can automatically identify the type of text you select and trigger corresponding custom actions, thereby reducing the burden of memorizing hotkeys and improving work efficiency.
 
 <div align="center">
   <img src="concept.jpg" alt="concept" width="1024">
 </div>
 
-## 核心特性
+## Core Features
 
-- **文本识别**：基于正则表达式、机器学习模型和自然语言处理技术，自动识别选中文本的类型
-- **自定义动作**：支持 JavaScript 和 Python 脚本执行，以及基于 Ollama 的本地 AI 对话
-- **可训练模型**：通过输入少量样本，快速训练专属的文本类型识别模型
-- **跨平台兼容**：基于 Tauri 框架，支持 Windows 和 macOS
-- **零记忆负担**：告别传统快捷键应用中需要记忆大量组合键的痛点
+- **Text Recognition**: Automatically identifies the type of selected text based on regular expressions, machine learning models, and natural language processing technologies
+- **Custom Actions**: Supports JavaScript and Python script execution, as well as local AI conversations based on Ollama
+- **Trainable Models**: Quickly train dedicated text type recognition models by inputting a small number of samples
+- **Cross-Platform Compatibility**: Built on the Tauri framework, supporting Windows and macOS
+- **Zero Memory Burden**: Say goodbye to the pain point of memorizing numerous key combinations in traditional hotkey applications
 
-## 应用场景
+## Use Cases
 
-以下是使用 TextGO 可以实现的功能：
+Here are the features you can achieve using TextGO:
 
-- **格式转换**：识别具有固定规则的文本并将其转换成您需要的格式
-- **文本生成**：通过脚本将选中文本嵌入到自定义的模板中
-- **划词翻译**：调用本地 LLM 实现 AI 翻译
+- **Format Conversion**: Identify text with fixed rules and convert it to the format you need
+- **Text Generation**: Embed selected text into custom templates through scripts
+- **Word Translation**: Call local LLM to achieve AI translation
 - ...
 
-## 依赖项目
+## Dependencies
 
-| 名称                                               | 说明                                         |
-| -------------------------------------------------- | -------------------------------------------- |
-| **[Tauri](https://tauri.app/)**                    | 基于 Rust 的跨平台桌面应用框架，提供原生性能 |
-| **[Enigo](https://github.com/enigo-rs/enigo)**     | Rust 输入模拟库，用于模拟鼠标和键盘输入      |
-| **[Svelte](https://svelte.dev/)**                  | 现代前端框架，构建响应式用户界面             |
-| **[DaisyUI](https://daisyui.com/)**                | 基于 Tailwind CSS 的语义化组件库             |
-| **[TailwindCSS](https://tailwindcss.com/)**        | 实用优先的 CSS 框架，快速构建美观界面        |
-| **[CodeMirror](https://codemirror.net/)**          | 代码编辑器组件，支持语法高亮和自动完成       |
-| **[TensorFlow.js](https://www.tensorflow.org/js)** | 浏览器端机器学习，支持文本分类模型训练       |
-| **[Ollama](https://ollama.com/)**                  | 本地 LLM 运行时，提供 AI 对话能力            |
+| Name                                               | Description                                                                          |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| **[Tauri](https://tauri.app/)**                    | Rust-based cross-platform desktop application framework providing native performance |
+| **[Enigo](https://github.com/enigo-rs/enigo)**     | Rust input simulation library for simulating mouse and keyboard input                |
+| **[Svelte](https://svelte.dev/)**                  | Modern frontend framework for building responsive user interfaces                    |
+| **[DaisyUI](https://daisyui.com/)**                | Semantic component library based on Tailwind CSS                                     |
+| **[TailwindCSS](https://tailwindcss.com/)**        | Utility-first CSS framework for rapidly building beautiful interfaces                |
+| **[CodeMirror](https://codemirror.net/)**          | Code editor component with syntax highlighting and auto-completion support           |
+| **[TensorFlow.js](https://www.tensorflow.org/js)** | Browser-side machine learning supporting text classification model training          |
+| **[Ollama](https://ollama.com/)**                  | Local LLM runtime providing AI conversation capabilities                             |
 
-## 开源协议
+## License
 
-本项目基于 [MIT](LICENSE) 开源协议发布
+This project is released under the [MIT](LICENSE) open source license

@@ -1,0 +1,52 @@
+<h1 align="center">TextGO</h1>
+
+<div align="center">
+
+[![GitHub Stars](https://img.shields.io/github/stars/C5H12O5/TextGO?logo=github&label=Stars&style=flat&color=yellow)](https://github.com/C5H12O5/TextGO/stargazers)
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Tauri Version](https://img.shields.io/badge/Tauri-v2.8.5-24C8D8.svg?logo=tauri)](https://tauri.app/)
+[![Svelte Version](https://img.shields.io/badge/Svelte-v5.39.6-FF3E00.svg?logo=svelte)](https://svelte.dev/)
+
+</div>
+
+###### 📖 [English](README.md) / 简体中文
+
+TextGO 是一款跨平台的全局快捷键应用，专为现代文字工作者设计。它可以通过识别您选中的文本类型并触发相应的自定义动作，从而减少记忆快捷键的负担，提升工作效率。
+
+<div align="center">
+  <img src="concept.jpg" alt="concept" width="1024">
+</div>
+
+## 核心特性
+
+- **文本识别**：基于正则表达式、机器学习模型和自然语言处理技术，自动识别选中文本的类型
+- **自定义动作**：支持 JavaScript 和 Python 脚本执行，以及基于 Ollama 的本地 AI 对话
+- **可训练模型**：通过输入少量样本，快速训练专属的文本类型识别模型
+- **跨平台兼容**：基于 Tauri 框架，支持 Windows 和 macOS
+- **零记忆负担**：告别传统快捷键应用中需要记忆大量组合键的痛点
+
+## 应用场景
+
+以下是使用 TextGO 可以实现的功能：
+
+- **格式转换**：识别具有固定规则的文本并将其转换成您需要的格式
+- **文本生成**：通过脚本将选中文本嵌入到自定义的模板中
+- **划词翻译**：调用本地 LLM 实现 AI 翻译
+- ...
+
+## 依赖项目
+
+| 名称                                               | 说明                                         |
+| -------------------------------------------------- | -------------------------------------------- |
+| **[Tauri](https://tauri.app/)**                    | 基于 Rust 的跨平台桌面应用框架，提供原生性能 |
+| **[Enigo](https://github.com/enigo-rs/enigo)**     | Rust 输入模拟库，用于模拟鼠标和键盘输入      |
+| **[Svelte](https://svelte.dev/)**                  | 现代前端框架，构建响应式用户界面             |
+| **[DaisyUI](https://daisyui.com/)**                | 基于 Tailwind CSS 的语义化组件库             |
+| **[TailwindCSS](https://tailwindcss.com/)**        | 实用优先的 CSS 框架，快速构建美观界面        |
+| **[CodeMirror](https://codemirror.net/)**          | 代码编辑器组件，支持语法高亮和自动完成       |
+| **[TensorFlow.js](https://www.tensorflow.org/js)** | 浏览器端机器学习，支持文本分类模型训练       |
+| **[Ollama](https://ollama.com/)**                  | 本地 LLM 运行时，提供 AI 对话能力            |
+
+## 开源协议
+
+本项目基于 [MIT](LICENSE) 开源协议发布
