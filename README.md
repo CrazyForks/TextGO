@@ -7,9 +7,9 @@
 [![Tauri Version](https://img.shields.io/badge/Tauri-v2.8.5-24C8D8.svg?logo=tauri)](https://tauri.app/)
 [![Svelte Version](https://img.shields.io/badge/Svelte-v5.39.6-FF3E00.svg?logo=svelte)](https://svelte.dev/)
 
-</div>
+📖 English / [简体中文](README.zh-CN.md)
 
-###### 📖 English / [简体中文](README.zh-CN.md)
+</div>
 
 TextGO is a cross-platform global hotkey application designed for modern text workers. It can automatically identify the type of text you select and trigger corresponding custom actions, thereby reducing the burden of memorizing hotkeys and improving work efficiency.
 

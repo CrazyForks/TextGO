@@ -7,9 +7,9 @@
 [![Tauri Version](https://img.shields.io/badge/Tauri-v2.8.5-24C8D8.svg?logo=tauri)](https://tauri.app/)
 [![Svelte Version](https://img.shields.io/badge/Svelte-v5.39.6-FF3E00.svg?logo=svelte)](https://svelte.dev/)
 
-</div>
+📖 [English](README.md) / 简体中文
 
-###### 📖 [English](README.md) / 简体中文
+</div>
 
 TextGO 是一款跨平台的全局快捷键应用，专为现代文字工作者设计。它可以通过识别您选中的文本类型并触发相应的自定义动作，从而减少记忆快捷键的负担，提升工作效率。
 
