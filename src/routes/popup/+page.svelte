@@ -157,8 +157,8 @@
 
   onMount(() => {
     // 监听主进程发送的事件
-    const unlisten = listen<Log>('log', (event) => {
-      log = event.payload;
+    const unlisten = listen<string>('log', (event) => {
+      log = JSON.parse(event.payload) as Log;
     });
     return () => {
       log = null;

@@ -146,7 +146,7 @@ export async function renderPrompt(prompt: Prompt, data: Data): Promise<string> 
  */
 async function showWindow(log: Log): Promise<void> {
   try {
-    await invoke('show_popup_window', { log });
+    await invoke('show_popup_window', { log: JSON.stringify(log) });
   } catch (error) {
     console.error('显示窗口失败:', error);
   }

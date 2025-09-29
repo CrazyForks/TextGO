@@ -190,28 +190,8 @@ async fn get_selected_text(app: tauri::AppHandle) -> Result<String, String> {
     Ok(original_clipboard)
 }
 
-#[derive(serde::Deserialize, serde::Serialize)]
-struct LogData {
-    id: String,
-    key: String,
-    #[serde(rename = "caseLabel")]
-    case_label: String,
-    datetime: String,
-    clipboard: String,
-    selection: String,
-    #[serde(rename = "actionType")]
-    action_type: Option<String>,
-    #[serde(rename = "scriptLang")]
-    script_lang: Option<String>,
-    #[serde(rename = "actionLabel")]
-    action_label: Option<String>,
-    result: Option<String>,
-    #[serde(rename = "systemPrompt")]
-    system_prompt: Option<String>,
-}
-
 #[tauri::command]
-async fn show_popup_window(app: tauri::AppHandle, log: LogData) -> Result<(), String> {
+async fn show_popup_window(app: tauri::AppHandle, log: String) -> Result<(), String> {
     // 获取当前鼠标位置
     let (mouse_x, mouse_y) = {
         let enigo = ENIGO
@@ -300,7 +280,7 @@ async fn show_popup_window(app: tauri::AppHandle, log: LogData) -> Result<(), St
 
         // 发送 log 数据到前端
         window
-            .emit("log", &log)
+            .emit("log", log)
             .map_err(|e| format!("Failed to emit log data: {}", e))?;
     } else {
         return Err("Popup window not found".to_string());
