@@ -11,7 +11,7 @@
 
 </div>
 
-`TextGO` is a cross-platform global hotkey application designed for modern text workers. It can automatically identify the type of text you select and trigger corresponding custom actions, thereby reducing the burden of memorizing hotkeys and improving work efficiency.
+`TextGO` is a cross-platform global hotkey application for modern text workers. It automatically identifies selected text types and triggers custom actions, eliminating the need to memorize complex hotkeys.
 
 <div align="center">
   <img src="concept.jpg" alt="concept" width="1024">
@@ -36,16 +36,18 @@ Here are the features you can achieve using `TextGO`:
 
 ## Dependencies
 
-| Name                                               | Description                                                                           |
-| -------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| **[Tauri](https://tauri.app/)**                    | Rust-based cross-platform desktop application framework providing native performance. |
-| **[Enigo](https://github.com/enigo-rs/enigo)**     | Rust input simulation library for simulating mouse and keyboard input.                |
-| **[Svelte](https://svelte.dev/)**                  | Modern frontend framework for building responsive user interfaces.                    |
-| **[DaisyUI](https://daisyui.com/)**                | Semantic component library based on Tailwind CSS.                                     |
-| **[TailwindCSS](https://tailwindcss.com/)**        | Utility-first CSS framework for rapidly building beautiful interfaces.                |
-| **[CodeMirror](https://codemirror.net/)**          | Code editor component with syntax highlighting and auto-completion support.           |
-| **[TensorFlow.js](https://www.tensorflow.org/js)** | Browser-side machine learning supporting text classification model training.          |
-| **[Ollama](https://ollama.com/)**                  | Local LLM runtime providing AI conversation capabilities.                             |
+| Name                                           | Description                                                                           |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------- |
+| [Tauri](https://tauri.app/)                    | Rust-based cross-platform desktop application framework providing native performance. |
+| [Enigo](https://github.com/enigo-rs/enigo)     | Rust input simulation library for simulating mouse and keyboard input.                |
+| [Svelte](https://svelte.dev/)                  | Modern frontend framework for building responsive user interfaces.                    |
+| [DaisyUI](https://daisyui.com/)                | Semantic component library based on Tailwind CSS.                                     |
+| [TailwindCSS](https://tailwindcss.com/)        | Utility-first CSS framework for rapidly building beautiful interfaces.                |
+| [CodeMirror](https://codemirror.net/)          | Code editor component with syntax highlighting and auto-completion support.           |
+| [franc](https://github.com/wooorm/franc)       | Natural language detection library for identifying human languages from text.         |
+| [Guesslang](https://github.com/yoeo/guesslang) | Machine learning library for detecting programming languages from code snippets.      |
+| [TensorFlow.js](https://www.tensorflow.org/js) | Browser-side machine learning supporting text classification model training.          |
+| [Ollama](https://ollama.com/)                  | Local LLM runtime providing AI conversation capabilities.                             |
 
 ## License
 

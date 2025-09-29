@@ -36,16 +36,18 @@
 
 ## 依赖项目
 
-| 名称                                               | 说明                                         |
-| -------------------------------------------------- | -------------------------------------------- |
-| **[Tauri](https://tauri.app/)**                    | 基于 Rust 的跨平台桌面应用框架，提供原生性能 |
-| **[Enigo](https://github.com/enigo-rs/enigo)**     | Rust 输入模拟库，用于模拟鼠标和键盘输入      |
-| **[Svelte](https://svelte.dev/)**                  | 现代前端框架，构建响应式用户界面             |
-| **[DaisyUI](https://daisyui.com/)**                | 基于 Tailwind CSS 的语义化组件库             |
-| **[TailwindCSS](https://tailwindcss.com/)**        | 实用优先的 CSS 框架，快速构建美观界面        |
-| **[CodeMirror](https://codemirror.net/)**          | 代码编辑器组件，支持语法高亮和自动完成       |
-| **[TensorFlow.js](https://www.tensorflow.org/js)** | 浏览器端机器学习，支持文本分类模型训练       |
-| **[Ollama](https://ollama.com/)**                  | 本地 LLM 运行时，提供 AI 对话能力            |
+| 名称                                           | 说明                                         |
+| ---------------------------------------------- | -------------------------------------------- |
+| [Tauri](https://tauri.app/)                    | 基于 Rust 的跨平台桌面应用框架，提供原生性能 |
+| [Enigo](https://github.com/enigo-rs/enigo)     | Rust 输入模拟库，用于模拟鼠标和键盘输入      |
+| [Svelte](https://svelte.dev/)                  | 现代前端框架，构建响应式用户界面             |
+| [DaisyUI](https://daisyui.com/)                | 基于 Tailwind CSS 的语义化组件库             |
+| [TailwindCSS](https://tailwindcss.com/)        | 实用优先的 CSS 框架，快速构建美观界面        |
+| [CodeMirror](https://codemirror.net/)          | 代码编辑器组件，支持语法高亮和自动完成       |
+| [franc](https://github.com/wooorm/franc)       | 自然语言检测库，用于识别文本的人类语言       |
+| [Guesslang](https://github.com/yoeo/guesslang) | 机器学习库，用于从代码片段检测编程语言       |
+| [TensorFlow.js](https://www.tensorflow.org/js) | 浏览器端机器学习，支持文本分类模型训练       |
+| [Ollama](https://ollama.com/)                  | 本地 LLM 运行时，提供 AI 对话能力            |
 
 ## 开源协议
 
