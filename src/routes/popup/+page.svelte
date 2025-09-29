@@ -7,7 +7,7 @@
   import { getCurrentWindow } from '@tauri-apps/api/window';
   import { marked } from 'marked';
   import ollama from 'ollama/browser';
-  import { CopySimple } from 'phosphor-svelte';
+  import { ArrowCounterClockwise, CopySimple, Robot, TextIndent } from 'phosphor-svelte';
   import { onMount, untrack } from 'svelte';
 
   let { data } = $props();
@@ -169,9 +169,20 @@
 
 {#key log?.id}
   <main class="h-screen w-screen overflow-hidden">
-    <div class="flex h-8 items-center justify-between bg-base-300 pr-2 pl-20" data-tauri-drag-region>
-      <span class="text-sm font-semibold">{log?.actionLabel}</span>
-      <Button icon={CopySimple} onclick={closeWindow} />
+    <div class="flex h-8 items-center justify-between gap-2 bg-base-300 pr-2 pl-20" data-tauri-drag-region>
+      <div class="pointer-events-none flex items-center gap-2 truncate">
+        {#if chatMode}
+          <Robot class="size-4.5 shrink-0" />
+          <span class="truncate text-sm text-base-content/80">gemma3:4b</span>
+        {/if}
+      </div>
+      <div class="flex items-center gap-1">
+        {#if !chatMode}
+          <Button icon={ArrowCounterClockwise} onclick={closeWindow} />
+          <Button icon={TextIndent} onclick={closeWindow} />
+          <Button icon={CopySimple} onclick={closeWindow} />
+        {/if}
+      </div>
     </div>
     <div class="size-full overflow-auto">
       {#if chatMode}
