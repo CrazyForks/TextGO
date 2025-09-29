@@ -78,14 +78,14 @@
       <!-- 导航菜单 -->
       <span class="mx-auto flex gap-2 pl-16">
         {#each menus as menu (menu.path)}
-          {@const isActive = page.url.pathname === menu.path}
+          {@const active = page.url.pathname.startsWith(menu.path)}
           <Button
             size="sm"
             square={false}
             icon={menu.icon}
             text={menu.text}
-            weight={isActive ? 'fill' : 'light'}
-            class="border-none transition-all hover:bg-base-100 {isActive
+            weight={active ? 'fill' : 'light'}
+            class="border-none transition-all hover:bg-base-100 {active
               ? 'gradient bg-base-100 shadow-around'
               : 'text-base-content/80 hover:text-base-content'}"
             onclick={() => goto(menu.path)}
