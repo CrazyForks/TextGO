@@ -87,7 +87,7 @@
         <button onclick={close}>✕</button>
       </form>
       {#if title}
-        <h3 class="flex items-center gap-2 text-lg font-semibold">
+        <h3 class="modal-title">
           {#if icon}
             {@const Icon = icon}
             <Icon class="size-6" />

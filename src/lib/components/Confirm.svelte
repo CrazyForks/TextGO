@@ -69,10 +69,7 @@
    */
   function pretty(title: string): string {
     title = escapeHTML(title);
-    return title.replace(
-      /\[([^\]]+)\]/g,
-      '<span class="max-w-md truncate pr-2 font-normal opacity-60">【 $1 】</span>'
-    );
+    return title.replace(/\[([^\]]+)\]/g, '<span class="truncate font-normal opacity-60">【 $1 】</span>');
   }
 </script>
 
@@ -87,8 +84,8 @@
         <button onclick={(event) => close(id, msg.oncancel, event)}>✕</button>
       </form>
       <!-- 消息标题 -->
-      <h3 class="flex flex-wrap items-center text-lg font-semibold">
-        <Icon class="mr-2 size-6" />
+      <h3 class="modal-title">
+        <Icon class="size-6" />
         <!-- eslint-disable-next-line svelte/no-at-html-tags -->
         {@html pretty(msg.title || '确认操作')}
       </h3>
