@@ -37,7 +37,8 @@
         "skipTaskbar": true,
         "hiddenTitle": true,
         "alwaysOnTop": true,
-        "titleBarStyle": "Overlay"
+        "titleBarStyle": "Overlay",
+        "trafficLightPosition": { "x": 10, "y": 14 }
       }
     ],
     "security": {
