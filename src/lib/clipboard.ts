@@ -1,5 +1,5 @@
 import { invoke } from '@tauri-apps/api/core';
-import { readText, writeText, clear } from '@tauri-apps/plugin-clipboard-manager';
+import { clear, readText, writeText } from '@tauri-apps/plugin-clipboard-manager';
 
 /**
  * 获取剪贴板中的文本内容

@@ -1,4 +1,3 @@
-import { goto } from '$app/navigation';
 import { getClipboardText, setClipboardText } from '$lib/clipboard';
 import { PROMPT_MARK, PROMPTS_KEY, SCRIPT_MARK, SCRIPTS_KEY } from '$lib/constants';
 import { getPersisted, logs } from '$lib/states.svelte';

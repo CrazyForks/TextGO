@@ -1,6 +1,6 @@
 <script lang="ts">
   import { SingleClassTextClassifier } from '$lib/classifier';
-  import { Button, Model, Label, List, Prompt, Script, Select, Setting } from '$lib/components';
+  import { Button, Label, List, Model, Prompt, Script, Select, Setting } from '$lib/components';
   import { JavaScript, Markdown, Python, Tensorflow } from '$lib/icons';
   import {
     ArrowFatLineRight,
