@@ -135,7 +135,7 @@ def process(data):
       <Label required>名称</Label>
       <label class="input w-full">
         <At class="size-4 opacity-50" />
-        <input class="grow" {...schema.name} bind:value={scriptName} disabled={!!scriptId} />
+        <input class="autofocus grow" {...schema.name} bind:value={scriptName} disabled={!!scriptId} />
       </label>
       <Label required>类型</Label>
       <Select

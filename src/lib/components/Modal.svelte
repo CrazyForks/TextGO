@@ -46,6 +46,12 @@
         return;
       }
       dialog.showModal();
+      // 设置焦点
+      const autofocus = dialog?.querySelector('.autofocus') as HTMLElement | null;
+      if (autofocus) {
+        setTimeout(() => autofocus.focus(), 0);
+      }
+      // 冻结窗口
       freeze();
     });
   }

@@ -1,9 +1,9 @@
+import { messages } from '$lib/components/Confirm.svelte';
+import { modals } from '$lib/components/Modal.svelte';
+import { getCurrentWindow } from '@tauri-apps/api/window';
 import type { ActionReturn } from 'svelte/action';
 import type { Instance, Props } from 'tippy.js';
 import tippy from 'tippy.js';
-import { getCurrentWindow } from '@tauri-apps/api/window';
-import { messages } from '$lib/components/Confirm.svelte';
-import { modals } from '$lib/components/Modal.svelte';
 
 /**
  * 防抖函数
@@ -167,10 +167,17 @@ export function formatISO8601(str: string | null | undefined): string {
   );
 }
 
+/**
+ * 冻结当前窗口大小，防止快速调整窗口大小时边缘出现空白
+ * https://github.com/tauri-apps/tauri/issues/6322
+ */
 export function freeze(): Promise<void> {
   return getCurrentWindow().setResizable(false);
 }
 
+/**
+ * 当前没有消息框和模态框时解冻窗口大小
+ */
 export function unfreeze(): Promise<void> {
   if (messages.size === 0 && modals.size === 0) {
     return getCurrentWindow().setResizable(true);

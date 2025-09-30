@@ -112,7 +112,7 @@
       <Label required>名称</Label>
       <label class="input w-full">
         <Hash class="size-4 opacity-50" />
-        <input class="grow" {...schema.name} bind:value={modelName} disabled={!!modelId} />
+        <input class="autofocus grow" {...schema.name} bind:value={modelName} disabled={!!modelId} />
       </label>
       <Label required tip="根据提供的正向样本数据训练文本分类模型">正向样本</Label>
       <CodeMirror

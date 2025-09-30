@@ -45,11 +45,6 @@
       }
     }
     promptModal.show();
-    // 模态框完全显示后设置焦点
-    tick().then(() => {
-      collapseCheckbox?.blur();
-      nameInputElement?.focus();
-    });
   };
 
   /**
@@ -107,7 +102,7 @@
       <label class="input w-full">
         <At class="size-4 opacity-50" />
         <input
-          class="grow"
+          class="autofocus grow"
           {...schema.name}
           bind:value={promptName}
           bind:this={nameInputElement}

@@ -29,7 +29,7 @@
 </script>
 
 {#if !children}
-  <div class="flex h-11 shrink-0 items-center justify-center {_class}" data-tauri-drag-region>
+  <div class="flex h-11 shrink-0 items-center justify-center select-none {_class}" data-tauri-drag-region>
     {#if title}
       {@render title()}
     {:else if fallback}

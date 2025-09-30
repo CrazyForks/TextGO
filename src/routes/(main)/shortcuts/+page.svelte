@@ -133,7 +133,7 @@
         <kbd class="kbd h-10 w-12"><ArrowFatUp class="size-6" /></kbd>
         <span class="text-2xl font-bold opacity-50">+</span>
         <input
-          class="input h-10 w-12 text-xl"
+          class="autofocus input h-10 w-12 text-xl"
           {...schema.key}
           bind:value={key}
           oninput={(event) => (event.target as HTMLInputElement)?.form?.requestSubmit()}

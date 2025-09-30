@@ -38,6 +38,7 @@
         return;
       }
       dialog.showModal();
+      // 冻结窗口
       freeze();
     });
   }
