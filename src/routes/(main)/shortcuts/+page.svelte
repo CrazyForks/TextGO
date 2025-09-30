@@ -1,6 +1,6 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
-  import { Button, Hotkey, List, Modal, Shortcut } from '$lib/components';
+  import { alert, Button, Hotkey, List, Modal, Shortcut } from '$lib/components';
   import { PROMPT_MARK, SCRIPT_MARK } from '$lib/constants';
   import { buildFormSchema } from '$lib/constraint';
   import { NoData } from '$lib/icons';
@@ -12,6 +12,7 @@
     Command,
     Control,
     FingerprintSimple,
+    Info,
     Robot,
     Sparkle,
     StackPlus,
@@ -29,10 +30,37 @@
   let hotkeyModal: Modal;
 
   let key: string = $state('');
+
   // 表单约束
   const schema = buildFormSchema(({ text }) => ({
-    key: text().maxlength(1).pattern('^[a-zA-Z0-9]$').oninvalid('请输入单个字母或数字')
+    key: text().maxlength(1).pattern('^[a-zA-Z0-9]$').oninvalid(oninvalid('暂不支持该键位'))
   }));
+
+  function checkDuplicate(value: string) {
+    if (value && shortcuts.current[value.toUpperCase()]) {
+      oninvalid('该键位已被注册')();
+      return false;
+    }
+    return true;
+  }
+
+  function oninvalid(message: string) {
+    return () => {
+      // 清除输入
+      key = '';
+      // 弹出提示
+      alert({ level: 'error', message: message });
+    };
+  }
+
+  function submit() {
+    if (!checkDuplicate(key)) {
+      return;
+    }
+    shortcuts.current[key.toUpperCase()] = [];
+    hotkeyModal.close();
+    key = '';
+  }
 </script>
 
 <div class="relative min-h-(--app-h) rounded-container">
@@ -113,11 +141,9 @@
 <Modal maxWidth="20rem" icon={StackPlus} title="注册快捷键" bind:this={hotkeyModal}>
   <form
     method="post"
-    use:enhance={({ formElement, cancel }) => {
+    use:enhance={({ cancel }) => {
       cancel();
-      shortcuts.current[key.toUpperCase()] = [];
-      hotkeyModal.close();
-      formElement.reset();
+      submit();
     }}
   >
     <fieldset class="fieldset">
@@ -138,6 +164,9 @@
           bind:value={key}
           oninput={(event) => (event.target as HTMLInputElement)?.form?.requestSubmit()}
         />
+      </div>
+      <div class="flex items-center justify-center gap-1 text-xs tracking-wider opacity-30">
+        <Info class="size-4" />请输入要注册的字母或数字键
       </div>
     </fieldset>
   </form>
