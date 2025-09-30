@@ -7,9 +7,9 @@
     ClockCounterClockwise,
     Code,
     FingerprintSimple,
-    Lightbulb,
     Package,
     PencilSimpleLine,
+    Robot,
     Scroll,
     SlidersHorizontal,
     Sphere,
@@ -36,7 +36,7 @@
       icon={Sphere}
       title="分类模型"
       name="分类模型"
-      hint="使用分类模型识别文本类型"
+      hint="训练分类模型识别自定义类型"
       bind:data={models.current}
       oncreate={() => modelCreator.showModal()}
       ondelete={(item) => SingleClassTextClassifier.clearSavedModel(item.id)}
@@ -83,7 +83,7 @@
       icon={Scroll}
       title="正则表达式"
       name="正则表达式"
-      hint="使用正则表达式匹配文本类型"
+      hint="编写正则表达式匹配自定义类型"
       bind:data={models.current}
       oncreate={() => modelCreator.showModal()}
       ondelete={(item) => SingleClassTextClassifier.clearSavedModel(item.id)}
@@ -98,7 +98,7 @@
       icon={Code}
       title="执行脚本"
       name="脚本"
-      hint="使用预设的脚本处理选中文本"
+      hint="执行预设的脚本处理选中文本"
       bind:data={scripts.current}
       oncreate={() => scriptCreator.showModal()}
       moreActions={() => console.log('moreActions')}
@@ -121,10 +121,10 @@
       {/snippet}
     </List>
     <List
-      icon={Lightbulb}
+      icon={Robot}
       title="发起对话"
       name="提示词"
-      hint="使用预设的提示词向 AI 模型发起对话"
+      hint="通过预设的提示词与 AI 模型对话"
       bind:data={prompts.current}
       oncreate={() => promptCreator.showModal()}
       moreActions={() => console.log('moreActions')}

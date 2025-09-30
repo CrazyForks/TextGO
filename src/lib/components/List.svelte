@@ -4,8 +4,8 @@
     ArrowCircleDown,
     ArrowCircleUp,
     DotsThree,
+    Lightbulb,
     PlusCircle,
-    Sparkle,
     XCircle,
     type IconComponentProps
   } from 'phosphor-svelte';
@@ -159,8 +159,8 @@
   </div>
   <ul class="list scrollbar-none overflow-y-auto bg-base-100 [&_.list-row]:min-h-10 [&_.list-row]:py-1">
     {#if data.length === 0}
-      <li class="list-row items-center gap-1 text-surface/35">
-        <Sparkle class="size-4" />{hint || '暂无数据'}
+      <li class="list-row mx-auto items-center gap-1 text-surface/35">
+        <Lightbulb class="size-3.5" />{hint || '暂无数据'}
       </li>
     {/if}
     {#each data as item, index (item.id)}

@@ -88,7 +88,7 @@
     <span class="pl-1 text-sm opacity-60">
       已注册快捷键数量: {Object.keys(shortcuts.current).length}
       {#if totalRules > 0}
-        <span class="text-xs opacity-50">({totalRules}条规则)</span>
+        <span class="text-xs tracking-wider opacity-50">({totalRules}条规则)</span>
       {/if}
     </span>
     <button class="btn text-sm btn-sm btn-submit" onclick={() => hotkeyModal.show()}>
@@ -127,16 +127,20 @@
         ></Button>
       </div>
       <List
-        hint="暂无规则"
+        hint="选中文本后按下快捷键触发动作"
         bind:data={shortcuts.current[key]}
         oncreate={() => hotkey?.showModal(key)}
         ondelete={(item) => hotkey?.unregister(item)}
       >
         {#snippet title()}
-          {#if shortcuts.current[key].length > 0}
-            <Sparkle class="mx-1 size-4 opacity-60" />
-            <span class="text-sm tracking-wide opacity-60">{shortcuts.current[key].length} 条规则</span>
-          {/if}
+          <Sparkle class="mx-1 size-4 opacity-60" />
+          <span class="text-sm tracking-wide opacity-60">
+            {#if shortcuts.current[key].length > 0}
+              {shortcuts.current[key].length} 条规则
+            {:else}
+              暂无规则
+            {/if}
+          </span>
         {/snippet}
         {#snippet row(item)}
           {@const caseLabel = hotkey?.getCaseLabel(item.case)}

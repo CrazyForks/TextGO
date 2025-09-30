@@ -55,7 +55,7 @@ def process(data):
   import { Loading } from '$lib/states.svelte';
   import { javascript } from '@codemirror/lang-javascript';
   import { python } from '@codemirror/lang-python';
-  import { At, Code, Terminal } from 'phosphor-svelte';
+  import { At, Code, Empty } from 'phosphor-svelte';
 
   const { scripts }: { scripts: Script[] } = $props();
   const schema = buildFormSchema(({ text }) => ({ name: text().maxlength(64) }));
@@ -180,7 +180,7 @@ def process(data):
             ? 'text-base-content'
             : ''}"
         >
-          <Terminal class="size-5" />静默模式
+          <Empty class="size-5" />静默模式
         </span>
         <input type="checkbox" class="checkbox" bind:checked={quietMode} />
       </label>
