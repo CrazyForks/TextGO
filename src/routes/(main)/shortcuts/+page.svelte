@@ -1,6 +1,6 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
-  import { alert, Button, Hotkey, List, Modal, Shortcut } from '$lib/components';
+  import { alert, Button, Hotkey, List, Modal, confirm, Shortcut } from '$lib/components';
   import { PROMPT_MARK, SCRIPT_MARK } from '$lib/constants';
   import { buildFormSchema } from '$lib/constraint';
   import { NoData } from '$lib/icons';
@@ -19,6 +19,7 @@
     Trash,
     Warning
   } from 'phosphor-svelte';
+  import { onMount, tick } from 'svelte';
 
   let { data } = $props();
   let { shortcuts, models, scripts, prompts } = data;
@@ -53,14 +54,32 @@
     };
   }
 
-  function submit() {
+  async function submit() {
     if (!checkDuplicate(key)) {
       return;
     }
-    shortcuts.current[key.toUpperCase()] = [];
+    // 只取第一个字符并转换为大写
+    const newKey = key.charAt(0).toUpperCase();
+    shortcuts.current[newKey] = [];
     hotkeyModal.close();
     key = '';
+
+    // 等待 DOM 更新后滚动到新注册的快捷键位置
+    await tick();
+    const element = document.querySelector(`[data-shortcut-key="${newKey}"]`);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
   }
+
+  let showNoData = $state(false);
+
+  onMount(() => {
+    // 延迟100ms显示
+    setTimeout(() => {
+      showNoData = true;
+    }, 100);
+  });
 </script>
 
 <div class="relative min-h-(--app-h) rounded-container">
@@ -75,21 +94,33 @@
       <StackPlus class="size-5" />注册快捷键
     </button>
   </div>
-  {#if Object.keys(shortcuts.current).length === 0}
+  {#if showNoData && Object.keys(shortcuts.current).length === 0}
     <div class="pointer-events-none absolute inset-0 flex items-center justify-center">
       <NoData class="m-auto size-64 pl-4 opacity-10" />
     </div>
   {/if}
-  {#each Object.keys(shortcuts.current) as key}
-    <div class="flex items-center justify-between pt-8 pb-2">
+  {#each Object.keys(shortcuts.current).sort() as key}
+    <div class="flex items-center justify-between pt-8 pb-2" data-shortcut-key={key}>
       <Shortcut {key} />
       <Button
         icon={Trash}
         onclick={() => {
-          for (const item of shortcuts.current[key] || []) {
-            hotkey?.unregister(item);
+          const clear = () => {
+            for (const item of shortcuts.current[key] || []) {
+              hotkey?.unregister(item);
+            }
+            delete shortcuts.current[key];
+          };
+          // 规则为空时直接删除，否则需要确认
+          if (shortcuts.current[key].length > 0) {
+            confirm({
+              title: `删除快捷键[${key}]`,
+              message: '数据删除后不可恢复，是否继续？',
+              onconfirm: clear
+            });
+          } else {
+            clear();
           }
-          delete shortcuts.current[key];
         }}
       ></Button>
     </div>
