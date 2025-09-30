@@ -86,7 +86,6 @@ export async function execute(hotkey: Hotkey, selection: string): Promise<void> 
       if (entries.current.length > 5) {
         entries.current = entries.current.slice(0, 5);
       }
-      // goto(`/histories/${log.id}`);
       await showWindow(entry);
     }
   }

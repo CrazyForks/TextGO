@@ -22,17 +22,17 @@
     <div class="menu-title text-xs tracking-wide text-base-content/60">历史记录</div>
     <div class="h-full overflow-y-auto">
       <ul class="menu w-full gap-1.5">
-        {#each data.logs.current as log, index (log.id)}
-          {@const href = `/histories/${log.id}`}
+        {#each data.entries.current as entry, index (entry.id)}
+          {@const href = `/histories/${entry.id}`}
           {@const menuActive = page.url.pathname === href}
           <li animate:flip={{ duration: 200 }}>
             <a
               {href}
               class="group gap-1 rounded-md px-1.5 {menuActive ? 'glass bg-emphasis text-neutral-content' : ''}"
             >
-              <kbd class="kbd kbd-sm text-primary/80">{log.key}</kbd>
+              <kbd class="kbd kbd-sm text-primary/80">{entry.key}</kbd>
               <span class="truncate py-1 text-xs tracking-wider opacity-60">
-                {log.selection.trim() || formatISO8601(log.datetime)}
+                {entry.selection.trim() || formatISO8601(entry.datetime)}
               </span>
               <Button
                 icon={Trash}
@@ -41,22 +41,22 @@
                   event.stopPropagation();
                   event.preventDefault();
                   if (page.url.pathname !== href) {
-                    data.logs.current.splice(index, 1);
+                    data.entries.current.splice(index, 1);
                     return;
                   }
                   const gotoPrev = () => {
                     // 删除后跳转到上一个日志，若无则跳转到设置页
-                    const prev = index > 0 ? `/histories/${data.logs.current[index - 1].id}` : '/histories';
-                    data.logs.current.splice(index, 1);
+                    const prev = index > 0 ? `/histories/${data.entries.current[index - 1].id}` : '/histories';
+                    data.entries.current.splice(index, 1);
                     goto(prev);
                   };
-                  if (log.streaming) {
+                  if (entry.streaming) {
                     confirm({
                       message: 'AI 正在生成回复，确定要离开吗？',
                       onconfirm: () => {
                         ollama.abort();
-                        log.leaving = true;
-                        log.streaming = false;
+                        entry.leaving = true;
+                        entry.streaming = false;
                         gotoPrev();
                       }
                     });
