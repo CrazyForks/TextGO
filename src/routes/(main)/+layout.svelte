@@ -8,6 +8,7 @@
   import { ClockCounterClockwise, GearSix, Keyboard } from 'phosphor-svelte';
   import { onMount, type Snippet } from 'svelte';
   import type { LayoutData } from './$types';
+  import { getCurrentWindow } from '@tauri-apps/api/window';
 
   let { data, children }: { data: LayoutData; children: Snippet } = $props();
   let { theme } = data;
@@ -64,11 +65,29 @@
     };
   });
 
-  onMount(async () => {
+  onMount(() => {
+    const unlisten = getCurrentWindow().onFocusChanged(({ payload: focused }) => {
+      if (focused) {
+        // 某些情况下，隐藏窗口显示后页面内会有元素意外获得焦点，这里将其取消掉
+        const activeElement = document.activeElement as HTMLElement;
+        if (activeElement && activeElement !== document.body) {
+          activeElement.blur();
+        }
+      }
+    });
+    return () => {
+      unlisten.then((fn) => fn());
+    };
+  });
+
+  onMount(() => {
     // 监听跳转快捷键注册页面事件
-    await listen('goto-shortcuts', async () => {
+    const unlisten = listen('goto-shortcuts', async () => {
       goto('/shortcuts');
     });
+    return () => {
+      unlisten.then((fn) => fn());
+    };
   });
 </script>
 
