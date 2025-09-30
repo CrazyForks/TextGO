@@ -1,7 +1,7 @@
 <script lang="ts">
   import { beforeNavigate, goto } from '$app/navigation';
   import { Button, CodeMirror, confirm } from '$lib/components';
-  import type { Log } from '$lib/types';
+  import type { Entry } from '$lib/types';
   import { markdown } from '@codemirror/lang-markdown';
   import { listen } from '@tauri-apps/api/event';
   import { getCurrentWindow } from '@tauri-apps/api/window';
@@ -14,8 +14,8 @@
   let { theme } = data;
   let darkMode = $derived(theme.current !== 'light');
 
-  let log: Log | null = $state(null);
-  let chatMode: boolean = $derived.by(() => log?.actionType === 'prompt');
+  let entry: Entry | null = $state(null);
+  let chatMode: boolean = $derived.by(() => entry?.actionType === 'prompt');
   let autoScroll = $state(true);
   let mainElement: HTMLElement | null = $state(null);
   let scrollInterval: ReturnType<typeof setInterval> | undefined = $state();
@@ -55,7 +55,7 @@
 
   // 处理用户滚动事件
   function handleScroll(event: Event) {
-    if (log?.streaming && log?.response) {
+    if (entry?.streaming && entry?.response) {
       const target = event.target as HTMLElement;
       // 如果用户向上滚动，停止自动滚动
       if (autoScroll) {
@@ -90,20 +90,20 @@
   });
 
   $effect(() => {
-    if (chatMode && log && log.result && log.streaming === undefined) {
+    if (chatMode && entry && entry.result && entry.streaming === undefined) {
       untrack(async () => {
-        if (!log) {
+        if (!entry) {
           return;
         }
         try {
           // 如果是聊天模式，请求 ollama 接口并获取回复
-          log.streaming = true;
+          entry.streaming = true;
           // 开始自动滚动
           startAutoScroll();
-          const messages = [{ role: 'user', content: log.result! }];
-          if (log.systemPrompt && log.systemPrompt.trim().length > 0) {
+          const messages = [{ role: 'user', content: entry.result! }];
+          if (entry.systemPrompt && entry.systemPrompt.trim().length > 0) {
             // 加入系统提示词
-            messages.unshift({ role: 'system', content: log.systemPrompt });
+            messages.unshift({ role: 'system', content: entry.systemPrompt });
           }
           const response = await ollama.chat({
             model: 'gemma3:4b',
@@ -111,21 +111,21 @@
             stream: true
           });
           // 保存回复内容
-          log.response = '';
+          entry.response = '';
           for await (const part of response) {
-            if (log?.leaving) {
+            if (entry?.leaving) {
               // 已经确认离开，停止接收
               break;
             }
-            log.response += part.message.content;
+            entry.response += part.message.content;
           }
         } catch (error) {
           console.error(error);
           if (error instanceof Error) {
-            log.response = error.message;
+            entry.response = error.message;
           }
         } finally {
-          log.streaming = false;
+          entry.streaming = false;
           // 停止自动滚动
           stopAutoScroll();
         }
@@ -135,19 +135,19 @@
 
   // 路由跳转前，如果有对话正在进行中，弹出确认对话框
   beforeNavigate(({ to, cancel }) => {
-    if (log?.leaving) {
+    if (entry?.leaving) {
       // 已经确认离开，直接放行
       return;
     }
-    if (log?.streaming) {
+    if (entry?.streaming) {
       cancel();
       confirm({
         message: 'AI 正在生成回复，确定要离开吗？',
         onconfirm: () => {
           ollama.abort();
-          if (log) {
-            log.leaving = true;
-            log.streaming = false;
+          if (entry) {
+            entry.leaving = true;
+            entry.streaming = false;
           }
           to && goto(to.url);
         }
@@ -157,17 +157,17 @@
 
   onMount(() => {
     // 监听主进程发送的事件
-    const unlisten = listen<string>('log', (event) => {
-      log = JSON.parse(event.payload) as Log;
+    const unlisten = listen<string>('popup', (event) => {
+      entry = JSON.parse(event.payload) as Entry;
     });
     return () => {
-      log = null;
+      entry = null;
       unlisten.then((fn) => fn());
     };
   });
 </script>
 
-{#key log?.id}
+{#key entry?.id}
   <main class="h-screen w-screen overflow-hidden">
     <div class="flex h-8 items-center justify-between gap-2 bg-base-300 pr-2 pl-20" data-tauri-drag-region>
       <div class="pointer-events-none flex items-center gap-2 truncate">
@@ -187,14 +187,14 @@
     <div class="size-full overflow-auto">
       {#if chatMode}
         <div class="p-2">
-          {#if log?.streaming}
+          {#if entry?.streaming}
             <div class="loading mb-2 loading-sm loading-dots opacity-70"></div>
           {/if}
-          {#if log?.response}
+          {#if entry?.response}
             <div class="prose prose-sm max-w-none text-base-content/90">
-              {@html marked(log.response + (log?.streaming ? ' |' : ''))}
+              {@html marked(entry.response + (entry?.streaming ? ' |' : ''))}
             </div>
-          {:else if !log?.streaming}
+          {:else if !entry?.streaming}
             <div class="text-sm text-base-content/60 italic">等待回复...</div>
           {/if}
         </div>
@@ -205,7 +205,7 @@
           class="rounded-none border-none"
           panelClass="hidden"
           language={chatMode ? markdown() : undefined}
-          document={log?.result}
+          document={entry?.result}
           {darkMode}
         />
       {/if}

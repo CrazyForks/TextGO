@@ -1,7 +1,7 @@
 import { getClipboardText, setClipboardText } from '$lib/clipboard';
 import { PROMPT_MARK, PROMPTS_KEY, SCRIPT_MARK, SCRIPTS_KEY } from '$lib/constants';
-import { getPersisted, logs } from '$lib/states.svelte';
-import type { Hotkey, Log, Prompt, Script } from '$lib/types';
+import { entries, getPersisted } from '$lib/states.svelte';
+import type { Entry, Hotkey, Prompt, Script } from '$lib/types';
 import { invoke } from '@tauri-apps/api/core';
 
 /**
@@ -32,7 +32,7 @@ export async function execute(hotkey: Hotkey, selection: string): Promise<void> 
     datetime: new Date().toISOString()
   };
   // 生成记录
-  const log: Log = {
+  const entry: Entry = {
     id: crypto.randomUUID(),
     key: hotkey.key,
     caseLabel: hotkey.caseLabel,
@@ -57,16 +57,16 @@ export async function execute(hotkey: Hotkey, selection: string): Promise<void> 
         return;
       }
       // 保存记录
-      log.actionType = 'script';
-      log.scriptLang = script.lang;
-      log.actionLabel = scriptId;
-      log.result = result;
-      logs.current.unshift(log);
+      entry.actionType = 'script';
+      entry.scriptLang = script.lang;
+      entry.actionLabel = scriptId;
+      entry.result = result;
+      entries.current.unshift(entry);
       // 保留最近5条记录
-      if (logs.current.length > 5) {
-        logs.current = logs.current.slice(0, 5);
+      if (entries.current.length > 5) {
+        entries.current = entries.current.slice(0, 5);
       }
-      await showWindow(log);
+      await showWindow(entry);
     }
   } else if (action.startsWith(PROMPT_MARK)) {
     const promptId = action.substring(PROMPT_MARK.length);
@@ -77,17 +77,17 @@ export async function execute(hotkey: Hotkey, selection: string): Promise<void> 
       const result = await renderPrompt(prompt, data);
       console.debug(`提示词生成成功: ${result}`);
       // 保存记录
-      log.actionType = 'prompt';
-      log.actionLabel = promptId;
-      log.systemPrompt = prompt.systemPrompt;
-      log.result = result;
-      logs.current.unshift(log);
+      entry.actionType = 'prompt';
+      entry.actionLabel = promptId;
+      entry.systemPrompt = prompt.systemPrompt;
+      entry.result = result;
+      entries.current.unshift(entry);
       // 保留最近5条记录
-      if (logs.current.length > 5) {
-        logs.current = logs.current.slice(0, 5);
+      if (entries.current.length > 5) {
+        entries.current = entries.current.slice(0, 5);
       }
       // goto(`/histories/${log.id}`);
-      await showWindow(log);
+      await showWindow(entry);
     }
   }
 }
@@ -143,9 +143,9 @@ export async function renderPrompt(prompt: Prompt, data: Data): Promise<string> 
 /**
  * 显示窗口
  */
-async function showWindow(log: Log): Promise<void> {
+async function showWindow(entry: Entry): Promise<void> {
   try {
-    await invoke('show_popup_window', { log: JSON.stringify(log) });
+    await invoke('show_popup_window', { payload: JSON.stringify(entry) });
   } catch (error) {
     console.error('显示窗口失败:', error);
   }

@@ -1,4 +1,4 @@
-import { logs, models, prompts, scripts, shortcuts, theme } from '$lib/states.svelte';
+import { entries, models, prompts, scripts, shortcuts, theme } from '$lib/states.svelte';
 import tippy, { followCursor } from 'tippy.js';
 import type { LayoutLoad } from './$types';
 
@@ -22,5 +22,5 @@ export const load: LayoutLoad = async () => {
     plugins: [followCursor]
   });
 
-  return { theme, shortcuts, models, scripts, prompts, logs };
+  return { theme, shortcuts, models, scripts, prompts, entries };
 };

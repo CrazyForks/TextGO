@@ -1,8 +1,8 @@
 <script lang="ts">
   import { page } from '$app/state';
   import { CodeMirror } from '$lib/components';
-  import { logs } from '$lib/states.svelte';
-  import type { Log } from '$lib/types';
+  import { entries } from '$lib/states.svelte';
+  import type { Entry } from '$lib/types';
   import { formatISO8601 } from '$lib/utils';
   import { markdown } from '@codemirror/lang-markdown';
   import { marked } from 'marked';
@@ -21,8 +21,8 @@
   import { onMount } from 'svelte';
   import { fade } from 'svelte/transition';
 
-  let log: Log | undefined = $derived(logs.current.find((l) => l.id === page.params.record));
-  let chatMode: boolean = $derived.by(() => log?.actionType === 'prompt');
+  let entry: Entry | undefined = $derived(entries.current.find((e) => e.id === page.params.record));
+  let chatMode: boolean = $derived.by(() => entry?.actionType === 'prompt');
   let autoScroll = $state(true);
   let mainElement: HTMLElement | null = $state(null);
   let scrollInterval: ReturnType<typeof setInterval> | undefined = $state();
@@ -54,7 +54,7 @@
 
   // 处理用户滚动事件
   function handleScroll(event: Event) {
-    if (log?.streaming && log?.response) {
+    if (entry?.streaming && entry?.response) {
       const target = event.target as HTMLElement;
       // 如果用户向上滚动，停止自动滚动
       if (autoScroll) {
@@ -89,18 +89,18 @@
   });
 </script>
 
-{#key log?.id}
+{#key entry?.id}
   <ul class="timeline timeline-vertical timeline-compact timeline-snap-icon" in:fade>
     <li>
       <div class="timeline-middle">
         <Lightning class="size-5 opacity-60" />
       </div>
       <div class="timeline-end mb-8 pt-[1px]">
-        <time class="pr-1 text-sm italic opacity-50">{formatISO8601(log?.datetime)}</time>
+        <time class="pr-1 text-sm italic opacity-50">{formatISO8601(entry?.datetime)}</time>
       </div>
       <hr />
     </li>
-    {#if log?.clipboard}
+    {#if entry?.clipboard}
       <li>
         <hr />
         <div class="timeline-middle">
@@ -124,14 +124,14 @@
               class="m-2 max-h-48 overflow-auto text-xs whitespace-pre opacity-80"
               transition:fade={{ duration: 200 }}
             >
-              {log.clipboard}
+              {entry.clipboard}
             </div>
           {/if}
         </div>
         <hr />
       </li>
     {/if}
-    {#if log?.selection}
+    {#if entry?.selection}
       <li>
         <hr />
         <div class="timeline-middle">
@@ -149,10 +149,10 @@
                 {/if}
               </span>
             </button>
-            {#if log?.caseLabel}
+            {#if entry?.caseLabel}
               <span class="ml-2 badge gap-0.5 border badge-xs">
                 <FingerprintSimple class="size-3" />
-                {log?.caseLabel}
+                {entry?.caseLabel}
               </span>
             {/if}
           </div>
@@ -161,7 +161,7 @@
               class="m-2 max-h-96 overflow-auto text-xs whitespace-pre opacity-80"
               transition:fade={{ duration: 200 }}
             >
-              {log.selection}
+              {entry.selection}
             </div>
           {/if}
         </div>
@@ -173,16 +173,16 @@
       <div class="timeline-middle">
         {#if chatMode}
           <ChatText class="size-5" />
-        {:else if log?.scriptLang === 'javascript'}
+        {:else if entry?.scriptLang === 'javascript'}
           <FileJs class="size-5" />
-        {:else if log?.scriptLang === 'python'}
+        {:else if entry?.scriptLang === 'python'}
           <FilePy class="size-5" />
         {/if}
       </div>
       <div class="timeline-end w-[calc(100%-2rem)] pt-[1px] {chatMode ? 'mb-2' : 'mb-8'}">
-        <time class="text-sm font-semibold italic">{log?.actionLabel}</time>
+        <time class="text-sm font-semibold italic">{entry?.actionLabel}</time>
         <div class="mt-2">
-          <CodeMirror language={chatMode ? markdown() : undefined} darkMode={!chatMode} document={log?.result} />
+          <CodeMirror language={chatMode ? markdown() : undefined} darkMode={!chatMode} document={entry?.result} />
         </div>
       </div>
       {#if chatMode}
@@ -198,14 +198,14 @@
         <div class="timeline-end mb-8 w-[calc(100%-2rem)] pt-[1px]">
           <time class="text-sm font-semibold italic">AI 回复</time>
           <div class="mt-2 rounded-box border bg-base-150 p-4">
-            {#if log?.streaming}
+            {#if entry?.streaming}
               <div class="loading mb-2 loading-sm loading-dots opacity-70"></div>
             {/if}
-            {#if log?.response}
+            {#if entry?.response}
               <div class="prose prose-sm max-w-none text-base-content">
-                {@html marked(log.response + (log?.streaming ? ' |' : ''))}
+                {@html marked(entry.response + (entry?.streaming ? ' |' : ''))}
               </div>
-            {:else if !log?.streaming}
+            {:else if !entry?.streaming}
               <div class="text-sm text-base-content/50 italic">等待回复...</div>
             {/if}
           </div>

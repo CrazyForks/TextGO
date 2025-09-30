@@ -191,7 +191,7 @@ async fn get_selected_text(app: tauri::AppHandle) -> Result<String, String> {
 }
 
 #[tauri::command]
-async fn show_popup_window(app: tauri::AppHandle, log: String) -> Result<(), String> {
+async fn show_popup_window(app: tauri::AppHandle, payload: String) -> Result<(), String> {
     // 获取当前鼠标位置
     let (mouse_x, mouse_y) = {
         let enigo = ENIGO
@@ -280,8 +280,8 @@ async fn show_popup_window(app: tauri::AppHandle, log: String) -> Result<(), Str
 
         // 发送 log 数据到前端
         window
-            .emit("log", log)
-            .map_err(|e| format!("Failed to emit log data: {}", e))?;
+            .emit("popup", payload)
+            .map_err(|e| format!("Failed to emit payload data: {}", e))?;
     } else {
         return Err("Popup window not found".to_string());
     }

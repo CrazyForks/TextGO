@@ -1,6 +1,6 @@
 import { hotkeyManager } from '$lib/components/Hotkey.svelte';
-import { LOGS_KEY, MODELS_KEY, PROMPTS_KEY, SCRIPTS_KEY, SHORTCUTS_KEY } from '$lib/constants';
-import type { Hotkey, Log, Model, Prompt, Script } from '$lib/types';
+import { ENTRIES_KEY, MODELS_KEY, PROMPTS_KEY, SCRIPTS_KEY, SHORTCUTS_KEY } from '$lib/constants';
+import type { Hotkey, Entry, Model, Prompt, Script } from '$lib/types';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { LazyStore } from '@tauri-apps/plugin-store';
 import { untrack } from 'svelte';
@@ -45,7 +45,7 @@ export const scripts = persisted<Script[]>(SCRIPTS_KEY, []);
 export const prompts = persisted<Prompt[]>(PROMPTS_KEY, []);
 
 // 触发记录存储
-export const logs = persisted<Log[]>(LOGS_KEY, []);
+export const entries = persisted<Entry[]>(ENTRIES_KEY, []);
 
 /**
  * 创建持久化状态的选项

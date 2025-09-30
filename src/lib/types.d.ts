@@ -1,14 +1,14 @@
 /**
- * 将类型 T 转换为可为空的类型
- */
-type Nullable<T> = T | null | undefined;
-
-/**
- * 将类型 T 中的所有属性变为可选
+ * 将类型 T 中的所有属性转换为可为空
  */
 export type Optional<T> = {
   [P in keyof T]?: T[P] | null;
 };
+
+/**
+ * 将类型 T 自身转换为可为空
+ */
+type Nullable<T> = T | null | undefined;
 
 /**
  * 选项值
@@ -28,7 +28,7 @@ export type Option = {
 /**
  * 触发记录
  */
-export type Log = {
+export type Entry = {
   /** 记录标识 */
   id: string;
   /** 快捷键 */

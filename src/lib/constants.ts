@@ -22,4 +22,4 @@ export const PROMPTS_KEY = 'prompts';
 export const PROMPT_MARK = 'prompt-';
 
 /** 触发记录存储的键 */
-export const LOGS_KEY = 'logs';
+export const ENTRIES_KEY = 'entries';
