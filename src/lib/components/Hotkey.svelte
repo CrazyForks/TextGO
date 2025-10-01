@@ -85,23 +85,20 @@
       await this.initializeListener();
 
       // 一个 shortcut 对应多个 hotkey
-      const shortcut = `CmdOrCtrl+Shift+${hotkey.key}`;
       try {
         // 检查 shortcut 是否已经在后端注册
         const isRegistered = await invoke('is_shortcut_registered', { key: hotkey.key });
         if (!isRegistered) {
           // 调用后端注册快捷键
           await invoke('register_shortcut', { key: hotkey.key });
-          console.debug(`注册系统快捷键成功: ${shortcut}`);
         }
         // 保存 hotkey 到前端注册表中
         const hotkeys = shortcuts.current[hotkey.key];
         if (hotkeys && !hotkeys.find((h) => h.id === hotkey.id)) {
           hotkeys.push(hotkey);
-          console.debug(`注册快捷键成功: ${hotkey.id}`);
         }
       } catch (error) {
-        console.error(`注册快捷键失败: ${hotkey.id}`, error);
+        console.error(error);
         throw error;
       }
     }
@@ -112,7 +109,6 @@
      * @param hotkey - 快捷键配置
      */
     async unregister(hotkey: Hotkey): Promise<void> {
-      const shortcut = `CmdOrCtrl+Shift+${hotkey.key}`;
       try {
         // 从前端注册表中移除 hotkey
         const hotkeys = shortcuts.current[hotkey.key];
@@ -120,16 +116,14 @@
           const index = hotkeys.findIndex((h) => h.id === hotkey.id);
           if (index !== -1) {
             hotkeys.splice(index, 1);
-            console.debug(`注销快捷键成功: ${hotkey.id}`);
           }
           // 如果没有剩余的 hotkey，注销后端快捷键
           if (hotkeys.length === 0) {
             await invoke('unregister_shortcut', { key: hotkey.key });
-            console.debug(`注销系统快捷键成功: ${shortcut}`);
           }
         }
       } catch (error) {
-        console.error(`注销快捷键失败: ${hotkey.id}`, error);
+        console.error(error);
         throw error;
       }
     }
@@ -209,7 +203,7 @@
 
   // 动作标识选项
   const actionIds: Option[] = $derived.by(() => {
-    const options: Option[] = [{ value: '', label: '显示窗口' }];
+    const options: Option[] = [{ value: '', label: '显示主窗口' }];
     if (scripts && scripts.length > 0) {
       options.push({ value: '--script--', label: '-- 脚本 --', disabled: true });
       for (const s of scripts) {
@@ -232,10 +226,6 @@
    * @returns 文本类型标签
    */
   export function getCaseLabel(value: string): string | null {
-    if (value === '') {
-      // `跳过`选项不显示标签
-      return value;
-    }
     const option = textCases.find((c) => c.value === value);
     return option ? option.label : null;
   }
@@ -275,9 +265,8 @@
     }
     loading.start();
     try {
-      const id = `⌘/⌃ + ⇧ + ${lastKey}` + (textCase ? ` | ${getCaseLabel(textCase)}` : '');
       const hotkey: Hotkey = {
-        id,
+        id: lastKey + textCase,
         key: lastKey,
         case: textCase,
         action: actionId

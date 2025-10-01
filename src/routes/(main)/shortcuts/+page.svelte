@@ -145,20 +145,22 @@
         {#snippet row(item)}
           {@const caseLabel = hotkey?.getCaseLabel(item.case)}
           {@const actionLabel = hotkey?.getActionLabel(item.action)}
-          <span class="list-col-grow ml-4 flex items-center gap-1 truncate" title={caseLabel}>
-            {#if caseLabel}
-              <FingerprintSimple class="size-4 shrink-0 opacity-50" />
+          <div class="ml-4 flex w-48 items-center gap-1 truncate" title={caseLabel}>
+            {#if item.case === ''}
+              <span class="truncate opacity-30">{caseLabel}</span>
+            {:else if caseLabel}
+              <FingerprintSimple class="size-4 shrink-0 opacity-60" />
               <span class="truncate">{caseLabel}</span>
-            {:else if caseLabel === ''}
-              <span class="truncate opacity-30">跳过</span>
             {:else}
               <Warning class="size-4 shrink-0 opacity-50" />
               <span class="truncate opacity-50">类型已失效</span>
             {/if}
-            <ArrowFatLineRight class="ml-auto size-4 shrink-0 opacity-50" />
-          </span>
-          <span class="flex w-38 items-center gap-1" title={actionLabel}>
-            {#if actionLabel}
+          </div>
+          <ArrowFatLineRight class="size-4 shrink-0 opacity-15" />
+          <div class="list-col-grow ml-4 flex items-center gap-1 truncate" title={actionLabel}>
+            {#if item.action === ''}
+              <span class="truncate opacity-30">{actionLabel}</span>
+            {:else if actionLabel}
               {#if item.action.startsWith(SCRIPT_MARK)}
                 <Code class="size-4 shrink-0" />
               {:else if item.action.startsWith(PROMPT_MARK)}
@@ -169,7 +171,7 @@
               <Warning class="size-4 shrink-0 opacity-50" />
               <span class="truncate opacity-50">动作已失效</span>
             {/if}
-          </span>
+          </div>
         {/snippet}
       </List>
     </div>
