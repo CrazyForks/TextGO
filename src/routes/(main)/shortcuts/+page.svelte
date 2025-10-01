@@ -3,7 +3,7 @@
   import { alert, Button, confirm, Hotkey, List, Modal, Shortcut } from '$lib/components';
   import { PROMPT_MARK, SCRIPT_MARK } from '$lib/constants';
   import { buildFormSchema } from '$lib/constraint';
-  import { NoData } from '$lib/icons';
+  import { JavaScript, NoData, Python, Ollama, LMStudio } from '$lib/icons';
   import { type } from '@tauri-apps/plugin-os';
   import {
     ArrowFatLineRight,
@@ -25,6 +25,16 @@
   let { data } = $props();
   let { shortcuts, models, scripts, prompts } = data;
   let totalRules = $derived(Object.values(shortcuts.current).reduce((sum, arr) => sum + arr.length, 0));
+
+  function getScript(action: string) {
+    const id = action.replace(SCRIPT_MARK, '');
+    return scripts.current.find((item) => item.id === id);
+  }
+
+  function getPrompt(action: string) {
+    const id = action.replace(PROMPT_MARK, '');
+    return prompts.current.find((item) => item.id === id);
+  }
 
   const osType = type();
 
@@ -162,9 +172,19 @@
               <span class="truncate opacity-30">{actionLabel}</span>
             {:else if actionLabel}
               {#if item.action.startsWith(SCRIPT_MARK)}
-                <Code class="size-4 shrink-0" />
+                {@const script = getScript(item.action)}
+                {#if script?.lang === 'javascript'}
+                  <JavaScript class="h-4 shrink-0" />
+                {:else if script?.lang === 'python'}
+                  <Python class="h-4 shrink-0" />
+                {/if}
               {:else if item.action.startsWith(PROMPT_MARK)}
-                <Robot class="size-4 shrink-0" />
+                {@const prompt = getPrompt(item.action)}
+                {#if prompt?.provider === 'ollama'}
+                  <Ollama class="h-4 shrink-0" />
+                {:else if prompt?.provider === 'lmstudio'}
+                  <LMStudio class="h-4 shrink-0" />
+                {/if}
               {/if}
               <span class="truncate">{actionLabel}</span>
             {:else}

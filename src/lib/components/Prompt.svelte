@@ -76,7 +76,10 @@
       prompts.push({
         id: promptName,
         prompt: promptText,
-        systemPrompt: systemPromptText
+        systemPrompt: systemPromptText,
+        // TODO: 去除硬编码
+        provider: 'ollama',
+        model: 'gemma3:4b'
       });
       // 重置表单
       promptName = '';

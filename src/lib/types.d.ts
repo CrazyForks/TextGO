@@ -95,6 +95,10 @@ export type Script = {
 export type Prompt = {
   /** 提示词标识 */
   id: string;
+  /** 模型供应 */
+  provider: 'ollama' | 'lmstudio';
+  /** 模型名称 */
+  model: string;
   /** 提示词内容 */
   prompt: string;
   /** 系统提示词 */
