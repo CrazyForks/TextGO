@@ -130,7 +130,7 @@
         class="mr-4 cursor-pointer opacity-50 transition-opacity hover:opacity-100"
         onclick={() => openUrl('https://github.com/C5H12O5/TextGO')}
       >
-        <GitHub class="size-5 p-[1px]" />
+        <GitHub class="size-5" />
       </button>
     {/snippet}
   </Title>

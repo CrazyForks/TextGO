@@ -174,16 +174,16 @@
               {#if item.action.startsWith(SCRIPT_MARK)}
                 {@const script = getScript(item.action)}
                 {#if script?.lang === 'javascript'}
-                  <JavaScript class="h-4 shrink-0" />
+                  <JavaScript class="h-5 shrink-0" />
                 {:else if script?.lang === 'python'}
-                  <Python class="h-4 shrink-0" />
+                  <Python class="h-5 shrink-0" />
                 {/if}
               {:else if item.action.startsWith(PROMPT_MARK)}
                 {@const prompt = getPrompt(item.action)}
                 {#if prompt?.provider === 'ollama'}
-                  <Ollama class="h-4 shrink-0" />
+                  <Ollama class="h-5 shrink-0" />
                 {:else if prompt?.provider === 'lmstudio'}
-                  <LMStudio class="h-4 shrink-0" />
+                  <LMStudio class="h-5 shrink-0" />
                 {/if}
               {/if}
               <span class="truncate">{actionLabel}</span>

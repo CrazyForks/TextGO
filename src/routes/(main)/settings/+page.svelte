@@ -1,7 +1,7 @@
 <script lang="ts">
   import { SingleClassTextClassifier } from '$lib/classifier';
   import { Button, Label, List, Model, Prompt, Script, Select, Setting } from '$lib/components';
-  import { JavaScript, Markdown, Python, Tensorflow } from '$lib/icons';
+  import { JavaScript, LMStudio, Python, Tensorflow } from '$lib/icons';
   import {
     ArrowFatLineRight,
     ClockCounterClockwise,
@@ -130,7 +130,7 @@
       moreActions={() => console.log('moreActions')}
     >
       {#snippet row(item)}
-        <Markdown class="h-5" />
+        <LMStudio class="h-5" />
         <span class="list-col-grow text-base">{item.id}</span>
         <Button
           size="sm"
