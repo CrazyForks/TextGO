@@ -1,6 +1,6 @@
 import { hotkeyManager } from '$lib/components/Hotkey.svelte';
-import { ENTRIES_KEY, MODELS_KEY, PROMPTS_KEY, SCRIPTS_KEY, SHORTCUTS_KEY } from '$lib/constants';
-import type { Hotkey, Entry, Model, Prompt, Script } from '$lib/types';
+import { ENTRIES_KEY, MODELS_KEY, PROMPTS_KEY, REGEXPS_KEY, SCRIPTS_KEY, SHORTCUTS_KEY } from '$lib/constants';
+import type { Entry, Hotkey, Model, Prompt, Regexp, Script } from '$lib/types';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { LazyStore } from '@tauri-apps/plugin-store';
 import { untrack } from 'svelte';
@@ -37,6 +37,9 @@ export const shortcuts = persisted<Record<string, Hotkey[]>>(
 
 // 分类模型存储
 export const models = persisted<Model[]>(MODELS_KEY, []);
+
+// 正则表达式存储
+export const regexps = persisted<Regexp[]>(REGEXPS_KEY, []);
 
 // 脚本存储
 export const scripts = persisted<Script[]>(SCRIPTS_KEY, []);

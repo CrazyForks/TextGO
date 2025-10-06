@@ -19,7 +19,6 @@
   import { Loading } from '$lib/states.svelte';
   import { markdown } from '@codemirror/lang-markdown';
   import { At, HeadCircuit, Lightbulb } from 'phosphor-svelte';
-  import { tick } from 'svelte';
 
   const { prompts }: { prompts: Prompt[] } = $props();
   const schema = buildFormSchema(({ text }) => ({ name: text().maxlength(64) }));

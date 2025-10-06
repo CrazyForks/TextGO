@@ -118,3 +118,13 @@ export type Model = {
   /** 模型是否已训练 */
   modelTrained?: boolean;
 };
+
+/**
+ * 正则表达式
+ */
+export type Regexp = {
+  /** 正则表达式标识 */
+  id: string;
+  /** 正则表达式内容 */
+  pattern: string;
+};

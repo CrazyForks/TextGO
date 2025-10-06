@@ -6,6 +6,7 @@ export { default as List } from './List.svelte';
 export { default as Modal } from './Modal.svelte';
 export { default as Model } from './Model.svelte';
 export { default as Prompt } from './Prompt.svelte';
+export { default as Regexp } from './Regexp.svelte';
 export { default as Script } from './Script.svelte';
 export { default as Select } from './Select.svelte';
 export { default as Setting } from './Setting.svelte';

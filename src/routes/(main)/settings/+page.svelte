@@ -1,7 +1,7 @@
 <script lang="ts">
   import { SingleClassTextClassifier } from '$lib/classifier';
-  import { Button, Label, List, Model, Prompt, Script, Select, Setting } from '$lib/components';
-  import { JavaScript, LMStudio, Python, Tensorflow } from '$lib/icons';
+  import { Button, Label, List, Model, Prompt, Script, Select, Setting, Regexp } from '$lib/components';
+  import { JavaScript, LMStudio, Python, Tensorflow, Regexp as RegexpIcon } from '$lib/icons';
   import {
     ArrowFatLineRight,
     ClockCounterClockwise,
@@ -20,14 +20,16 @@
   } from 'phosphor-svelte';
 
   let { data } = $props();
-  let { theme, models, scripts, prompts } = data;
+  let { theme, models, regexps, scripts, prompts } = data;
 
+  let modelCreator: Model;
+  let modelUpdater: Model;
+  let regexpCreator: Regexp;
+  let regexpUpdater: Regexp;
   let scriptCreator: Script;
   let scriptUpdater: Script;
   let promptCreator: Prompt;
   let promptUpdater: Prompt;
-  let modelCreator: Model;
-  let modelUpdater: Model;
 </script>
 
 <div class="flex flex-col gap-2">
@@ -84,12 +86,20 @@
       title="正则表达式"
       name="正则表达式"
       hint="编写正则表达式匹配自定义类型"
-      bind:data={models.current}
-      oncreate={() => modelCreator.showModal()}
-      ondelete={(item) => SingleClassTextClassifier.clearSavedModel(item.id)}
+      bind:data={regexps.current}
+      oncreate={() => regexpCreator.showModal()}
     >
       {#snippet row(item)}
-        <div></div>
+        <RegexpIcon class="h-5" />
+        <span class="list-col-grow text-base">{item.id}</span>
+        <Button
+          size="sm"
+          icon={PencilSimpleLine}
+          onclick={(event) => {
+            event.stopPropagation();
+            regexpUpdater.showModal(item.id);
+          }}
+        />
       {/snippet}
     </List>
   </Setting>
@@ -181,6 +191,9 @@
 
 <Model bind:this={modelCreator} models={models.current} />
 <Model bind:this={modelUpdater} models={models.current} />
+
+<Regexp bind:this={regexpCreator} regexps={regexps.current} />
+<Regexp bind:this={regexpUpdater} regexps={regexps.current} />
 
 <Script bind:this={scriptCreator} scripts={scripts.current} />
 <Script bind:this={scriptUpdater} scripts={scripts.current} />

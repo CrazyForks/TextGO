@@ -26,12 +26,12 @@
       return;
     }
     if (id) {
-      const existed = models.find((p) => p.id === id);
-      if (existed) {
+      const model = models.find((p) => p.id === id);
+      if (model) {
         modelId = id;
-        modelName = existed.id;
-        modelSample = existed.sample;
-        modelThreshold = existed.threshold;
+        modelName = model.id;
+        modelSample = model.sample;
+        modelThreshold = model.threshold;
       }
     }
     modelModal.show();
@@ -44,8 +44,8 @@
    */
   function save(form: HTMLFormElement) {
     modelName = modelName.trim();
-    const existed = models.find((p) => p.id === modelName);
-    if (existed && existed.id !== modelId) {
+    const model = models.find((p) => p.id === modelName);
+    if (model && model.id !== modelId) {
       alert({ level: 'error', message: '该名称已被使用' });
       const nameInput = form.querySelector('input[name="name"]');
       (nameInput as HTMLInputElement | null)?.focus();
@@ -56,9 +56,9 @@
       return;
     }
     loading.start();
-    if (existed) {
+    if (model) {
       // 更新模型信息
-      existed.threshold = modelThreshold;
+      model.threshold = modelThreshold;
       alert('模型信息更新成功');
       loading.end();
     } else {
