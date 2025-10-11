@@ -1,15 +1,13 @@
 <div align="center">
-  <img src="app-icon.png" alt="logo" width="64">
-</div>
 
-<h1 align="center">TextGO</h1>
+<img src="app-icon.png" alt="logo" width="64">
 
-<div align="center">
+<h1>TextGO</h1>
 
 [![GitHub Stars](https://img.shields.io/github/stars/C5H12O5/TextGO?logo=github&label=Stars&style=flat&color=yellow)](https://github.com/C5H12O5/TextGO/stargazers)
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Tauri Version](https://img.shields.io/badge/Tauri-v2.8.5-24C8D8.svg?logo=tauri)](https://tauri.app/)
-[![Svelte Version](https://img.shields.io/badge/Svelte-v5.39.6-FF3E00.svg?logo=svelte)](https://svelte.dev/)
+[![Svelte Version](https://img.shields.io/badge/Svelte-v5.39.11-FF3E00.svg?logo=svelte)](https://svelte.dev/)
 
 📖 English / [简体中文](README.zh-CN.md)
 
@@ -17,7 +15,7 @@
 
 `TextGO` is a cross-platform global hotkey application for modern text workers. It automatically identifies selected text types and triggers custom actions, eliminating the need to memorize complex hotkeys.
 
-## Core Features
+## ✨ Core Features
 
 - **Text Recognition**: Automatically identifies text type using regex, ML models, and NLP technologies.
 - **Custom Actions**: Supports JavaScript/Python scripts and local AI conversations via Ollama.
@@ -25,7 +23,7 @@
 - **Cross-Platform**: Built on Tauri framework, supports Windows and macOS.
 - **Zero Memory Burden**: No need to memorize complex key combinations.
 
-## Use Cases
+## 🚀 Use Cases
 
 Here are the features you can achieve using `TextGO`:
 
@@ -34,7 +32,7 @@ Here are the features you can achieve using `TextGO`:
 - **Word Translation**: Call local LLM to achieve AI translation.
 - ...
 
-## Dependencies
+## 🛠️ Dependencies
 
 | Name                                           | Description                                                                           |
 | ---------------------------------------------- | ------------------------------------------------------------------------------------- |
@@ -49,6 +47,6 @@ Here are the features you can achieve using `TextGO`:
 | [TensorFlow.js](https://www.tensorflow.org/js) | Browser-side machine learning supporting text classification model training.          |
 | [Ollama](https://ollama.com/)                  | Local LLM runtime providing AI conversation capabilities.                             |
 
-## License
+## 📄 License
 
 This project is released under the [MIT](LICENSE) open source license.

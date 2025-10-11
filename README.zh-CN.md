@@ -1,23 +1,21 @@
 <div align="center">
-  <img src="app-icon.png" alt="logo" width="64">
-</div>
 
-<h1 align="center">TextGO</h1>
+<img src="app-icon.png" alt="logo" width="64">
 
-<div align="center">
+<h1>TextGO</h1>
 
 [![GitHub Stars](https://img.shields.io/github/stars/C5H12O5/TextGO?logo=github&label=Stars&style=flat&color=yellow)](https://github.com/C5H12O5/TextGO/stargazers)
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Tauri Version](https://img.shields.io/badge/Tauri-v2.8.5-24C8D8.svg?logo=tauri)](https://tauri.app/)
-[![Svelte Version](https://img.shields.io/badge/Svelte-v5.39.6-FF3E00.svg?logo=svelte)](https://svelte.dev/)
+[![Svelte Version](https://img.shields.io/badge/Svelte-v5.39.11-FF3E00.svg?logo=svelte)](https://svelte.dev/)
 
 📖 [English](README.md) / 简体中文
 
 </div>
 
-`TextGO`是一款跨平台的全局快捷键应用，专为现代文字工作者设计。它可以通过识别您选中的文本类型并触发相应的自定义动作，从而减少记忆快捷键的负担，提升工作效率。
+`TextGO` 是一款跨平台的全局快捷键应用，专为现代文字工作者设计。它可以通过识别您选中的文本类型并触发相应的自定义动作，从而减少记忆快捷键的负担，提升工作效率。
 
-## 核心特性
+## ✨ 核心特性
 
 - **文本识别**：基于正则表达式、机器学习模型和自然语言处理技术，自动识别选中文本的类型
 - **自定义动作**：支持 JavaScript 和 Python 脚本执行，以及基于 Ollama 的本地 AI 对话
@@ -25,16 +23,16 @@
 - **跨平台兼容**：基于 Tauri 框架，支持 Windows 和 macOS
 - **零记忆负担**：告别传统快捷键应用中需要记忆大量组合键的痛点
 
-## 应用场景
+## 🚀 应用场景
 
-以下是使用`TextGO`可以实现的功能：
+以下是使用 `TextGO` 可以实现的功能：
 
 - **格式转换**：识别具有固定规则的文本并将其转换成您需要的格式
 - **文本生成**：通过脚本将选中文本嵌入到自定义的模板中
 - **划词翻译**：调用本地 LLM 实现 AI 翻译
 - ...
 
-## 依赖项目
+## 🛠️ 依赖项目
 
 | 名称                                           | 说明                                         |
 | ---------------------------------------------- | -------------------------------------------- |
@@ -49,6 +47,6 @@
 | [TensorFlow.js](https://www.tensorflow.org/js) | 浏览器端机器学习，支持文本分类模型训练       |
 | [Ollama](https://ollama.com/)                  | 本地 LLM 运行时，提供 AI 对话能力            |
 
-## 开源协议
+## 📄 开源协议
 
 本项目基于 [MIT](LICENSE) 开源协议发布
