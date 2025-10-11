@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="app-icon.png" alt="logo" width="64">
+</div>
+
 <h1 align="center">TextGO</h1>
 
 <div align="center">
@@ -12,10 +16,6 @@
 </div>
 
 `TextGO` is a cross-platform global hotkey application for modern text workers. It automatically identifies selected text types and triggers custom actions, eliminating the need to memorize complex hotkeys.
-
-<div align="center">
-  <img src="concept.jpg" alt="concept" width="1024">
-</div>
 
 ## Core Features
 

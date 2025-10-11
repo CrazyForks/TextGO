@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="app-icon.png" alt="logo" width="64">
+</div>
+
 <h1 align="center">TextGO</h1>
 
 <div align="center">
@@ -12,10 +16,6 @@
 </div>
 
 `TextGO`是一款跨平台的全局快捷键应用，专为现代文字工作者设计。它可以通过识别您选中的文本类型并触发相应的自定义动作，从而减少记忆快捷键的负担，提升工作效率。
-
-<div align="center">
-  <img src="concept.jpg" alt="concept" width="1024">
-</div>
 
 ## 核心特性
 
