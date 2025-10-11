@@ -3,17 +3,15 @@
   import { alert, Button, confirm, Hotkey, List, Modal, Shortcut } from '$lib/components';
   import { PROMPT_MARK, SCRIPT_MARK } from '$lib/constants';
   import { buildFormSchema } from '$lib/constraint';
-  import { JavaScript, NoData, Python, Ollama, LMStudio } from '$lib/icons';
+  import { JavaScript, LMStudio, NoData, Ollama, Python } from '$lib/icons';
   import { type } from '@tauri-apps/plugin-os';
   import {
     ArrowFatLineRight,
     ArrowFatUp,
-    Code,
     Command,
     Control,
     FingerprintSimple,
     Info,
-    Robot,
     Sparkle,
     StackPlus,
     Trash,
@@ -137,6 +135,7 @@
         ></Button>
       </div>
       <List
+        name="规则"
         hint="选中文本后按下快捷键触发动作"
         bind:data={shortcuts.current[key]}
         oncreate={() => hotkey?.showModal(key)}
@@ -155,7 +154,7 @@
         {#snippet row(item)}
           {@const caseLabel = hotkey?.getCaseLabel(item.case)}
           {@const actionLabel = hotkey?.getActionLabel(item.action)}
-          <div class="ml-4 flex w-48 items-center gap-1 truncate" title={caseLabel}>
+          <div class="ml-4 flex w-60 items-center gap-1 truncate" title={caseLabel}>
             {#if item.case === ''}
               <span class="truncate opacity-30">{caseLabel}</span>
             {:else if caseLabel}

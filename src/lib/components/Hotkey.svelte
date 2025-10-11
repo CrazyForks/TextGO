@@ -166,7 +166,7 @@
   import { MODEL_MARK, PROMPT_MARK, SCRIPT_MARK } from '$lib/constants';
   import { BUILTIN_CASES, NATURAL_CASES, PROGRAM_CASES } from '$lib/matcher';
   import { Loading } from '$lib/states.svelte';
-  import { ArrowFatLineRight, FingerprintSimple, Keyboard } from 'phosphor-svelte';
+  import { ArrowFatLineRight, FingerprintSimple, Sparkle } from 'phosphor-svelte';
 
   let {
     models,
@@ -301,7 +301,7 @@
   }
 </script>
 
-<Modal icon={Keyboard} title="新增规则" bind:this={hotkeyModal}>
+<Modal icon={Sparkle} title="新增规则" bind:this={hotkeyModal}>
   <form
     method="post"
     use:enhance={({ formElement, cancel }) => {

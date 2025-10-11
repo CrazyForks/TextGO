@@ -31,7 +31,7 @@ export type Option = {
 export type Entry = {
   /** 记录标识 */
   id: string;
-  /** 快捷键 */
+  /** 触发键位 */
   key: string;
   /** 文本类型 */
   caseLabel?: string;

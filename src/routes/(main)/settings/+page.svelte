@@ -1,7 +1,7 @@
 <script lang="ts">
   import { SingleClassTextClassifier } from '$lib/classifier';
-  import { Button, Label, List, Model, Prompt, Script, Select, Setting, Regexp } from '$lib/components';
-  import { JavaScript, LMStudio, Python, Tensorflow, Regexp as RegexpIcon } from '$lib/icons';
+  import { Button, Label, List, Model, Prompt, Regexp, Script, Select, Setting } from '$lib/components';
+  import { JavaScript, LMStudio, Python, Regexp as RegexpIcon, Tensorflow } from '$lib/icons';
   import {
     ArrowFatLineRight,
     ClockCounterClockwise,
