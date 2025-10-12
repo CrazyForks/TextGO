@@ -8,7 +8,19 @@ import { untrack } from 'svelte';
 // 创建一个全局的 LazyStore 实例
 const store = new LazyStore('.settings.dat');
 
-// 主题存储
+// Node.js 路径
+export const nodePath = persisted<string>('nodePath', '');
+
+// Python 路径
+export const pythonPath = persisted<string>('pythonPath', '');
+
+// Ollama 主机
+export const ollamaHost = persisted<string>('ollamaHost', '');
+
+// 历史记录保留条数
+export const historySize = persisted<number>('historySize', 5);
+
+// 主题
 export const theme = persisted<string>('theme', 'light', {
   onchange: (theme) => {
     // 动态设置根元素的 data-theme 属性以应用主题
@@ -19,7 +31,7 @@ export const theme = persisted<string>('theme', 'light', {
   }
 });
 
-// 快捷键组存储
+// 快捷键组
 export const shortcuts = persisted<Record<string, Hotkey[]>>(
   SHORTCUTS_KEY,
   {},
@@ -35,19 +47,19 @@ export const shortcuts = persisted<Record<string, Hotkey[]>>(
   }
 );
 
-// 分类模型存储
+// 分类模型
 export const models = persisted<Model[]>(MODELS_KEY, []);
 
-// 正则表达式存储
+// 正则表达式
 export const regexps = persisted<Regexp[]>(REGEXPS_KEY, []);
 
-// 脚本存储
+// 脚本
 export const scripts = persisted<Script[]>(SCRIPTS_KEY, []);
 
-// 提示词存储
+// 提示词
 export const prompts = persisted<Prompt[]>(PROMPTS_KEY, []);
 
-// 触发记录存储
+// 触发记录
 export const entries = persisted<Entry[]>(ENTRIES_KEY, []);
 
 /**
