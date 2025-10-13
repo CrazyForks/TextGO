@@ -182,7 +182,7 @@
       <div class="timeline-end w-[calc(100%-2rem)] pt-[1px] {chatMode ? 'mb-2' : 'mb-8'}">
         <time class="text-sm font-semibold italic">{entry?.actionLabel}</time>
         <div class="mt-2">
-          <CodeMirror language={chatMode ? markdown() : undefined} darkMode={!chatMode} document={entry?.result} />
+          <CodeMirror language={chatMode ? markdown() : undefined} document={entry?.result} />
         </div>
       </div>
       {#if chatMode}

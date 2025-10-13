@@ -117,7 +117,6 @@
       <Label required tip="根据提供的正向样本数据训练文本分类模型">正向样本</Label>
       <CodeMirror
         title="正向样本"
-        darkMode={false}
         bind:document={modelSample}
         readOnly={!!modelId}
         placeholder="请输入至少 3 条正向样本，每行一条"
