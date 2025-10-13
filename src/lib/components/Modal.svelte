@@ -4,24 +4,24 @@
   import { SvelteMap } from 'svelte/reactivity';
 
   export type ModalProps = Partial<{
-    /** The icon to display before the title. */
+    /** 标题前显示的图标 */
     icon: Component<IconComponentProps>;
-    /** The title of the modal dialog. */
+    /** 模态对话框的标题 */
     title: string;
-    /** The content of the modal dialog. */
+    /** 模态对话框的内容 */
     children: Snippet;
-    /** The maximum width of the modal dialog. */
+    /** 模态对话框的最大宽度 */
     maxWidth: string;
-    /** The class names for the modal dialog. */
+    /** 模态对话框的类名 */
     class: string;
     boxClass: string;
     cornerClass: string;
-    /** The callback function when the dialog is closed. */
+    /** 对话框关闭时的回调函数 */
     onclose: () => void;
   }>;
 
   /**
-   * Reactive map of modal dialogs.
+   * 模态对话框的响应式映射
    */
   export const modals = new SvelteMap<string, ModalProps>();
 </script>
@@ -37,7 +37,7 @@
   const id: string = `modal-${crypto.randomUUID()}`;
 
   /**
-   * Show the modal dialog.
+   * 显示模态对话框
    */
   export function show() {
     modals.set(id, { onclose });
@@ -57,9 +57,9 @@
   }
 
   /**
-   * Close the modal dialog.
+   * 关闭模态对话框
    *
-   * @param event - The mouse event that triggered the close action.
+   * @param event - 触发关闭操作的鼠标事件
    */
   export function close(event: MouseEvent | null = null) {
     if (event) {
@@ -74,9 +74,9 @@
   }
 
   /**
-   * Check if the modal dialog is currently open.
+   * 检查模态对话框当前是否打开
    *
-   * @return True if the modal dialog is open, false otherwise.
+   * @return 如果模态对话框打开则返回 true，否则返回 false
    */
   export function isOpen(): boolean {
     return modals.has(id);

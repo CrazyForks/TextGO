@@ -5,12 +5,12 @@
   import { buildFormSchema } from '$lib/constraint';
   import { Loading } from '$lib/states.svelte';
   import type { Model } from '$lib/types';
-  import { FingerprintSimple, Hash } from 'phosphor-svelte';
+  import { FingerprintSimple, Sphere } from 'phosphor-svelte';
 
   const { models }: { models: Model[] } = $props();
-  const schema = buildFormSchema(({ text, number }) => ({
+  const schema = buildFormSchema(({ text, range }) => ({
     name: text().maxlength(32),
-    threshold: number().min(0.01).max(0.99).step(0.01)
+    threshold: range().min(0.01).max(0.99).step(0.01)
   }));
   const loading = new Loading();
 
@@ -100,7 +100,7 @@
   }
 </script>
 
-<Modal icon={FingerprintSimple} title="{modelId ? '更新' : '新增'}分类模型" bind:this={modelModal}>
+<Modal icon={Sphere} title="{modelId ? '更新' : '新增'}分类模型" bind:this={modelModal}>
   <form
     method="post"
     use:enhance={({ formElement, cancel }) => {
@@ -109,9 +109,9 @@
     }}
   >
     <fieldset class="fieldset">
-      <Label required>名称</Label>
+      <Label required>类型名称</Label>
       <label class="input w-full">
-        <Hash class="size-4 opacity-50" />
+        <FingerprintSimple class="size-4 opacity-50" />
         <input class="autofocus grow" {...schema.name} bind:value={modelName} disabled={!!modelId} />
       </label>
       <Label required tip="根据提供的正向样本数据训练文本分类模型">正向样本</Label>
@@ -122,9 +122,10 @@
         readOnly={!!modelId}
         placeholder="请输入至少 3 条正向样本，每行一条"
       />
-      <Label required tip="取值范围 0.01 ~ 0.99">置信度阈值</Label>
-      <label class="input input-sm w-full">
-        <input class="grow" {...schema.threshold} bind:value={modelThreshold} />
+      <Label required tip="相似度大于等于该阈值的文本将被识别为该类型">置信度阈值</Label>
+      <label class="flex w-full items-center gap-4">
+        <input class="range grow text-emphasis range-xs" {...schema.threshold} bind:value={modelThreshold} />
+        <span class="w-10 text-base font-light">{(modelThreshold * 100).toFixed(0)}%</span>
       </label>
     </fieldset>
     <div class="modal-action">

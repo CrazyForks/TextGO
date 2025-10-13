@@ -190,7 +190,7 @@
     class: _class,
     panelClass,
     editorClass,
-    minHeight = '10rem',
+    minHeight = '8rem',
     maxHeight = '20rem',
     minWidth = '100%',
     maxWidth = '100%',
