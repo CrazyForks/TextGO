@@ -1,6 +1,8 @@
 <script lang="ts">
+  import { dev } from '$app/environment';
   import { Alert, Confirm } from '$lib/components';
   import type { Snippet } from 'svelte';
+  import { onMount } from 'svelte';
   // 导入字体
   import '@fontsource-variable/noto-sans';
   import '@fontsource-variable/noto-sans-sc';
@@ -10,6 +12,20 @@
   import '../app.css';
 
   let { children }: { children: Snippet } = $props();
+
+  // 禁用右键菜单
+  if (!dev) {
+    onMount(() => {
+      const disableContextMenu = (event: MouseEvent) => {
+        event.preventDefault();
+        return false;
+      };
+      document.addEventListener('contextmenu', disableContextMenu);
+      return () => {
+        document.removeEventListener('contextmenu', disableContextMenu);
+      };
+    });
+  }
 </script>
 
 {@render children()}
