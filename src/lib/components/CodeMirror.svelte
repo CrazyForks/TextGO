@@ -24,7 +24,7 @@
     /** 编辑器是否为只读 */
     readOnly: boolean;
     /** 是否使用深色主题 */
-    darkMode: boolean;
+    darkMode: boolean | 'auto';
 
     /** 容器的样式 */
     style: string | null;
@@ -145,6 +145,7 @@
 
 <script lang="ts">
   import { Button, Modal } from '$lib/components';
+  import { theme } from '$lib/states.svelte';
   import { autocompletion, closeBrackets, closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete';
   import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
   import {
@@ -184,7 +185,7 @@
     tabSize = 4,
     lineLength = 80,
     readOnly = false,
-    darkMode = true,
+    darkMode = 'auto',
 
     style,
     class: _class,
@@ -317,16 +318,15 @@
   const tabKeyHandler: Extension = [keymap.of([indentWithTab]), indentUnit.of(' '.repeat(tabSize))];
 
   /**
-   * 使用深色主题的扩展
+   * 编辑器主题的扩展
    */
-  const darkModeHandler: Extension = darkMode ? oneDark : [];
   const editorTheme = new Compartment();
-
+  const getTheme = () => (darkMode === true || (darkMode === 'auto' && theme.current !== 'light') ? oneDark : []);
+  const themeHandler: Extension = editorTheme.of(getTheme());
   $effect(() => {
-    console.log('Reconfigure theme:', darkMode);
-    if (editorView) {
+    if (theme.current && editorView) {
       editorView.dispatch({
-        effects: editorTheme.reconfigure(darkMode ? oneDark : [])
+        effects: editorTheme.reconfigure(getTheme())
       });
     }
   });
@@ -360,7 +360,7 @@
           languageSupport,
           updateListener,
           tabKeyHandler,
-          editorTheme.of(darkModeHandler),
+          themeHandler,
           readOnlyHandler,
           placeholderHandler
         ]

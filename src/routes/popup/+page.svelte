@@ -10,10 +10,6 @@
   import { ArrowCounterClockwise, CopySimple, Robot, TextIndent } from 'phosphor-svelte';
   import { onMount, untrack } from 'svelte';
 
-  let { data } = $props();
-  let { theme } = data;
-  let darkMode = $derived(theme.current !== 'light');
-
   let entry: Entry | null = $state(null);
   let chatMode: boolean = $derived.by(() => entry?.actionType === 'prompt');
   let autoScroll = $state(true);
@@ -206,7 +202,6 @@
           panelClass="hidden"
           language={chatMode ? markdown() : undefined}
           document={entry?.result}
-          {darkMode}
         />
       {/if}
     </div>
