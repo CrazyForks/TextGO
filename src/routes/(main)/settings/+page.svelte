@@ -6,6 +6,7 @@
     ArrowFatLineRight,
     ClockCounterClockwise,
     Code,
+    Empty,
     FingerprintSimple,
     Package,
     PencilSimpleLine,
@@ -45,8 +46,8 @@
     >
       {#snippet row(item)}
         <Tensorflow class="h-5" />
-        <span class="list-col-grow flex items-center gap-4 truncate">
-          <span class="truncate text-base">{item.id}</span>
+        <div class="list-col-grow flex items-center gap-4 truncate" title={item.id}>
+          <span class="truncate text-base font-light">{item.id}</span>
           {#if item.modelTrained === true}
             {@const { sizeKB, vocabulary } = SingleClassTextClassifier.getModelInfo(item.id)}
             <span class="badge badge-ghost badge-sm">
@@ -58,17 +59,17 @@
               {vocabulary} 词汇
             </span>
           {/if}
-        </span>
+        </div>
         {#if item.modelTrained === undefined}
-          <span class="flex h-8 items-center gap-2 opacity-50">
+          <div class="flex h-8 items-center gap-2 opacity-50">
             <span class="loading loading-sm loading-spinner"></span>
             训练中
-          </span>
+          </div>
         {:else if item.modelTrained === false}
-          <span class="flex h-8 items-center gap-2 opacity-50">
+          <div class="flex h-8 items-center gap-2 opacity-50">
             <Warning class="size-4 shrink-0" />
             训练失败
-          </span>
+          </div>
         {:else}
           <Button
             size="sm"
@@ -91,7 +92,9 @@
     >
       {#snippet row(item)}
         <RegexpIcon class="h-5" />
-        <span class="list-col-grow text-base">{item.id}</span>
+        <div class="list-col-grow flex items-center gap-4 truncate" title={item.id}>
+          <span class="truncate text-base font-light">{item.id}</span>
+        </div>
         <Button
           size="sm"
           icon={PencilSimpleLine}
@@ -119,7 +122,15 @@
         {:else if item.lang === 'python'}
           <Python class="h-5" />
         {/if}
-        <span class="list-col-grow text-base">{item.id}</span>
+        <div class="list-col-grow flex items-center gap-4 truncate" title={item.id}>
+          <span class="truncate text-base font-light">{item.id}</span>
+          {#if item.quietMode === true}
+            <span class="badge badge-ghost badge-sm">
+              <Empty class="size-4 shrink-0 opacity-50" />
+              静默模式
+            </span>
+          {/if}
+        </div>
         <Button
           size="sm"
           icon={PencilSimpleLine}
@@ -141,7 +152,9 @@
     >
       {#snippet row(item)}
         <LMStudio class="h-5" />
-        <span class="list-col-grow text-base">{item.id}</span>
+        <div class="list-col-grow flex items-center gap-4 truncate" title={item.id}>
+          <span class="truncate text-base font-light">{item.id}</span>
+        </div>
         <Button
           size="sm"
           icon={PencilSimpleLine}
