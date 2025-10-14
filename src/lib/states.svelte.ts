@@ -8,18 +8,6 @@ import { untrack } from 'svelte';
 // 创建一个全局的 LazyStore 实例
 const store = new LazyStore('.settings.dat');
 
-// Node.js 路径
-export const nodePath = persisted<string>('nodePath', '');
-
-// Python 路径
-export const pythonPath = persisted<string>('pythonPath', '');
-
-// Ollama 主机
-export const ollamaHost = persisted<string>('ollamaHost', '');
-
-// 历史记录保留条数
-export const historySize = persisted<number>('historySize', 5);
-
 // 主题
 export const theme = persisted<string>('theme', 'light', {
   onchange: (theme) => {
@@ -30,6 +18,18 @@ export const theme = persisted<string>('theme', 'light', {
     getCurrentWindow().setTheme(theme === 'light' ? 'light' : 'dark');
   }
 });
+
+// Node.js 路径
+export const nodePath = persisted<string>('nodePath', '');
+
+// Python 路径
+export const pythonPath = persisted<string>('pythonPath', '');
+
+// Ollama 服务地址
+export const ollamaHost = persisted<string>('ollamaHost', '');
+
+// 历史记录保留条数
+export const historySize = persisted<number>('historySize', 5);
 
 // 快捷键组
 export const shortcuts = persisted<Record<string, Hotkey[]>>(

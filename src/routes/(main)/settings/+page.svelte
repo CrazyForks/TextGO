@@ -1,6 +1,7 @@
 <script lang="ts">
   import { SingleClassTextClassifier } from '$lib/classifier';
-  import { Button, Label, List, Model, Prompt, Regexp, Script, Select, Setting } from '$lib/components';
+  import { Button, Label, List, Modal, Model, Prompt, Regexp, Script, Select, Setting } from '$lib/components';
+  import { buildFormSchema } from '$lib/constraint';
   import { JavaScript, LMStudio, Ollama, Python, Regexp as RegexpIcon, Tensorflow } from '$lib/icons';
   import {
     ArrowFatLineRight,
@@ -9,6 +10,7 @@
     Cube,
     Empty,
     FingerprintSimple,
+    GearSix,
     Package,
     PencilSimpleLine,
     Robot,
@@ -22,16 +24,27 @@
   } from 'phosphor-svelte';
 
   let { data } = $props();
-  let { theme, models, regexps, scripts, prompts } = data;
+  let { theme, nodePath, pythonPath, ollamaHost, historySize, models, regexps, scripts, prompts } = data;
+
+  const schema = buildFormSchema(({ text }) => ({
+    nodePath: text().maxlength(256),
+    pythonPath: text().maxlength(256),
+    ollamaHost: text().maxlength(256)
+  }));
 
   let modelCreator: Model;
   let modelUpdater: Model;
+
   let regexpCreator: Regexp;
   let regexpUpdater: Regexp;
+
   let scriptCreator: Script;
   let scriptUpdater: Script;
+  let scriptOptions: Modal;
+
   let promptCreator: Prompt;
   let promptUpdater: Prompt;
+  let promptOptions: Modal;
 </script>
 
 <div class="flex flex-col gap-2">
@@ -115,7 +128,7 @@
       hint="执行预设的脚本处理选中文本"
       bind:data={scripts.current}
       oncreate={() => scriptCreator.showModal()}
-      moreActions={() => console.log('moreActions')}
+      moreActions={() => scriptOptions.show()}
     >
       {#snippet row(item)}
         {#if item.lang === 'javascript'}
@@ -149,7 +162,7 @@
       hint="通过预设的提示词与 AI 模型对话"
       bind:data={prompts.current}
       oncreate={() => promptCreator.showModal()}
-      moreActions={() => console.log('moreActions')}
+      moreActions={() => promptOptions.show()}
     >
       {#snippet row(item)}
         {#if item.provider === 'ollama'}
@@ -201,9 +214,10 @@
             { value: 0, label: '不保留' },
             { value: 3, label: '最近 3 条' },
             { value: 5, label: '最近 5 条' },
-            { value: 10, label: '最近 10 条' }
+            { value: 10, label: '最近 10 条' },
+            { value: 20, label: '最近 20 条' }
           ]}
-          value={5}
+          bind:value={historySize.current}
           class="w-36 select-sm"
         />
       </fieldset>
@@ -222,3 +236,38 @@
 
 <Prompt bind:this={promptCreator} prompts={prompts.current} />
 <Prompt bind:this={promptUpdater} prompts={prompts.current} />
+
+<Modal icon={GearSix} title="脚本选项设置" bind:this={scriptOptions}>
+  <form>
+    <fieldset class="fieldset">
+      <Label>Node.js 路径</Label>
+      <input
+        class="input w-full"
+        placeholder="请填写 Node.js 可执行文件的路径，如 /usr/local/bin/node"
+        {...schema.nodePath}
+        bind:value={nodePath.current}
+      />
+      <Label>Python 路径</Label>
+      <input
+        class="input w-full"
+        placeholder="请填写 Python 可执行文件的路径，如 /usr/local/bin/python3"
+        {...schema.pythonPath}
+        bind:value={pythonPath.current}
+      />
+    </fieldset>
+  </form>
+</Modal>
+
+<Modal icon={GearSix} title="AI 选项设置" bind:this={promptOptions}>
+  <form>
+    <fieldset class="fieldset">
+      <Label>Ollama 服务地址</Label>
+      <input
+        class="input w-full"
+        placeholder="http://127.0.0.1:11434"
+        {...schema.ollamaHost}
+        bind:value={ollamaHost.current}
+      />
+    </fieldset>
+  </form>
+</Modal>

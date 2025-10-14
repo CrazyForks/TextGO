@@ -10,7 +10,7 @@
   const loading = new Loading();
   const schema = buildFormSchema(({ text }) => ({
     name: text().maxlength(32),
-    pattern: text().maxlength(128)
+    pattern: text().maxlength(256)
   }));
 
   let regexpId: string = $state('');

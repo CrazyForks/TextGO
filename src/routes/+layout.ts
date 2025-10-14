@@ -1,4 +1,16 @@
-import { entries, models, prompts, regexps, scripts, shortcuts, theme } from '$lib/states.svelte';
+import {
+  entries,
+  historySize,
+  models,
+  nodePath,
+  ollamaHost,
+  prompts,
+  pythonPath,
+  regexps,
+  scripts,
+  shortcuts,
+  theme
+} from '$lib/states.svelte';
 import tippy, { followCursor } from 'tippy.js';
 import type { LayoutLoad } from './$types';
 
@@ -22,5 +34,17 @@ export const load: LayoutLoad = async () => {
     plugins: [followCursor]
   });
 
-  return { theme, shortcuts, models, regexps, scripts, prompts, entries };
+  return {
+    theme,
+    nodePath,
+    pythonPath,
+    ollamaHost,
+    historySize,
+    shortcuts,
+    models,
+    regexps,
+    scripts,
+    prompts,
+    entries
+  };
 };

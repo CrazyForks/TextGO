@@ -150,6 +150,7 @@
         <Button
           icon={DotsThree}
           weight="bold"
+          text="更多操作"
           onclick={() => {
             moreActions?.();
           }}
