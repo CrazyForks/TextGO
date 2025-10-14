@@ -14,20 +14,25 @@
 
 <script lang="ts">
   import { enhance } from '$app/forms';
-  import { CodeMirror, Label, Modal, alert } from '$lib/components';
+  import { CodeMirror, Label, Modal, Select, alert } from '$lib/components';
   import { buildFormSchema } from '$lib/constraint';
   import { Loading } from '$lib/states.svelte';
   import { markdown } from '@codemirror/lang-markdown';
-  import { At, HeadCircuit, Lightbulb } from 'phosphor-svelte';
+  import { ArrowFatLineRight, Cube, HeadCircuit, Lightbulb } from 'phosphor-svelte';
 
   const { prompts }: { prompts: Prompt[] } = $props();
-  const schema = buildFormSchema(({ text }) => ({ name: text().maxlength(64) }));
   const loading = new Loading();
+  const schema = buildFormSchema(({ text }) => ({
+    name: text().maxlength(64),
+    modelName: text().maxlength(32)
+  }));
 
   let promptId: string = $state('');
   let promptName: string = $state('');
   let promptText: string = $state('');
   let systemPromptText: string = $state('');
+  let modelProvider: 'ollama' | 'lmstudio' = $state('ollama');
+  let modelName: string = $state('gemma3:4b');
 
   let promptModal: Modal;
   let nameInputElement: HTMLInputElement;
@@ -76,9 +81,8 @@
         id: promptName,
         prompt: promptText,
         systemPrompt: systemPromptText,
-        // TODO: 去除硬编码
-        provider: 'ollama',
-        model: 'gemma3:4b'
+        provider: modelProvider,
+        model: modelName
       });
       // 重置表单
       promptName = '';
@@ -100,9 +104,9 @@
     }}
   >
     <fieldset class="fieldset">
-      <Label required>名称</Label>
+      <Label required>动作名称</Label>
       <label class="input w-full">
-        <At class="size-4 opacity-50" />
+        <ArrowFatLineRight class="size-5 opacity-50" />
         <input
           class="autofocus grow"
           {...schema.name}
@@ -111,6 +115,26 @@
           disabled={!!promptId}
         />
       </label>
+      <div class="grid grid-cols-2 gap-2">
+        <span>
+          <Label required>模型提供商</Label>
+          <Select
+            bind:value={modelProvider}
+            options={[
+              { value: 'ollama', label: 'Ollama' },
+              { value: 'lmstudio', label: 'LM Studio' }
+            ]}
+            class="w-full"
+          />
+        </span>
+        <span>
+          <Label required>模型名称</Label>
+          <label class="input w-full">
+            <Cube class="size-5 opacity-50" />
+            <input class="grow" {...schema.modelName} bind:value={modelName} />
+          </label>
+        </span>
+      </div>
       <Label required tip="明确描述您希望 AI 执行的具体任务或目标">提示词</Label>
       <CodeMirror language={markdown()} title="提示词" placeholder={PROMPT_PLACEHOLDER} bind:document={promptText} />
       <div class="collapse-arrow collapse mt-2 border">

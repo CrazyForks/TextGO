@@ -1,11 +1,12 @@
 <script lang="ts">
   import { SingleClassTextClassifier } from '$lib/classifier';
   import { Button, Label, List, Model, Prompt, Regexp, Script, Select, Setting } from '$lib/components';
-  import { JavaScript, LMStudio, Python, Regexp as RegexpIcon, Tensorflow } from '$lib/icons';
+  import { JavaScript, LMStudio, Ollama, Python, Regexp as RegexpIcon, Tensorflow } from '$lib/icons';
   import {
     ArrowFatLineRight,
     ClockCounterClockwise,
     Code,
+    Cube,
     Empty,
     FingerprintSimple,
     Package,
@@ -151,9 +152,17 @@
       moreActions={() => console.log('moreActions')}
     >
       {#snippet row(item)}
-        <LMStudio class="h-5" />
+        {#if item.provider === 'ollama'}
+          <Ollama class="h-5" />
+        {:else if item.provider === 'lmstudio'}
+          <LMStudio class="h-5" />
+        {/if}
         <div class="list-col-grow flex items-center gap-4 truncate" title={item.id}>
           <span class="truncate text-base font-light">{item.id}</span>
+          <span class="badge badge-ghost badge-sm">
+            <Cube class="size-4 shrink-0 opacity-50" />
+            {item.model}
+          </span>
         </div>
         <Button
           size="sm"

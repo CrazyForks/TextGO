@@ -95,7 +95,7 @@
           // 确认删除操作
           confirm({
             title: `删除${name}[${selectedId}]`,
-            message: '数据删除后不可恢复，是否继续？',
+            message: '数据删除后无法恢复，是否继续？',
             onconfirm: () => {
               const index = data.findIndex((i) => i.id === selectedId);
               if (index !== -1) {

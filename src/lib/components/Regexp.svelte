@@ -7,11 +7,11 @@
   import { FingerprintSimple, Scroll } from 'phosphor-svelte';
 
   const { regexps }: { regexps: Regexp[] } = $props();
+  const loading = new Loading();
   const schema = buildFormSchema(({ text }) => ({
     name: text().maxlength(32),
-    pattern: text().minlength(1).maxlength(128)
+    pattern: text().maxlength(128)
   }));
-  const loading = new Loading();
 
   let regexpId: string = $state('');
   let regexpName: string = $state('');
@@ -77,7 +77,7 @@
     <fieldset class="fieldset">
       <Label required>类型名称</Label>
       <label class="input w-full">
-        <FingerprintSimple class="size-4 opacity-50" />
+        <FingerprintSimple class="size-5 opacity-50" />
         <input class="autofocus grow" {...schema.name} bind:value={regexpName} disabled={!!regexpId} />
       </label>
       <Label required>正则表达式</Label>

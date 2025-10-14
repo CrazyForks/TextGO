@@ -111,7 +111,7 @@
     <fieldset class="fieldset">
       <Label required>类型名称</Label>
       <label class="input w-full">
-        <FingerprintSimple class="size-4 opacity-50" />
+        <FingerprintSimple class="size-5 opacity-50" />
         <input class="autofocus grow" {...schema.name} bind:value={modelName} disabled={!!modelId} />
       </label>
       <Label required>正向样本</Label>
@@ -130,7 +130,7 @@
     <div class="modal-action">
       <button type="button" class="btn" onclick={() => modelModal.close()}>取 消</button>
       <button type="submit" class="btn btn-submit" disabled={loading.started}>
-        {modelId ? '更 新' : '训 练'}
+        确 定
         {#if loading.delayed}
           <span class="loading loading-xs loading-dots"></span>
         {/if}

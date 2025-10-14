@@ -55,11 +55,11 @@ def process(data):
   import { Loading } from '$lib/states.svelte';
   import { javascript } from '@codemirror/lang-javascript';
   import { python } from '@codemirror/lang-python';
-  import { At, Code, Empty } from 'phosphor-svelte';
+  import { ArrowFatLineRight, Code, Empty } from 'phosphor-svelte';
 
   const { scripts }: { scripts: Script[] } = $props();
-  const schema = buildFormSchema(({ text }) => ({ name: text().maxlength(64) }));
   const loading = new Loading();
+  const schema = buildFormSchema(({ text }) => ({ name: text().maxlength(64) }));
 
   let scriptId: string = $state('');
   let scriptName: string = $state('');
@@ -132,12 +132,12 @@ def process(data):
     }}
   >
     <fieldset class="fieldset">
-      <Label required>名称</Label>
+      <Label required>动作名称</Label>
       <label class="input w-full">
-        <At class="size-4 opacity-50" />
+        <ArrowFatLineRight class="size-5 opacity-50" />
         <input class="autofocus grow" {...schema.name} bind:value={scriptName} disabled={!!scriptId} />
       </label>
-      <Label required>类型</Label>
+      <Label required>脚本类型</Label>
       <Select
         value={scriptLang}
         options={[
