@@ -15,9 +15,9 @@
       {
         "label": "main",
         "title": "Main",
-        "width": 754,
-        "height": 565,
-        "minWidth": 754,
+        "width": 755,
+        "height": 805,
+        "minWidth": 755,
         "minHeight": 565,
         "visible": false,
         "skipTaskbar": true,
