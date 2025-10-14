@@ -8,11 +8,11 @@
   import { FingerprintSimple, Sphere } from 'phosphor-svelte';
 
   const { models }: { models: Model[] } = $props();
+  const loading = new Loading();
   const schema = buildFormSchema(({ text, range }) => ({
     name: text().maxlength(32),
     threshold: range().min(0.01).max(0.99).step(0.01)
   }));
-  const loading = new Loading();
 
   let modelId: string = $state('');
   let modelName: string = $state('');
@@ -22,7 +22,7 @@
   let modelModal: Modal;
   export const showModal = (id?: string) => {
     if (loading.started) {
-      alert({ level: 'error', message: `【${modelName}】模型训练中，请稍后` });
+      alert({ level: 'error', message: '其它模型训练中，请稍后' });
       return;
     }
     if (id) {
@@ -52,7 +52,7 @@
       return;
     }
     if (!SingleClassTextClassifier.validateTrainingData(modelSample)) {
-      alert({ level: 'error', message: '训练数据格式无效或没有有效样本' });
+      alert({ level: 'error', message: '训练数据格式无效或没有足够的样本' });
       return;
     }
     loading.start();
@@ -69,7 +69,7 @@
         sample: modelSample,
         threshold: modelThreshold
       });
-      alert(`【${modelName}】模型训练开始`);
+      alert('模型训练开始');
       // 训练模型
       const classifier = new SingleClassTextClassifier(modelName);
       classifier
@@ -80,7 +80,7 @@
             model.modelTrained = true;
           }
           loading.end();
-          alert(`【${modelName}】模型训练成功`);
+          alert('模型训练成功');
           // 重置表单
           modelName = '';
           modelSample = '';
@@ -93,7 +93,7 @@
             model.modelTrained = false;
           }
           loading.end();
-          alert({ level: 'error', message: `【${modelName}】模型训练失败` });
+          alert({ level: 'error', message: '模型训练失败' });
         });
     }
     modelModal.close();
@@ -114,7 +114,7 @@
         <FingerprintSimple class="size-4 opacity-50" />
         <input class="autofocus grow" {...schema.name} bind:value={modelName} disabled={!!modelId} />
       </label>
-      <Label required tip="根据提供的正向样本数据训练文本分类模型">正向样本</Label>
+      <Label required>正向样本</Label>
       <CodeMirror
         title="正向样本"
         bind:document={modelSample}

@@ -71,7 +71,7 @@ export class SingleClassTextClassifier {
     // 0. 验证和预处理训练数据
     const processedData = SingleClassTextClassifier.validateTrainingData(positiveTrainingData);
     if (!processedData) {
-      throw new Error('训练数据格式无效或没有有效样本');
+      throw new Error('训练数据格式无效或没有足够的样本');
     }
 
     try {
@@ -662,13 +662,16 @@ export class SingleClassTextClassifier {
     }
 
     // 过滤无效文本
-    const validData = processedData.filter((item) => {
+    let validData = processedData.filter((item) => {
       if (!item || typeof item !== 'string' || item.trim().length === 0) {
         console.debug('过滤无效文本:', item);
         return false;
       }
       return true;
     });
+
+    // 去除重复数据
+    validData = Array.from(new Set(validData));
 
     // 检查最终样本数量
     if (validData.length < 3) {
