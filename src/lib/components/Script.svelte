@@ -8,17 +8,15 @@
 /**
  * 输入数据结构:
  * data = {
- *     "selection": "",  // 选中的文本
  *     "clipboard": "",  // 剪贴板文本
- *     "datetime": ""    // 当前日期时间 (ISO 8601格式)
+ *     "selection": ""   // 选中的文本
  * }
  *
- * @param data - 输入的数据
- * @returns 处理后的输出
+ * @param data - 输入数据
+ * @returns 输出结果
  */
 function process(data) {
     // write your code here
-
     return "";
 }
 `.trimStart();
@@ -31,19 +29,17 @@ def process(data):
     """
     输入数据结构:
     data = {
-        "selection": "",  # 选中的文本
         "clipboard": "",  # 剪贴板文本
-        "datetime": ""    # 当前日期时间 (ISO 8601格式)
+        "selection": ""   # 选中的文本
     }
 
     Args:
-        data: 输入的数据
+        data: 输入数据
 
     Returns:
-        处理后的输出
+        输出结果
     """
     # write your code here
-
     return ""
 `.trimStart();
 </script>

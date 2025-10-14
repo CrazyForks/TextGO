@@ -2,13 +2,12 @@
   import type { Prompt } from '$lib/types';
 
   /**
-   * 提示词模板
+   * 提示词模板变量说明
    */
   const PROMPT_PLACEHOLDER = `
 提示词中可使用以下变量:
-{{selection}} - 选中的文本
 {{clipboard}} - 剪贴板文本
-{{datetime}}  - 当前日期时间 (ISO 8601格式)
+{{selection}} - 选中的文本
 `.trimStart();
 </script>
 
@@ -74,7 +73,7 @@
       // 更新提示词
       prompt.prompt = promptText;
       prompt.systemPrompt = systemPromptText;
-      alert('提示词更新成功');
+      alert('提示词模板更新成功');
     } else {
       // 新增提示词
       prompts.push({
@@ -88,14 +87,14 @@
       promptName = '';
       promptText = '';
       systemPromptText = '';
-      alert('提示词添加成功');
+      alert('提示词模板添加成功');
     }
     promptModal.close();
     loading.end();
   }
 </script>
 
-<Modal icon={Lightbulb} title="{promptId ? '更新' : '新增'}提示词" bind:this={promptModal}>
+<Modal icon={Lightbulb} title="{promptId ? '更新' : '新增'}提示词模板" bind:this={promptModal}>
   <form
     method="post"
     use:enhance={({ formElement, cancel }) => {

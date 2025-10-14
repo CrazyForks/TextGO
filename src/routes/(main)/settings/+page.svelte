@@ -145,7 +145,7 @@
     <List
       icon={Robot}
       title="发起对话"
-      name="提示词"
+      name="提示词模板"
       hint="通过预设的提示词与 AI 模型对话"
       bind:data={prompts.current}
       oncreate={() => promptCreator.showModal()}
