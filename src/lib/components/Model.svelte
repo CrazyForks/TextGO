@@ -124,7 +124,7 @@
       <Label required tip="相似度大于等于该阈值的文本将被识别为该类型">置信度阈值</Label>
       <label class="flex w-full items-center gap-4">
         <input class="range grow text-emphasis range-xs" {...schema.threshold} bind:value={modelThreshold} />
-        <span class="w-10 text-base font-light">{(modelThreshold * 100).toFixed(0)}%</span>
+        <span class="w-10 text-base font-light tracking-widest">{(modelThreshold * 100).toFixed(0)}%</span>
       </label>
     </fieldset>
     <div class="modal-action">

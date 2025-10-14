@@ -92,7 +92,7 @@
 </script>
 
 {#if alerts.size > 0}
-  <div class="toast-top toast-center pointer-events-none toast top-14 z-102" in:fly={{ y: -50 }}>
+  <div class="pointer-events-none toast toast-center toast-top top-14 z-102" in:fly={{ y: -50 }}>
     {#each Array.from(alerts.entries()).reverse() as [id, alert] (id)}
       {@const { icon: Icon, color } = mappings[alert.level ?? 'success']}
       <div

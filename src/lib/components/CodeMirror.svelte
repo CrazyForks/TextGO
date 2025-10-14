@@ -320,8 +320,8 @@
   /**
    * 编辑器主题的扩展
    */
-  const editorTheme = new Compartment();
   const getTheme = () => (darkMode === true || (darkMode === 'auto' && theme.current !== 'light') ? oneDark : []);
+  const editorTheme = new Compartment();
   const themeHandler: Extension = editorTheme.of(getTheme());
   $effect(() => {
     if (theme.current && editorView) {

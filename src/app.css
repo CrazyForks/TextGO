@@ -17,7 +17,7 @@
 
   --color-border: color-mix(in oklab, var(--color-base-content) 15%, transparent);
   --color-surface: color-mix(in oklab, var(--color-primary) 30%, var(--color-base-content) 70%);
-  --color-emphasis: color-mix(in oklab, var(--color-primary) 30%, var(--color-neutral) 70%);
+  --color-emphasis: color-mix(in oklab, var(--color-primary) 40%, var(--color-neutral) 60%);
   --color-base-150: color-mix(in oklab, var(--color-base-100) 50%, var(--color-base-200) 50%);
 }
 
