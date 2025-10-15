@@ -266,7 +266,7 @@
     loading.start();
     try {
       const hotkey: Hotkey = {
-        id: lastKey + textCase,
+        id: crypto.randomUUID(),
         key: lastKey,
         case: textCase,
         action: actionId
@@ -279,7 +279,6 @@
       alert('规则添加成功');
     } catch (error) {
       console.error('规则添加失败:', error);
-      alert({ level: 'error', message: `规则添加失败: ${error}` });
     } finally {
       loading.end();
     }
@@ -295,7 +294,6 @@
       await hotkeyManager.unregister(hotkey);
     } catch (error) {
       console.error('注销快捷键失败:', error);
-      alert({ level: 'error', message: `注销快捷键失败: ${error}` });
     }
   }
 </script>
@@ -309,9 +307,9 @@
     }}
   >
     <fieldset class="fieldset">
-      <Label icon={FingerprintSimple} class="mt-4">识别</Label>
+      <Label icon={FingerprintSimple} class="mt-4">识别类型</Label>
       <Select bind:value={textCase} options={textCases} class="w-full" />
-      <Label icon={ArrowFatLineRight} class="mt-4">执行</Label>
+      <Label icon={ArrowFatLineRight} class="mt-4">执行动作</Label>
       <Select bind:value={actionId} options={actionIds} class="w-full" />
     </fieldset>
     <div class="modal-action">

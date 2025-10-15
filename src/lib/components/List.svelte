@@ -102,7 +102,6 @@
                 const item = data[index];
                 data.splice(index, 1);
                 ondelete?.(item);
-                alert({ level: 'info', message: `${name}【 ${selectedId} 】已删除` });
               }
               selectedId = '';
               selectedElement = null;
