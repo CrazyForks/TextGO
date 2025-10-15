@@ -143,6 +143,9 @@
       entry = JSON.parse(event.payload) as Entry;
     });
     return () => {
+      if (entry?.streaming) {
+        ollama.abort();
+      }
       entry = null;
       stopAutoScroll();
       unlisten.then((fn) => fn());
@@ -169,7 +172,7 @@
     </div>
     <div class="size-full overflow-auto" bind:this={mainElement} onscroll={handleScroll}>
       {#if chatMode}
-        <div class="px-4 pt-2 pb-8">
+        <div class="px-4 pt-2 pb-10">
           {#if entry?.streaming && !entry?.response}
             <div class="loading mb-2 loading-sm loading-dots opacity-70"></div>
           {/if}

@@ -14,7 +14,7 @@
   const SIDEBAR_WIDTH = '12rem';
 </script>
 
-<div class="relative h-(--app-h) rounded-container">
+<div class="relative h-(--app-h) rounded-container p-0">
   <div class="absolute inset-y-0 left-0 flex flex-col border-r" style:width={SIDEBAR_WIDTH}>
     <div class="menu-title text-xs tracking-wide text-base-content/60">历史记录</div>
     <div class="h-full overflow-y-auto">
@@ -50,7 +50,7 @@
       </ul>
     </div>
   </div>
-  <div class="relative h-full overflow-y-auto" style:margin-left={SIDEBAR_WIDTH}>
+  <div class="relative h-full overflow-y-auto p-4" style:margin-left={SIDEBAR_WIDTH}>
     {@render children()}
   </div>
 </div>
