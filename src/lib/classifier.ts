@@ -33,19 +33,19 @@ const MODEL_CACHE = new Map<string, ModelCache>();
 /**
  * 基于合成负样本的文本分类器
  *
- * 功能说明：
+ * 功能说明:
  * - 只需要提供正样本数据即可训练二分类模型
  * - 自动生成负样本来补充训练数据
  * - 支持多种文本模式识别（车牌号、ISBN、身份证等）
  * - 返回0-1之间的置信度分数
  *
- * 实现原理：
- * 1. 特征工程：提取字符级、词级、模式、位置等多维特征
- * 2. 负样本生成：通过随机化和噪声添加生成合成负样本
- * 3. 神经网络：嵌入层 + 全局平均池化 + 全连接层的轻量级架构
- * 4. 二分类训练：使用正样本(标签1) + 负样本(标签0)进行监督学习
+ * 实现原理:
+ * 1. 特征工程: 提取字符级、词级、模式、位置等多维特征
+ * 2. 负样本生成: 通过随机化和噪声添加生成合成负样本
+ * 3. 神经网络: 嵌入层 + 全局平均池化 + 全连接层的轻量级架构
+ * 4. 二分类训练: 使用正样本(标签1) + 负样本(标签0)进行监督学习
  *
- * 技术特点：
+ * 技术特点:
  * - 支持多模型管理（通过ID区分不同用途的分类器）
  * - 本地存储持久化（模型、分词器、配置自动保存）
  * - 小数据集友好（最少3个正样本即可训练）
@@ -144,7 +144,7 @@ export class SingleClassTextClassifier {
         tf.layers.dense({ units: 16, activation: 'relu' }),
         tf.layers.dropout({ rate: 0.3 }),
 
-        // 输出层：单个神经元，sigmoid激活函数用于二分类
+        // 输出层: 单个神经元，sigmoid激活函数用于二分类
         tf.layers.dense({
           units: 1,
           activation: 'sigmoid'
@@ -624,7 +624,7 @@ export class SingleClassTextClassifier {
     }
   }
 
-  // 调试方法：检查数据和模型状态
+  // 调试方法: 检查数据和模型状态
   debugInfo(): void {
     console.debug('=== 单类别文本分类器调试信息 ===');
     console.debug('模型ID:', this.id);
@@ -762,7 +762,7 @@ export class SingleClassTextClassifier {
     SingleClassTextClassifier.clearSavedModel(this.id);
   }
 
-  // 静态方法：从缓存创建分类器实例
+  // 静态方法: 从缓存创建分类器实例
   static fromCache(id: string, cached: ModelCache): SingleClassTextClassifier {
     const classifier = new SingleClassTextClassifier(id);
     classifier.model = cached.model;

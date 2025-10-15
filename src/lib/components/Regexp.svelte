@@ -82,7 +82,12 @@
       </label>
       <Label required>正则表达式</Label>
       <label class="input w-full">
-        <input class="grow" {...schema.pattern} bind:value={regexpPattern} />
+        <input
+          class="grow"
+          placeholder="请输入用于匹配类型的正则表达式"
+          {...schema.pattern}
+          bind:value={regexpPattern}
+        />
       </label>
     </fieldset>
     <div class="modal-action">

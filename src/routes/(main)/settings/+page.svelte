@@ -243,14 +243,14 @@
       <Label>Node.js 路径</Label>
       <input
         class="input w-full"
-        placeholder="请填写 Node.js 可执行文件的路径，如 /usr/local/bin/node"
+        placeholder="例如: /usr/local/bin/node"
         {...schema.nodePath}
         bind:value={nodePath.current}
       />
       <Label>Python 路径</Label>
       <input
         class="input w-full"
-        placeholder="请填写 Python 可执行文件的路径，如 /usr/local/bin/python3"
+        placeholder="例如: /usr/local/bin/python3"
         {...schema.pythonPath}
         bind:value={pythonPath.current}
       />

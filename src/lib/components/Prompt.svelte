@@ -124,6 +124,7 @@
               { value: 'lmstudio', label: 'LM Studio' }
             ]}
             class="w-full"
+            disabled={true}
           />
         </span>
         <span>

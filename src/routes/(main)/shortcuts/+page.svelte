@@ -22,38 +22,30 @@
 
   let { data } = $props();
   let { shortcuts, models, scripts, prompts } = data;
-  let totalRules = $derived(Object.values(shortcuts.current).reduce((sum, arr) => sum + arr.length, 0));
-
-  function getScript(action: string) {
-    const id = action.replace(SCRIPT_MARK, '');
-    return scripts.current.find((item) => item.id === id);
-  }
-
-  function getPrompt(action: string) {
-    const id = action.replace(PROMPT_MARK, '');
-    return prompts.current.find((item) => item.id === id);
-  }
-
-  const osType = type();
-
-  let hotkey = $state<Hotkey>();
-  let hotkeyModal: Modal;
 
   let key: string = $state('');
+  let keyModal: Modal;
+
+  let hotkey = $state<Hotkey>();
 
   // 表单约束
   const schema = buildFormSchema(({ text }) => ({
     key: text().maxlength(1).pattern('^[a-zA-Z0-9]$').oninvalid(oninvalid('暂不支持该键位'))
   }));
 
-  function checkDuplicate(value: string) {
-    if (value && shortcuts.current[value.toUpperCase()]) {
-      oninvalid('该键位已被注册')();
-      return false;
-    }
-    return true;
-  }
+  // 操作系统类型
+  const osType = type();
 
+  // 计算总规则数
+  let totalRules = $derived(Object.values(shortcuts.current).reduce((sum, arr) => sum + arr.length, 0));
+
+  // 是否处于输入法组合状态
+  let compositing: boolean = false;
+
+  /**
+   * 输入无效时的处理
+   * @param message - 提示信息
+   */
   function oninvalid(message: string) {
     return () => {
       // 清除输入
@@ -63,16 +55,31 @@
     };
   }
 
-  async function submit() {
-    if (!checkDuplicate(key)) {
-      return;
+  /**
+   * 检查是否重复
+   * @param value - 输入值
+   */
+  function checkDuplicate(value: string) {
+    if (value && shortcuts.current[value.toUpperCase()]) {
+      oninvalid('该键位已被注册')();
+      return false;
     }
+    return true;
+  }
+
+  /**
+   * 提交注册
+   */
+  async function submit() {
     // 只取第一个字符并转换为大写
     const newKey = key.charAt(0).toUpperCase();
+    if (!checkDuplicate(newKey)) {
+      return;
+    }
     shortcuts.current[newKey] = [];
-    hotkeyModal.close();
+    keyModal.close();
     key = '';
-    alert({ message: `快捷键【${newKey}】注册成功` });
+    alert({ message: `快捷键组【 ${newKey} 】注册成功` });
     // 等待 DOM 更新后滚动到新注册的快捷键位置
     await tick();
     const element = document.querySelector(`[data-shortcut-key="${newKey}"]`);
@@ -81,10 +88,29 @@
     }
   }
 
-  let showNoData = $state(false);
+  /**
+   * 根据动作ID获取脚本
+   *
+   * @param action - 动作ID
+   */
+  function getScript(action: string) {
+    const id = action.replace(SCRIPT_MARK, '');
+    return scripts.current.find((item) => item.id === id);
+  }
 
+  /**
+   * 根据动作ID获取提示词
+   *
+   * @param action - 动作ID
+   */
+  function getPrompt(action: string) {
+    const id = action.replace(PROMPT_MARK, '');
+    return prompts.current.find((item) => item.id === id);
+  }
+
+  // 控制无数据时的显示延迟，避免闪烁
+  let showNoData = $state(false);
   onMount(() => {
-    // 延迟100ms显示
     setTimeout(() => {
       showNoData = true;
     }, 100);
@@ -94,13 +120,13 @@
 <div class="relative min-h-(--app-h) rounded-container">
   <div class="flex items-center justify-between">
     <span class="pl-1 text-sm opacity-60">
-      已注册快捷键数量: {Object.keys(shortcuts.current).length}
+      已注册快捷键组数量: {Object.keys(shortcuts.current).length}
       {#if totalRules > 0}
         <span class="text-xs tracking-wider opacity-50">({totalRules}条规则)</span>
       {/if}
     </span>
-    <button class="btn text-sm btn-sm btn-submit" onclick={() => hotkeyModal.show()}>
-      <StackPlus class="size-5" />注册快捷键
+    <button class="btn text-sm btn-sm btn-submit" onclick={() => keyModal.show()}>
+      <StackPlus class="size-5" />注册快捷键组
     </button>
   </div>
   {#if showNoData && Object.keys(shortcuts.current).length === 0}
@@ -124,8 +150,8 @@
             // 规则为空时直接删除，否则需要确认
             if (shortcuts.current[key].length > 0) {
               confirm({
-                title: `删除快捷键[${key}]`,
-                message: '数据删除后不可恢复，是否继续？',
+                title: `删除快捷键组[${key}]`,
+                message: '数据删除后无法恢复，是否继续？',
                 onconfirm: clear
               });
             } else {
@@ -197,7 +223,7 @@
   {/each}
 </div>
 
-<Modal maxWidth="20rem" icon={StackPlus} title="注册快捷键" bind:this={hotkeyModal}>
+<Modal maxWidth="20rem" icon={StackPlus} title="注册快捷键组" bind:this={keyModal}>
   <form
     method="post"
     use:enhance={({ cancel }) => {
@@ -221,7 +247,12 @@
           class="autofocus input h-10 w-12 text-xl"
           {...schema.key}
           bind:value={key}
-          oninput={(event) => (event.target as HTMLInputElement)?.form?.requestSubmit()}
+          oninput={(event) => !compositing && (event.target as HTMLInputElement)?.form?.requestSubmit()}
+          oncompositionstart={() => (compositing = true)}
+          oncompositionend={(event) => (
+            (compositing = false),
+            (event.target as HTMLInputElement)?.form?.requestSubmit()
+          )}
         />
       </div>
       <div class="flex items-center justify-center gap-1 text-xs tracking-wider opacity-30">

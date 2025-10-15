@@ -260,7 +260,7 @@
   async function register(form: HTMLFormElement) {
     const hotkeys = shortcuts.current[lastKey];
     if (hotkeys.find((h) => h.key === lastKey && h.case === textCase)) {
-      alert({ level: 'error', message: '该快捷键组合已被使用' });
+      alert({ level: 'error', message: '该类型已被使用' });
       return;
     }
     loading.start();
@@ -272,15 +272,14 @@
         action: actionId
       };
 
-      // 注册快捷键
       await hotkeyManager.register(hotkey);
 
       form.reset();
       hotkeyModal.close();
-      alert('快捷键注册成功');
+      alert('规则添加成功');
     } catch (error) {
-      console.error('注册快捷键失败:', error);
-      alert({ level: 'error', message: `注册快捷键失败: ${error}` });
+      console.error('规则添加失败:', error);
+      alert({ level: 'error', message: `规则添加失败: ${error}` });
     } finally {
       loading.end();
     }

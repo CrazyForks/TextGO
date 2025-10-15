@@ -256,13 +256,13 @@ function matchProgramCase(targetId: string, results: ModelResult[]): boolean {
   }
   const targetConfidence = results[targetIndex].confidence;
 
-  // 策略1：判断目标语言置信度是否达标
+  // 策略1: 判断目标语言置信度是否达标
   const threshold = INITIAL_THRESHOLD + 0.1 * targetIndex;
   if (targetConfidence > threshold) {
     return true;
   }
 
-  // 策略2：判断相邻置信度差值是否达标
+  // 策略2: 判断相邻置信度差值是否达标
   if (targetConfidence <= MIN_CONFIDENCE || targetIndex >= 3) {
     // 置信度过低或排名过后
     return false;
