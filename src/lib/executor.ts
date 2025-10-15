@@ -79,8 +79,10 @@ export async function execute(hotkey: Hotkey, selection: string): Promise<void> 
       // 保存记录
       entry.actionType = 'prompt';
       entry.actionLabel = promptId;
-      entry.systemPrompt = prompt.systemPrompt;
       entry.result = result;
+      entry.systemPrompt = prompt.systemPrompt;
+      entry.provider = prompt.provider;
+      entry.model = prompt.model;
       entries.current.unshift(entry);
       // 保留最近5条记录
       if (entries.current.length > 5) {

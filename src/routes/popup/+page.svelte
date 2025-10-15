@@ -71,24 +71,10 @@
     }
   }
 
-  // 查找并绑定main元素
-  onMount(() => {
-    mainElement = document.querySelector('main');
-    if (mainElement) {
-      mainElement.addEventListener('scroll', handleScroll);
-    }
-    return () => {
-      stopAutoScroll();
-      if (mainElement) {
-        mainElement.removeEventListener('scroll', handleScroll);
-      }
-    };
-  });
-
   $effect(() => {
     if (chatMode && entry && entry.result && entry.streaming === undefined) {
       untrack(async () => {
-        if (!entry) {
+        if (!entry || !entry.model) {
           return;
         }
         try {
@@ -102,7 +88,7 @@
             messages.unshift({ role: 'system', content: entry.systemPrompt });
           }
           const response = await ollama.chat({
-            model: 'gemma3:4b',
+            model: entry.model,
             messages: messages,
             stream: true
           });
@@ -158,6 +144,7 @@
     });
     return () => {
       entry = null;
+      stopAutoScroll();
       unlisten.then((fn) => fn());
     };
   });
@@ -169,7 +156,7 @@
       <div class="pointer-events-none flex items-center gap-2 truncate">
         {#if chatMode}
           <Robot class="size-4.5 shrink-0" />
-          <span class="truncate text-sm text-base-content/80">gemma3:4b</span>
+          <span class="truncate text-sm text-base-content/80">{entry?.model}</span>
         {/if}
       </div>
       <div class="flex items-center gap-1">
@@ -180,10 +167,10 @@
         {/if}
       </div>
     </div>
-    <div class="size-full overflow-auto">
+    <div class="size-full overflow-auto" bind:this={mainElement} onscroll={handleScroll}>
       {#if chatMode}
-        <div class="p-2">
-          {#if entry?.streaming}
+        <div class="px-4 pt-2 pb-8">
+          {#if entry?.streaming && !entry?.response}
             <div class="loading mb-2 loading-sm loading-dots opacity-70"></div>
           {/if}
           {#if entry?.response}

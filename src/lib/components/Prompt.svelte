@@ -45,6 +45,8 @@
         promptName = prompt.id;
         promptText = prompt.prompt;
         systemPromptText = prompt.systemPrompt || '';
+        modelProvider = prompt.provider;
+        modelName = prompt.model;
       }
     }
     promptModal.show();
@@ -73,6 +75,8 @@
       // 更新提示词
       prompt.prompt = promptText;
       prompt.systemPrompt = systemPromptText;
+      prompt.provider = modelProvider;
+      prompt.model = modelName;
       alert('提示词模板更新成功');
     } else {
       // 新增提示词
@@ -87,6 +91,8 @@
       promptName = '';
       promptText = '';
       systemPromptText = '';
+      modelProvider = 'ollama';
+      modelName = 'gemma3:4b';
       alert('提示词模板添加成功');
     }
     promptModal.close();

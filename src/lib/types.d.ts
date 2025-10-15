@@ -51,6 +51,10 @@ export type Entry = {
   result?: string;
   /** 系统提示词 */
   systemPrompt?: string;
+  /** 模型供应 */
+  provider?: 'ollama' | 'lmstudio';
+  /** 模型名称 */
+  model?: string;
   /** 响应内容 */
   response?: string;
   /** 是否在响应中 */
