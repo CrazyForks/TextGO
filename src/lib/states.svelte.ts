@@ -1,4 +1,4 @@
-import { hotkeyManager } from '$lib/components/Hotkey.svelte';
+import { manager } from '$lib/manager';
 import { ENTRIES_KEY, MODELS_KEY, PROMPTS_KEY, REGEXPS_KEY, SCRIPTS_KEY, SHORTCUTS_KEY } from '$lib/constants';
 import type { Entry, Hotkey, Model, Prompt, Regexp, Script } from '$lib/types';
 import { getCurrentWindow } from '@tauri-apps/api/window';
@@ -40,7 +40,7 @@ export const shortcuts = persisted<Record<string, Hotkey[]>>(
       // 主窗口初始化时注册所有快捷键
       if (getCurrentWindow().label === 'main') {
         for (const hotkey of Object.values(shortcuts).flat()) {
-          await hotkeyManager.register(hotkey);
+          await manager.register(hotkey);
         }
       }
     }
