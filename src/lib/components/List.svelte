@@ -1,5 +1,5 @@
 <script lang="ts" generics="T extends { id: string }">
-  import { Button, alert, confirm } from '$lib/components';
+  import { Button, confirm } from '$lib/components';
   import {
     ArrowCircleDown,
     ArrowCircleUp,
@@ -47,7 +47,12 @@
     ondelete,
     moreActions
   }: ListProps = $props();
+
+  // 选中数据ID
   let selectedId: string = $state('');
+  // 选中数据编号
+  let selectedNum: string = $state('');
+  // 选中数据元素
   let selectedElement: HTMLLIElement | null = $state(null);
 
   /**
@@ -94,7 +99,7 @@
           }
           // 确认删除操作
           confirm({
-            title: `删除${name}[${selectedId}]`,
+            title: `删除${name}[${selectedNum}]`,
             message: '数据删除后无法恢复，是否继续？',
             onconfirm: () => {
               const index = data.findIndex((i) => i.id === selectedId);
@@ -104,6 +109,7 @@
                 ondelete?.(item);
               }
               selectedId = '';
+              selectedNum = '';
               selectedElement = null;
             }
           });
@@ -164,6 +170,7 @@
       </li>
     {/if}
     {#each data as item, index (item.id)}
+      {@const itemNum = (index + 1).toString().padStart(2, '0')}
       <!-- svelte-ignore a11y_click_events_have_key_events -->
       <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
       <li
@@ -171,9 +178,11 @@
         onclick={(event) => {
           if (selectedId === item.id) {
             selectedId = '';
+            selectedNum = '';
             selectedElement = null;
           } else {
             selectedId = item.id;
+            selectedNum = itemNum;
             selectedElement = event.currentTarget as HTMLLIElement;
           }
         }}
@@ -181,9 +190,7 @@
       >
         <span class="flex items-center gap-1">
           <input type="radio" class="pointer-events-none radio radio-xs" checked={selectedId === item.id} />
-          <span class="text-base font-thin {selectedId === item.id ? '' : 'opacity-60'}">
-            {(index + 1).toString().padStart(2, '0')}
-          </span>
+          <span class="text-base font-thin {selectedId === item.id ? '' : 'opacity-60'}">{itemNum}</span>
         </span>
         {@render row(item)}
       </li>

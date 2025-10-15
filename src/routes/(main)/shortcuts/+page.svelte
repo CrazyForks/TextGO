@@ -184,14 +184,14 @@
             {#if item.case === ''}
               <span class="truncate opacity-30">{caseLabel}</span>
             {:else if caseLabel}
-              <FingerprintSimple class="size-4 shrink-0 opacity-60" />
+              <FingerprintSimple class="size-5 shrink-0 opacity-60" />
               <span class="truncate">{caseLabel}</span>
             {:else}
-              <Warning class="size-4 shrink-0 opacity-50" />
+              <Warning class="size-5 shrink-0 opacity-50" />
               <span class="truncate opacity-50">类型已失效</span>
             {/if}
           </div>
-          <ArrowFatLineRight class="size-4 shrink-0 opacity-15" />
+          <ArrowFatLineRight class="size-5 shrink-0 opacity-15" />
           <div class="list-col-grow ml-4 flex items-center gap-1 truncate" title={actionLabel}>
             {#if item.action === ''}
               <span class="truncate opacity-30">{actionLabel}</span>
@@ -213,7 +213,7 @@
               {/if}
               <span class="truncate">{actionLabel}</span>
             {:else}
-              <Warning class="size-4 shrink-0 opacity-50" />
+              <Warning class="size-5 shrink-0 opacity-50" />
               <span class="truncate opacity-50">动作已失效</span>
             {/if}
           </div>
