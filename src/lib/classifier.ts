@@ -51,7 +51,7 @@ const MODEL_CACHE = new Map<string, ModelCache>();
  * - 小数据集友好（最少3个正样本即可训练）
  * - 快速训练推理（轻量级架构，适合浏览器环境）
  */
-export class SingleClassTextClassifier {
+export class Classifier {
   private model: tf.LayersModel | null = null;
   private tokenizer: Map<string, number> = new Map();
   private maxSequenceLength = 50; // 缩短序列长度，适合少量样本
@@ -69,7 +69,7 @@ export class SingleClassTextClassifier {
     console.debug('准备单类别训练数据...');
 
     // 0. 验证和预处理训练数据
-    const processedData = SingleClassTextClassifier.validateTrainingData(positiveTrainingData);
+    const processedData = Classifier.validateTrainingData(positiveTrainingData);
     if (!processedData) {
       throw new Error('训练数据格式无效或没有足够的样本');
     }
@@ -759,12 +759,12 @@ export class SingleClassTextClassifier {
 
   // 清除当前实例的保存模型数据
   clearSavedModel(): void {
-    SingleClassTextClassifier.clearSavedModel(this.id);
+    Classifier.clearSavedModel(this.id);
   }
 
   // 静态方法: 从缓存创建分类器实例
-  static fromCache(id: string, cached: ModelCache): SingleClassTextClassifier {
-    const classifier = new SingleClassTextClassifier(id);
+  static fromCache(id: string, cached: ModelCache): Classifier {
+    const classifier = new Classifier(id);
     classifier.model = cached.model;
     classifier.tokenizer = new Map(cached.tokenizer);
     classifier.maxSequenceLength = cached.config.maxSequenceLength;
@@ -790,7 +790,7 @@ export async function predict(modelId: string, text: string): Promise<number | n
     if (!cached) {
       // 缓存中没有，尝试加载
       console.debug('缓存中没有模型，尝试加载:', modelId);
-      const classifier = new SingleClassTextClassifier(modelId);
+      const classifier = new Classifier(modelId);
       const loadSuccess = await classifier.loadModel();
 
       if (!loadSuccess) {
@@ -816,7 +816,7 @@ export async function predict(modelId: string, text: string): Promise<number | n
     }
 
     // 使用缓存的模型进行预测
-    const classifier = SingleClassTextClassifier.fromCache(modelId, cached);
+    const classifier = Classifier.fromCache(modelId, cached);
     const result = classifier.predict(text);
     return result;
   } catch (error) {

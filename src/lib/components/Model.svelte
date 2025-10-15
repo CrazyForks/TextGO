@@ -1,6 +1,6 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
-  import { SingleClassTextClassifier } from '$lib/classifier';
+  import { Classifier } from '$lib/classifier';
   import { CodeMirror, Label, Modal, alert } from '$lib/components';
   import { buildFormSchema } from '$lib/constraint';
   import { Loading } from '$lib/states.svelte';
@@ -51,7 +51,7 @@
       (nameInput as HTMLInputElement | null)?.focus();
       return;
     }
-    if (!SingleClassTextClassifier.validateTrainingData(modelSample)) {
+    if (!Classifier.validateTrainingData(modelSample)) {
       alert({ level: 'error', message: '训练数据格式无效或没有足够的样本' });
       return;
     }
@@ -71,7 +71,7 @@
       });
       alert('模型训练开始');
       // 训练模型
-      const classifier = new SingleClassTextClassifier(modelName);
+      const classifier = new Classifier(modelName);
       classifier
         .trainModel(modelSample)
         .then(() => {

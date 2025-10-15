@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { SingleClassTextClassifier } from '$lib/classifier';
+  import { Classifier } from '$lib/classifier';
   import { Button, Label, List, Modal, Model, Prompt, Regexp, Script, Select, Setting } from '$lib/components';
   import { buildFormSchema } from '$lib/constraint';
   import { JavaScript, LMStudio, Ollama, Python, Regexp as RegexpIcon, Tensorflow } from '$lib/icons';
@@ -56,14 +56,14 @@
       hint="训练分类模型识别自定义类型"
       bind:data={models.current}
       oncreate={() => modelCreator.showModal()}
-      ondelete={(item) => SingleClassTextClassifier.clearSavedModel(item.id)}
+      ondelete={(item) => Classifier.clearSavedModel(item.id)}
     >
       {#snippet row(item)}
         <Tensorflow class="h-5" />
         <div class="list-col-grow flex items-center gap-4 truncate" title={item.id}>
           <span class="truncate text-base font-light">{item.id}</span>
           {#if item.modelTrained === true}
-            {@const { sizeKB, vocabulary } = SingleClassTextClassifier.getModelInfo(item.id)}
+            {@const { sizeKB, vocabulary } = Classifier.getModelInfo(item.id)}
             <span class="badge badge-ghost badge-sm">
               <Package class="size-4 shrink-0 opacity-50" />
               {sizeKB} KB
