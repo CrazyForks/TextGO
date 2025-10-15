@@ -1,6 +1,6 @@
 import { getClipboardText, setClipboardText } from '$lib/clipboard';
 import { PROMPT_MARK, PROMPTS_KEY, SCRIPT_MARK, SCRIPTS_KEY } from '$lib/constants';
-import { entries, getPersisted } from '$lib/states.svelte';
+import { entries, getPersisted, historySize } from '$lib/states.svelte';
 import type { Entry, Hotkey, Prompt, Script } from '$lib/types';
 import { invoke } from '@tauri-apps/api/core';
 
@@ -50,23 +50,23 @@ export async function execute(hotkey: Hotkey, selection: string): Promise<void> 
       console.debug(`开始执行脚本: ${scriptId}`);
       const result = await executeScript(script, data);
       console.debug(`脚本执行成功: ${result}`);
-      if (script.quietMode) {
-        // 静默模式下不保存记录和显示窗口
-        await setClipboardText(result);
-        await invoke('send_paste_key');
-        return;
-      }
       // 保存记录
       entry.actionType = 'script';
       entry.scriptLang = script.lang;
       entry.actionLabel = scriptId;
       entry.result = result;
       entries.current.unshift(entry);
-      // 保留最近5条记录
-      if (entries.current.length > 5) {
-        entries.current = entries.current.slice(0, 5);
+      // 删除多余记录
+      if (entries.current.length > historySize.current) {
+        entries.current = entries.current.slice(0, historySize.current);
       }
-      await showWindow(entry);
+      if (script.quietMode) {
+        // 静默模式下不显示窗口
+        await setClipboardText(result);
+        await invoke('send_paste_key');
+      } else {
+        await showWindow(entry);
+      }
     }
   } else if (action.startsWith(PROMPT_MARK)) {
     const promptId = action.substring(PROMPT_MARK.length);
@@ -84,9 +84,9 @@ export async function execute(hotkey: Hotkey, selection: string): Promise<void> 
       entry.provider = prompt.provider;
       entry.model = prompt.model;
       entries.current.unshift(entry);
-      // 保留最近5条记录
-      if (entries.current.length > 5) {
-        entries.current = entries.current.slice(0, 5);
+      // 删除多余记录
+      if (entries.current.length > historySize.current) {
+        entries.current = entries.current.slice(0, historySize.current);
       }
       await showWindow(entry);
     }
