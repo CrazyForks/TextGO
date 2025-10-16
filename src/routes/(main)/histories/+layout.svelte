@@ -34,6 +34,7 @@
                 onclick={(event) => {
                   event.stopPropagation();
                   event.preventDefault();
+                  // 不是当前页面，直接删除
                   if (page.url.pathname !== href) {
                     data.entries.current.splice(index, 1);
                     return;

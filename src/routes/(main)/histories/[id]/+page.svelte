@@ -9,16 +9,18 @@
     CaretDown,
     CaretRight,
     ClipboardText,
+    Clock,
+    Cube,
+    Empty,
     FileJs,
     FileMd,
     FilePy,
     FingerprintSimple,
-    Clock,
     Textbox
   } from 'phosphor-svelte';
   import { fade } from 'svelte/transition';
 
-  let entry: Entry | undefined = $derived(entries.current.find((e) => e.id === page.params.record));
+  let entry: Entry | undefined = $derived(entries.current.find((e) => e.id === page.params.id));
   let chatMode: boolean = $derived.by(() => entry?.actionType === 'prompt');
   let clipboardExpanded = $state(false);
   let selectionExpanded = $state(false);
@@ -28,9 +30,9 @@
   <ul class="timeline timeline-vertical timeline-compact timeline-snap-icon" in:fade>
     <li>
       <div class="timeline-middle">
-        <Clock class="size-5 opacity-60" />
+        <Clock class="size-5 opacity-50" />
       </div>
-      <div class="timeline-end mb-8 pt-[1px]">
+      <div class="timeline-end mb-10 w-[calc(100%-0.5rem)] pt-[1px]">
         <time class="pr-1 text-sm italic opacity-50">{formatISO8601(entry?.datetime)}</time>
       </div>
       <hr />
@@ -41,11 +43,11 @@
         <div class="timeline-middle">
           <ClipboardText class="size-5" />
         </div>
-        <div class="timeline-end mb-8 w-[calc(100%-0.5rem)] pt-1">
-          <div class="flex items-center">
+        <div class="timeline-end mb-10 w-[calc(100%-0.5rem)] pt-1">
+          <div class="flex items-center gap-2">
             <button class="flex cursor-pointer items-center" onclick={() => (clipboardExpanded = !clipboardExpanded)}>
-              <span class="text-sm font-semibold italic">剪贴版</span>
-              <span class="ml-1 inline-flex">
+              <span class="pr-1 text-sm font-semibold italic">剪贴版</span>
+              <span class="inline-flex">
                 {#if clipboardExpanded}
                   <CaretDown class="size-4" />
                 {:else}
@@ -56,7 +58,7 @@
           </div>
           {#if clipboardExpanded}
             <div
-              class="m-2 max-h-48 overflow-auto text-xs whitespace-pre opacity-80"
+              class="m-2 max-h-96 overflow-auto text-xs whitespace-pre opacity-80"
               transition:fade={{ duration: 200 }}
             >
               {entry.clipboard}
@@ -72,11 +74,11 @@
         <div class="timeline-middle">
           <Textbox class="size-5" />
         </div>
-        <div class="timeline-end mb-8 w-[calc(100%-0.5rem)] pt-1">
-          <div class="flex items-center">
+        <div class="timeline-end mb-10 w-[calc(100%-0.5rem)] pt-1">
+          <div class="flex items-center gap-2">
             <button class="flex cursor-pointer items-center" onclick={() => (selectionExpanded = !selectionExpanded)}>
-              <span class="text-sm font-semibold italic">选中文本</span>
-              <span class="ml-1 inline-flex">
+              <span class="pr-1 text-sm font-semibold italic">选中文本</span>
+              <span class="inline-flex">
                 {#if selectionExpanded}
                   <CaretDown class="size-4" />
                 {:else}
@@ -85,7 +87,7 @@
               </span>
             </button>
             {#if entry?.caseLabel}
-              <span class="ml-2 badge gap-0.5 border badge-xs">
+              <span class="badge gap-0.5 border badge-xs">
                 <FingerprintSimple class="size-3" />
                 {entry?.caseLabel}
               </span>
@@ -114,11 +116,22 @@
           <FilePy class="size-5" />
         {/if}
       </div>
-      <div class="timeline-end w-[calc(100%-0.5rem)] pt-[1px] {chatMode ? 'mb-2' : 'mb-8'}">
-        <time class="text-sm font-semibold italic">{entry?.actionLabel}</time>
-        <div class="mt-2">
-          <CodeMirror language={chatMode ? markdown() : undefined} document={entry?.result} />
+      <div class="timeline-end w-[calc(100%-0.5rem)] pt-1">
+        <div class="flex items-center gap-2">
+          <time class="pr-1 text-sm font-semibold italic">{entry?.actionLabel}</time>
+          {#if chatMode}
+            <span class="badge gap-0.5 border badge-xs">
+              <Cube class="size-3" />
+              {entry?.model}
+            </span>
+          {:else if entry?.quietMode}
+            <span class="badge gap-0.5 border badge-xs">
+              <Empty class="size-3" />
+              静默模式
+            </span>
+          {/if}
         </div>
+        <CodeMirror class="mt-2" language={chatMode ? markdown() : undefined} document={entry?.result} />
       </div>
     </li>
   </ul>

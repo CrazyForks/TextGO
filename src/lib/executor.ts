@@ -52,9 +52,10 @@ export async function execute(hotkey: Hotkey, selection: string): Promise<void> 
       console.debug(`脚本执行成功: ${result}`);
       // 保存记录
       entry.actionType = 'script';
-      entry.scriptLang = script.lang;
       entry.actionLabel = scriptId;
       entry.result = result;
+      entry.scriptLang = script.lang;
+      entry.quietMode = script.quietMode;
       entries.current.unshift(entry);
       // 删除多余记录
       if (entries.current.length > historySize.current) {

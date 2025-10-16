@@ -174,14 +174,11 @@
       {#if chatMode}
         <div class="px-4 pt-2 pb-10">
           {#if entry?.streaming && !entry?.response}
-            <div class="loading mb-2 loading-sm loading-dots opacity-70"></div>
-          {/if}
-          {#if entry?.response}
+            <div class="loading loading-sm loading-dots opacity-70"></div>
+          {:else if entry?.response}
             <div class="prose prose-sm max-w-none text-base-content/90">
               {@html marked(entry.response + (entry?.streaming ? ' |' : ''))}
             </div>
-          {:else if !entry?.streaming}
-            <div class="text-sm text-base-content/60 italic">等待回复...</div>
           {/if}
         </div>
       {:else}

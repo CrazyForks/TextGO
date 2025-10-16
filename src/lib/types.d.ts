@@ -33,22 +33,24 @@ export type Entry = {
   id: string;
   /** 触发键位 */
   key: string;
-  /** 文本类型 */
-  caseLabel?: string;
-  /** 触发动作 */
-  actionLabel?: string;
-  /** 动作类型 */
-  actionType?: 'script' | 'prompt';
-  /** 脚本语言 */
-  scriptLang?: 'javascript' | 'python';
   /** 触发时间 */
   datetime: string;
   /** 剪贴版文本 */
   clipboard: string;
   /** 选中的文本 */
   selection: string;
+  /** 文本类型 */
+  caseLabel?: string;
+  /** 触发动作 */
+  actionLabel?: string;
+  /** 动作类型 */
+  actionType?: 'script' | 'prompt';
   /** 执行结果 (脚本返回值/提示词) */
   result?: string;
+  /** 脚本语言 */
+  scriptLang?: 'javascript' | 'python';
+  /** 静默执行 */
+  quietMode?: boolean;
   /** 系统提示词 */
   systemPrompt?: string;
   /** 模型供应 */
@@ -89,7 +91,7 @@ export type Script = {
   lang: 'javascript' | 'python';
   /** 脚本内容 */
   script: string;
-  /** 是否静默执行 */
+  /** 静默执行 */
   quietMode?: boolean;
 };
 
