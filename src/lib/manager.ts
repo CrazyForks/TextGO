@@ -9,32 +9,24 @@ import { listen } from '@tauri-apps/api/event';
  * 快捷键管理类
  */
 export class Manager {
-  /**
-   * 事件监听器是否已初始化
-   */
-  private listenerInitialized: boolean = false;
+  constructor() {
+    this.initialize();
+  }
 
   /**
    * 初始化事件监听器
    */
-  private async initializeListener(): Promise<void> {
-    if (this.listenerInitialized) {
-      return;
-    }
-
+  private async initialize(): Promise<void> {
     try {
       // 监听来自 Rust 后端的快捷键触发事件
       await listen('shortcut-triggered', async (event) => {
-        const payload = event.payload as { key: string; selectedText: string };
+        const payload = event.payload as { key: string; selection: string };
         console.debug('------------------------------');
         console.debug(`接收到快捷键触发事件: ${payload.key}`);
-        console.debug(
-          `获取到选中文本: ${payload.selectedText.slice(0, 20)}${payload.selectedText.length > 20 ? '...' : ''}`
-        );
-        await this.handleShortcutEvent(payload.key, payload.selectedText);
+        console.debug(`获取到选中文本: ${payload.selection.slice(0, 20)}${payload.selection.length > 20 ? '...' : ''}`);
+        await this.handleShortcutEvent(payload.key, payload.selection);
       });
 
-      this.listenerInitialized = true;
       console.debug('快捷键事件监听器初始化成功');
     } catch (error) {
       console.error('初始化快捷键事件监听器失败:', error);
@@ -45,9 +37,9 @@ export class Manager {
    * 处理快捷键事件
    *
    * @param key - 触发的快捷键
-   * @param selectedText - 已获取的选中文本
+   * @param selection - 已获取的选中文本
    */
-  private async handleShortcutEvent(key: string, selectedText: string): Promise<void> {
+  private async handleShortcutEvent(key: string, selection: string): Promise<void> {
     try {
       // 获取所有绑定到该 shortcut 的 hotkey
       const hotkeys = shortcuts.current[key];
@@ -55,8 +47,7 @@ export class Manager {
         return;
       }
       // 使用从后端传来的选中文本
-      const text = selectedText;
-      const hotkey = await match(text, hotkeys);
+      const hotkey = await match(selection, hotkeys);
       if (hotkey === null) {
         console.warn('没有匹配的快捷键动作');
         return;
@@ -67,7 +58,7 @@ export class Manager {
         return;
       }
       // 执行匹配到的动作
-      await execute(hotkey, text);
+      await execute(hotkey, selection);
     } catch (error) {
       console.error(`执行快捷键动作失败: ${key}`, error);
     }
@@ -79,9 +70,6 @@ export class Manager {
    * @param hotkey - 快捷键配置
    */
   async register(hotkey: Hotkey): Promise<void> {
-    // 确保事件监听器已初始化
-    await this.initializeListener();
-
     // 一个 shortcut 对应多个 hotkey
     try {
       // 检查 shortcut 是否已经在后端注册

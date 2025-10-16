@@ -87,7 +87,7 @@
               </span>
             </button>
             {#if entry?.caseLabel}
-              <span class="badge gap-0.5 border badge-xs">
+              <span class="badge shrink-0 gap-0.5 border badge-xs">
                 <FingerprintSimple class="size-3" />
                 {entry?.caseLabel}
               </span>
@@ -120,12 +120,12 @@
         <div class="flex items-center gap-2">
           <time class="pr-1 text-sm font-semibold italic">{entry?.actionLabel}</time>
           {#if chatMode}
-            <span class="badge gap-0.5 border badge-xs">
+            <span class="badge shrink-0 gap-0.5 border badge-xs">
               <Cube class="size-3" />
               {entry?.model}
             </span>
           {:else if entry?.quietMode}
-            <span class="badge gap-0.5 border badge-xs">
+            <span class="badge shrink-0 gap-0.5 border badge-xs">
               <Empty class="size-3" />
               静默模式
             </span>

@@ -134,7 +134,7 @@ fn send_paste_key() -> Result<(), String> {
 }
 
 #[tauri::command]
-async fn get_selected_text(app: tauri::AppHandle) -> Result<String, String> {
+async fn get_selection(app: tauri::AppHandle) -> Result<String, String> {
     // 获取剪贴板管理器
     let clipboard = app.clipboard();
 
@@ -619,11 +619,11 @@ pub fn run() {
 
                         // 异步获取选中文本并发送事件到前端
                         tauri::async_runtime::spawn(async move {
-                            match get_selected_text(app_clone.clone()).await {
-                                Ok(selected_text) => {
+                            match get_selection(app_clone.clone()).await {
+                                Ok(selection) => {
                                     let event_data = serde_json::json!({
                                         "key": key_char_clone,
-                                        "selectedText": selected_text
+                                        "selection": selection
                                     });
                                     if let Err(e) = app_clone.emit("shortcut-triggered", event_data) {
                                         eprintln!("发送快捷键事件失败: {}", e);
@@ -634,7 +634,7 @@ pub fn run() {
                                     // 即使获取选中文本失败，也发送事件，但选中文本为空
                                     let event_data = serde_json::json!({
                                         "key": key_char_clone,
-                                        "selectedText": ""
+                                        "selection": ""
                                     });
                                     if let Err(e) = app_clone.emit("shortcut-triggered", event_data) {
                                         eprintln!("发送快捷键事件失败: {}", e);
@@ -747,7 +747,7 @@ pub fn run() {
             show_shortcuts,
             send_copy_key,
             send_paste_key,
-            get_selected_text,
+            get_selection,
             show_popup_window,
             execute_javascript,
             execute_python,
