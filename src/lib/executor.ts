@@ -1,8 +1,8 @@
-import { getClipboardText, setClipboardText } from '$lib/clipboard';
 import { PROMPT_MARK, PROMPTS_KEY, SCRIPT_MARK, SCRIPTS_KEY } from '$lib/constants';
 import { entries, getPersisted, historySize } from '$lib/states.svelte';
 import type { Entry, Hotkey, Prompt, Script } from '$lib/types';
 import { invoke } from '@tauri-apps/api/core';
+import { readText, writeText } from '@tauri-apps/plugin-clipboard-manager';
 
 /**
  * 数据类型
@@ -28,7 +28,7 @@ export async function execute(hotkey: Hotkey, selection: string): Promise<void> 
   // 组装数据
   const data: Data = {
     selection: selection,
-    clipboard: await getClipboardText(),
+    clipboard: await readText(),
     datetime: new Date().toISOString()
   };
   // 生成记录
@@ -63,7 +63,7 @@ export async function execute(hotkey: Hotkey, selection: string): Promise<void> 
       }
       if (script.quietMode) {
         // 静默模式下不显示窗口
-        await setClipboardText(result);
+        await writeText(result);
         await invoke('send_paste_key');
       } else {
         await showWindow(entry);
