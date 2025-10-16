@@ -11,59 +11,75 @@
 
   let entry: Entry | null = $state(null);
   let chatMode: boolean = $derived.by(() => entry?.actionType === 'prompt');
+
   let autoScroll = $state(true);
   let scrollElement: HTMLElement | null = $state(null);
-  let scrollInterval: ReturnType<typeof setInterval> | undefined = $state();
+  let scrollInterval: ReturnType<typeof setInterval> | null = $state(null);
 
-  // 关闭窗口函数
+  /**
+   * 关闭当前窗口
+   */
   async function closeWindow() {
     try {
-      const appWindow = getCurrentWindow();
-      await appWindow.hide();
+      const currentWindow = getCurrentWindow();
+      await currentWindow.hide();
     } catch (error) {
-      console.error('Failed to close window:', error);
+      console.error('关闭当前窗口失败:', error);
     }
   }
 
-  // 自动滚动到底部
+  /**
+   * 自动滚动到底部
+   */
   function scrollToEnd() {
     if (autoScroll && scrollElement) {
-      scrollElement.scrollTo({ top: scrollElement.scrollHeight, behavior: 'smooth' });
+      scrollElement.scrollTo({
+        top: scrollElement.scrollHeight,
+        behavior: 'smooth'
+      });
     }
   }
 
-  // 开始自动滚动
+  /**
+   * 开始自动滚动
+   */
   function startAutoScroll() {
     if (scrollInterval) {
       clearInterval(scrollInterval);
     }
+    autoScroll = true;
     scrollInterval = setInterval(scrollToEnd, 100);
   }
 
-  // 停止自动滚动
+  /**
+   * 停止自动滚动
+   */
   function stopAutoScroll() {
     if (scrollInterval) {
       clearInterval(scrollInterval);
-      scrollInterval = undefined;
     }
+    autoScroll = false;
+    scrollInterval = null;
   }
 
-  // 处理用户滚动事件
+  /**
+   * 处理用户滚动事件
+   *
+   * @param event - 滚动事件
+   */
   function handleScroll(event: Event) {
     if (streaming && entry?.response) {
       const target = event.target as HTMLElement;
-      // 如果用户向上滚动，停止自动滚动
       if (autoScroll) {
-        const isScrollingUp = target.scrollTop < target.scrollHeight - target.clientHeight - 10;
+        // 如果用户向上滚动，停止自动滚动
+        const isScrollingUp = target.scrollTop + target.clientHeight < target.scrollHeight - 10;
         if (isScrollingUp) {
-          autoScroll = false;
           stopAutoScroll();
         }
       } else {
         // 如果用户滚动到底部，恢复自动滚动
         const isAtBottom = target.scrollTop + target.clientHeight >= target.scrollHeight - 10;
         if (isAtBottom) {
-          autoScroll = true;
           startAutoScroll();
         }
       }
