@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { beforeNavigate, goto } from '$app/navigation';
-  import { Button, CodeMirror, confirm } from '$lib/components';
+  import { Button, CodeMirror } from '$lib/components';
   import type { Entry } from '$lib/types';
   import { markdown } from '@codemirror/lang-markdown';
   import { listen } from '@tauri-apps/api/event';
@@ -13,7 +12,7 @@
   let entry: Entry | null = $state(null);
   let chatMode: boolean = $derived.by(() => entry?.actionType === 'prompt');
   let autoScroll = $state(true);
-  let mainElement: HTMLElement | null = $state(null);
+  let scrollElement: HTMLElement | null = $state(null);
   let scrollInterval: ReturnType<typeof setInterval> | undefined = $state();
 
   // 关闭窗口函数
@@ -28,8 +27,8 @@
 
   // 自动滚动到底部
   function scrollToEnd() {
-    if (autoScroll && mainElement) {
-      mainElement.scrollTo({ top: mainElement.scrollHeight, behavior: 'smooth' });
+    if (autoScroll && scrollElement) {
+      scrollElement.scrollTo({ top: scrollElement.scrollHeight, behavior: 'smooth' });
     }
   }
 
@@ -51,7 +50,7 @@
 
   // 处理用户滚动事件
   function handleScroll(event: Event) {
-    if (entry?.streaming && entry?.response) {
+    if (streaming && entry?.response) {
       const target = event.target as HTMLElement;
       // 如果用户向上滚动，停止自动滚动
       if (autoScroll) {
@@ -71,15 +70,17 @@
     }
   }
 
+  let streaming: boolean | null = $state(null);
+
   $effect(() => {
-    if (chatMode && entry && entry.result && entry.streaming === undefined) {
+    if (chatMode && entry && entry.result && streaming === null) {
       untrack(async () => {
         if (!entry || !entry.model) {
           return;
         }
         try {
           // 如果是聊天模式，请求 ollama 接口并获取回复
-          entry.streaming = true;
+          streaming = true;
           // 开始自动滚动
           startAutoScroll();
           const messages = [{ role: 'user', content: entry.result! }];
@@ -95,7 +96,7 @@
           // 保存回复内容
           entry.response = '';
           for await (const part of response) {
-            if (entry?.leaving) {
+            if (streaming === null) {
               // 已经确认离开，停止接收
               break;
             }
@@ -107,31 +108,9 @@
             entry.response = error.message;
           }
         } finally {
-          entry.streaming = false;
+          streaming = false;
           // 停止自动滚动
           stopAutoScroll();
-        }
-      });
-    }
-  });
-
-  // 路由跳转前，如果有对话正在进行中，弹出确认对话框
-  beforeNavigate(({ to, cancel }) => {
-    if (entry?.leaving) {
-      // 已经确认离开，直接放行
-      return;
-    }
-    if (entry?.streaming) {
-      cancel();
-      confirm({
-        message: 'AI 正在生成回复，确定要离开吗？',
-        onconfirm: () => {
-          ollama.abort();
-          if (entry) {
-            entry.leaving = true;
-            entry.streaming = false;
-          }
-          to && goto(to.url);
         }
       });
     }
@@ -141,9 +120,13 @@
     // 监听主进程发送的事件
     const unlisten = listen<string>('popup', (event) => {
       entry = JSON.parse(event.payload) as Entry;
+      if (streaming) {
+        ollama.abort();
+      }
+      streaming = null;
     });
     return () => {
-      if (entry?.streaming) {
+      if (streaming) {
         ollama.abort();
       }
       entry = null;
@@ -170,14 +153,14 @@
         {/if}
       </div>
     </div>
-    <div class="size-full overflow-auto" bind:this={mainElement} onscroll={handleScroll}>
+    <div class="size-full overflow-auto" bind:this={scrollElement} onscroll={handleScroll}>
       {#if chatMode}
         <div class="px-4 pt-2 pb-10">
-          {#if entry?.streaming && !entry?.response}
+          {#if streaming && !entry?.response}
             <div class="loading loading-sm loading-dots opacity-70"></div>
           {:else if entry?.response}
             <div class="prose prose-sm max-w-none text-base-content/90">
-              {@html marked(entry.response + (entry?.streaming ? ' |' : ''))}
+              {@html marked(entry.response + (streaming ? ' |' : ''))}
             </div>
           {/if}
         </div>

@@ -4,6 +4,7 @@ import { shortcuts } from '$lib/states.svelte';
 import type { Hotkey } from '$lib/types';
 import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
+import { getCurrentWindow } from '@tauri-apps/api/window';
 
 /**
  * 快捷键管理类
@@ -17,14 +18,16 @@ export class Manager {
    * 初始化事件监听器
    */
   private async initialize(): Promise<void> {
-    try {
-      // 监听来自 Rust 后端的快捷键触发事件
-      await listen('shortcut-triggered', async (event) => {
-        const payload = event.payload as { key: string; selection: string };
-        await this.handleShortcutEvent(payload.key, payload.selection);
-      });
-    } catch (error) {
-      console.error('初始化快捷键事件监听器失败:', error);
+    if (getCurrentWindow().label === 'main') {
+      try {
+        // 监听来自 Rust 后端的快捷键触发事件
+        await listen('shortcut-triggered', async (event) => {
+          const payload = event.payload as { key: string; selection: string };
+          await this.handleShortcutEvent(payload.key, payload.selection);
+        });
+      } catch (error) {
+        console.error('初始化快捷键事件监听器失败:', error);
+      }
     }
   }
 

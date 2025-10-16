@@ -51,18 +51,14 @@ export type Entry = {
   scriptLang?: 'javascript' | 'python';
   /** 静默执行 */
   quietMode?: boolean;
-  /** 系统提示词 */
-  systemPrompt?: string;
   /** 模型供应 */
   provider?: 'ollama' | 'lmstudio';
   /** 模型名称 */
   model?: string;
+  /** 系统提示词 */
+  systemPrompt?: string;
   /** 响应内容 */
   response?: string;
-  /** 是否在响应中 */
-  streaming?: boolean;
-  /** 是否离开页面 */
-  leaving?: boolean;
 };
 
 /**

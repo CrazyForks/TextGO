@@ -135,8 +135,8 @@ export async function renderPrompt(prompt: Prompt, data: Data): Promise<string> 
   let result = prompt.prompt || '';
 
   // 使用正则表达式替换模板参数
-  result = result.replace(/\{\{selection\}\}/g, data.selection);
   result = result.replace(/\{\{clipboard\}\}/g, data.clipboard);
+  result = result.replace(/\{\{selection\}\}/g, data.selection);
   result = result.replace(/\{\{datetime\}\}/g, data.datetime);
 
   return result;
