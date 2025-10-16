@@ -559,25 +559,6 @@ async fn unregister_shortcut(app: tauri::AppHandle, key: String) -> Result<(), S
 }
 
 #[tauri::command]
-async fn unregister_all_shortcuts(app: tauri::AppHandle) -> Result<(), String> {
-    // 注销所有快捷键
-    app.global_shortcut()
-        .unregister_all()
-        .map_err(|e| format!("注销所有快捷键失败: {}", e))?;
-
-    // 清空注册表
-    {
-        let mut registered = REGISTERED_SHORTCUTS
-            .lock()
-            .map_err(|e| format!("锁定失败: {}", e))?;
-        registered.clear();
-    }
-
-    println!("成功注销所有快捷键");
-    Ok(())
-}
-
-#[tauri::command]
 async fn is_shortcut_registered(key: String) -> Result<bool, String> {
     // 验证输入参数
     if key.len() != 1 || !key.chars().all(|c| c.is_alphanumeric()) {
@@ -753,7 +734,6 @@ pub fn run() {
             execute_python,
             register_shortcut,
             unregister_shortcut,
-            unregister_all_shortcuts,
             is_shortcut_registered
         ])
         .build(tauri::generate_context!())
