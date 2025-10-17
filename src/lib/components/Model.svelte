@@ -117,9 +117,9 @@
       <Label required>正向样本</Label>
       <CodeMirror
         title="正向样本"
-        bind:document={modelSample}
         readOnly={!!modelId}
         placeholder="请输入至少 3 条正向样本，每行一条"
+        bind:document={modelSample}
       />
       <Label required tip="相似度大于等于该阈值的文本将被识别为该类型">置信度阈值</Label>
       <label class="flex w-full items-center gap-4">

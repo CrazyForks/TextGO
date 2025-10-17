@@ -11,6 +11,8 @@
 
   let entry: Entry | null = $state(null);
 
+  let codeMirror: CodeMirror | null = $state(null);
+
   let chatMode: boolean = $derived.by(() => entry?.actionType === 'prompt');
   let streaming: boolean | null = $state(null);
 
@@ -159,9 +161,9 @@
       </div>
       <div class="flex items-center gap-1">
         {#if !chatMode}
-          <Button icon={ArrowCounterClockwise} onclick={closeWindow} />
-          <Button icon={TextIndent} onclick={closeWindow} />
-          <Button icon={CopySimple} onclick={closeWindow} />
+          <Button icon={ArrowCounterClockwise} onclick={() => codeMirror?.reset()} />
+          <Button icon={TextIndent} onclick={() => codeMirror?.format()} />
+          <Button icon={CopySimple} onclick={() => codeMirror?.copy()} />
         {/if}
       </div>
     </div>
@@ -182,8 +184,8 @@
           maxHeight="calc(100vh - 2.25rem)"
           class="rounded-none border-none"
           panelClass="hidden"
-          language={chatMode ? markdown() : undefined}
           document={entry?.result}
+          bind:this={codeMirror}
         />
       {/if}
     </div>

@@ -164,10 +164,10 @@ def process(data):
       />
       {#key scriptLang}
         <CodeMirror
-          language={scriptLang === 'python' ? python() : javascript()}
           title={scriptLang === 'python' ? 'Python 脚本' : 'JavaScript 脚本'}
-          class="mt-4"
+          language={scriptLang === 'python' ? python() : javascript()}
           bind:document={scriptText}
+          class="mt-4"
         />
       {/key}
       <label class="label mt-2 justify-between rounded-box border p-2">

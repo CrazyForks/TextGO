@@ -58,16 +58,28 @@
   }>;
 
   /**
-   * 从语言对象获取语言名称
+   * 从语言支持对象中获取语言名称
    *
-   * @param language - 语言对象
+   * @param language - 语言支持对象
    */
-  function getName(language: LanguageSupport | Language | null | undefined): string {
-    if (!language) {
+  function getLanguageName(language: LanguageSupport | Language | null | undefined): string {
+    let name = null;
+    if (language) {
+      name = 'name' in language ? language.name : language.language.name;
+    } else {
       // 默认为纯文本
-      return 'text';
+      name = 'text';
     }
-    return 'name' in language ? language.name : language.language.name;
+    // 非首字母大写的语言名称映射
+    const mappings: Record<string, string> = {
+      javascript: 'JavaScript',
+      json: 'JSON',
+      css: 'CSS',
+      html: 'HTML',
+      yaml: 'YAML'
+    };
+    // 返回映射名称或首字母大写名称
+    return mappings[name] || name.charAt(0).toUpperCase() + name.slice(1);
   }
 
   /**
@@ -76,7 +88,7 @@
    * @param view - 编辑器视图
    * @param newDoc - 新文档
    */
-  function replace(view: EditorView, newDoc: string | undefined) {
+  function replaceDocument(view: EditorView, newDoc: string | undefined) {
     // https://codemirror.net/examples/change/
     view.dispatch({
       changes: { from: 0, to: view.state.doc.length, insert: newDoc }
@@ -91,7 +103,7 @@
    * @param tabSize - 制表符空格数
    * @param lineLength - 行的最大长度
    */
-  async function format(view: EditorView, language: string, tabSize: number, lineLength: number) {
+  async function formatDocument(view: EditorView, language: string, tabSize: number, lineLength: number) {
     const formatOptions: Record<string, Options> = {
       javascript: { parser: 'babel', plugins: [babel, estree] },
       json: { parser: 'json', plugins: [babel, estree] },
@@ -111,7 +123,7 @@
         tabWidth: tabSize,
         printWidth: lineLength
       });
-      replace(view, formatted);
+      replaceDocument(view, formatted);
     } catch (error) {
       console.error(error);
     }
@@ -208,19 +220,27 @@
   let editorView: EditorView;
   let largerView: Modal | null = $state(null);
   let originalDoc = document;
-  const languageName = getName(language);
+  const languageName = getLanguageName(language);
 
   /**
-   * 用新文档替换当前文档
-   *
-   * @param newDoc - 新文档
-   * @param setOriginal - 是否替换原始文档
+   * 重置文档内容
    */
-  export function setDocument(newDoc: string | undefined, setOriginal: boolean = false) {
-    replace(editorView, newDoc);
-    if (setOriginal) {
-      originalDoc = newDoc;
-    }
+  export function reset() {
+    replaceDocument(editorView, originalDoc);
+  }
+
+  /**
+   * 格式化文档内容
+   */
+  export function format() {
+    formatDocument(editorView, languageName, tabSize, lineLength);
+  }
+
+  /**
+   * 复制文档内容到剪贴板
+   */
+  export function copy() {
+    document && navigator.clipboard && navigator.clipboard.writeText(document);
   }
 
   /**
@@ -373,15 +393,6 @@
   });
 </script>
 
-<svelte:window
-  onkeydown={(event) => {
-    if ((event.ctrlKey || event.metaKey) && event.code === 'KeyZ') {
-      // 撤销/重做触发时更新文档
-      setTimeout(() => setDocument(document), 0);
-    }
-  }}
-/>
-
 <div class="shrink-0 overflow-auto rounded-box border-1 border-base-content/20 {_class}" {style}>
   <div class={editorClass} bind:this={editor}></div>
   <div class="flex items-center justify-between border-t px-2 py-1 {panelClass}">
@@ -397,25 +408,13 @@
     </span>
     <span class="flex items-center gap-2">
       {#if !readOnly && resetter}
-        <Button
-          icon={ArrowCounterClockwise}
-          class="border-0 bg-transparent shadow-none"
-          onclick={() => replace(editorView, originalDoc)}
-        />
+        <Button icon={ArrowCounterClockwise} class="border-0 bg-transparent shadow-none" onclick={reset} />
       {/if}
       {#if !readOnly && language && formatter}
-        <Button
-          icon={TextIndent}
-          class="border-0 bg-transparent shadow-none"
-          onclick={() => format(editorView, languageName, tabSize, lineLength)}
-        />
+        <Button icon={TextIndent} class="border-0 bg-transparent shadow-none" onclick={format} />
       {/if}
       {#if copier}
-        <Button
-          icon={CopySimple}
-          class="border-0 bg-transparent shadow-none"
-          onclick={() => document && navigator.clipboard && navigator.clipboard.writeText(document)}
-        />
+        <Button icon={CopySimple} class="border-0 bg-transparent shadow-none" onclick={copy} />
       {/if}
     </span>
   </div>
@@ -443,7 +442,7 @@
       {copier}
       {resetter}
       {formatter}
-      onchange={() => replace(editorView, document)}
+      onchange={() => replaceDocument(editorView, document)}
     />
   </Modal>
 {/if}

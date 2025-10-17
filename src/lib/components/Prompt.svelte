@@ -142,7 +142,7 @@
         </span>
       </div>
       <Label required tip="明确描述您希望 AI 执行的具体任务或目标">提示词</Label>
-      <CodeMirror language={markdown()} title="提示词" placeholder={PROMPT_PLACEHOLDER} bind:document={promptText} />
+      <CodeMirror title="提示词" language={markdown()} placeholder={PROMPT_PLACEHOLDER} bind:document={promptText} />
       <div class="collapse-arrow collapse mt-2 border">
         <input type="checkbox" class="peer" bind:this={collapseCheckbox} />
         <div class="collapse-title border-b-transparent transition-all duration-200 peer-checked:border-b">
@@ -151,10 +151,10 @@
         </div>
         <div class="collapse-content overflow-x-auto !p-0">
           <CodeMirror
-            language={markdown()}
             title="系统提示词"
-            class="rounded-t-none border-x-0 border-b-0"
+            language={markdown()}
             bind:document={systemPromptText}
+            class="rounded-t-none border-x-0 border-b-0"
           />
         </div>
       </div>

@@ -131,7 +131,12 @@
             </span>
           {/if}
         </div>
-        <CodeMirror class="mt-2" language={chatMode ? markdown() : undefined} document={entry?.result} />
+        <CodeMirror
+          title={chatMode ? '提示词' : '脚本执行结果'}
+          language={chatMode ? markdown() : undefined}
+          document={entry?.result}
+          class="mt-2"
+        />
       </div>
     </li>
   </ul>
