@@ -3,15 +3,14 @@
   import { page } from '$app/state';
   import { Button, Title } from '$lib/components';
   import { GitHub, Moon, Sun } from '$lib/icons';
+  import { theme } from '$lib/stores.svelte';
   import { listen } from '@tauri-apps/api/event';
   import { getCurrentWindow } from '@tauri-apps/api/window';
   import { openUrl } from '@tauri-apps/plugin-opener';
   import { ClockCounterClockwise, GearSix, Keyboard } from 'phosphor-svelte';
   import { onMount, type Snippet } from 'svelte';
-  import type { LayoutData } from './$types';
 
-  let { data, children }: { data: LayoutData; children: Snippet } = $props();
-  let { theme } = data;
+  let { children }: { children: Snippet } = $props();
 
   /**
    * 导航栏菜单项

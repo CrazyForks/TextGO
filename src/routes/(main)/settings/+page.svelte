@@ -4,6 +4,17 @@
   import { buildFormSchema } from '$lib/constraint';
   import { JavaScript, LMStudio, Ollama, Python, Regexp as RegexpIcon, Tensorflow } from '$lib/icons';
   import {
+    historySize,
+    models,
+    nodePath,
+    ollamaHost,
+    prompts,
+    pythonPath,
+    regexps,
+    scripts,
+    theme
+  } from '$lib/stores.svelte';
+  import {
     ArrowFatLineRight,
     ClockCounterClockwise,
     Code,
@@ -22,9 +33,6 @@
     Translate,
     Warning
   } from 'phosphor-svelte';
-
-  let { data } = $props();
-  let { theme, nodePath, pythonPath, ollamaHost, historySize, models, regexps, scripts, prompts } = data;
 
   const schema = buildFormSchema(({ text }) => ({
     nodePath: text().maxlength(256),

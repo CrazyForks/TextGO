@@ -145,7 +145,7 @@
 
 <script lang="ts">
   import { Button, Modal } from '$lib/components';
-  import { theme } from '$lib/states.svelte';
+  import { theme } from '$lib/stores.svelte';
   import { autocompletion, closeBrackets, closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete';
   import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
   import {

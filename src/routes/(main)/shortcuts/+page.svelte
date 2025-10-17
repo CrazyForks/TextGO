@@ -4,6 +4,7 @@
   import { PROMPT_MARK, SCRIPT_MARK } from '$lib/constants';
   import { buildFormSchema } from '$lib/constraint';
   import { JavaScript, LMStudio, NoData, Ollama, Python } from '$lib/icons';
+  import { prompts, scripts, shortcuts } from '$lib/stores.svelte';
   import { type } from '@tauri-apps/plugin-os';
   import {
     ArrowFatLineRight,
@@ -19,9 +20,6 @@
   } from 'phosphor-svelte';
   import { onMount, tick } from 'svelte';
   import { fly } from 'svelte/transition';
-
-  let { data } = $props();
-  let { shortcuts, models, scripts, prompts } = data;
 
   let key: string = $state('');
   let keyModal: Modal;
@@ -262,4 +260,4 @@
   </form>
 </Modal>
 
-<Hotkey bind:this={hotkey} models={models.current} scripts={scripts.current} prompts={prompts.current} />
+<Hotkey bind:this={hotkey} />

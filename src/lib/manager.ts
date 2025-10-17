@@ -1,6 +1,6 @@
 import { execute } from '$lib/executor';
 import { match } from '$lib/matcher';
-import { shortcuts } from '$lib/states.svelte';
+import { shortcuts } from '$lib/stores.svelte';
 import type { Hotkey } from '$lib/types';
 import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';

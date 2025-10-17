@@ -2,13 +2,13 @@
   import { goto } from '$app/navigation';
   import { page } from '$app/state';
   import { Button } from '$lib/components';
+  import { entries } from '$lib/stores.svelte';
   import { formatISO8601 } from '$lib/utils';
   import { Trash } from 'phosphor-svelte';
   import { type Snippet } from 'svelte';
   import { flip } from 'svelte/animate';
-  import type { LayoutData } from './$types';
 
-  let { data, children }: { data: LayoutData; children: Snippet } = $props();
+  let { children }: { children: Snippet } = $props();
 
   // 侧边栏宽度
   const SIDEBAR_WIDTH = '12rem';
@@ -19,7 +19,7 @@
     <div class="menu-title text-xs tracking-wide text-base-content/60">历史记录</div>
     <div class="h-full overflow-y-auto">
       <ul class="menu w-full gap-1.5">
-        {#each data.entries.current as entry, index (entry.id)}
+        {#each entries.current as entry, index (entry.id)}
           {@const href = `/histories/${entry.id}`}
           {@const active = page.url.pathname === href}
           <li animate:flip={{ duration: 200 }}>
@@ -36,12 +36,12 @@
                   event.preventDefault();
                   // 不是当前页面，直接删除
                   if (page.url.pathname !== href) {
-                    data.entries.current.splice(index, 1);
+                    entries.current.splice(index, 1);
                     return;
                   }
                   // 删除后跳转到上一个日志
-                  const prev = index > 0 ? `/histories/${data.entries.current[index - 1].id}` : '/histories';
-                  data.entries.current.splice(index, 1);
+                  const prev = index > 0 ? `/histories/${entries.current[index - 1].id}` : '/histories';
+                  entries.current.splice(index, 1);
                   goto(prev);
                 }}
               />

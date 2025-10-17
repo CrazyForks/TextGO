@@ -4,19 +4,10 @@
   import { MODEL_MARK, PROMPT_MARK, SCRIPT_MARK } from '$lib/constants';
   import { manager } from '$lib/manager';
   import { BUILTIN_CASES, NATURAL_CASES, PROGRAM_CASES } from '$lib/matcher';
-  import { Loading, shortcuts } from '$lib/states.svelte';
-  import type { Hotkey, Model, Option, Prompt, Script } from '$lib/types';
+  import { Loading } from '$lib/states.svelte';
+  import { models, prompts, scripts, shortcuts } from '$lib/stores.svelte';
+  import type { Hotkey, Option } from '$lib/types';
   import { ArrowFatLineRight, FingerprintSimple, Sparkle } from 'phosphor-svelte';
-
-  let {
-    models,
-    scripts,
-    prompts
-  }: {
-    models: Model[];
-    scripts: Script[];
-    prompts: Prompt[];
-  } = $props();
 
   // 加载状态
   const loading = new Loading();
@@ -32,9 +23,9 @@
       { value: '--program--', label: '-- 编程语言 --', disabled: true },
       ...PROGRAM_CASES
     ];
-    if (models && models.length > 0) {
+    if (models.current && models.current.length > 0) {
       options.push({ value: '--model--', label: '-- 分类模型 --', disabled: true });
-      for (const m of models) {
+      for (const m of models.current) {
         options.push({ value: MODEL_MARK + m.id, label: m.id });
       }
     }
@@ -44,15 +35,15 @@
   // 动作标识选项
   const actionIds: Option[] = $derived.by(() => {
     const options: Option[] = [{ value: '', label: '显示主窗口' }];
-    if (scripts && scripts.length > 0) {
+    if (scripts.current && scripts.current.length > 0) {
       options.push({ value: '--script--', label: '-- 脚本 --', disabled: true });
-      for (const s of scripts) {
+      for (const s of scripts.current) {
         options.push({ value: SCRIPT_MARK + s.id, label: s.id });
       }
     }
-    if (prompts && prompts.length > 0) {
+    if (prompts.current && prompts.current.length > 0) {
       options.push({ value: '--prompt--', label: '-- 对话 --', disabled: true });
-      for (const p of prompts) {
+      for (const p of prompts.current) {
         options.push({ value: PROMPT_MARK + p.id, label: p.id });
       }
     }

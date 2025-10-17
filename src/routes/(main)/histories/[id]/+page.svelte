@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from '$app/state';
   import { CodeMirror } from '$lib/components';
-  import { entries } from '$lib/states.svelte';
+  import { entries } from '$lib/stores.svelte';
   import type { Entry } from '$lib/types';
   import { formatISO8601 } from '$lib/utils';
   import { markdown } from '@codemirror/lang-markdown';

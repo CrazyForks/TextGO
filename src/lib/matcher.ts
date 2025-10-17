@@ -1,6 +1,6 @@
 import { predict } from '$lib/classifier';
 import { MODEL_MARK } from '$lib/constants';
-import { models } from '$lib/states.svelte';
+import { models } from '$lib/stores.svelte';
 import type { Hotkey, Model, Option } from '$lib/types';
 import { ModelOperations, type ModelResult } from '@vscode/vscode-languagedetection';
 import { franc } from 'franc-min';

@@ -1,16 +1,4 @@
-import {
-  entries,
-  historySize,
-  models,
-  nodePath,
-  ollamaHost,
-  prompts,
-  pythonPath,
-  regexps,
-  scripts,
-  shortcuts,
-  theme
-} from '$lib/states.svelte';
+import * as stores from '$lib/stores.svelte';
 import tippy, { followCursor } from 'tippy.js';
 import type { LayoutLoad } from './$types';
 
@@ -34,17 +22,6 @@ export const load: LayoutLoad = async () => {
     plugins: [followCursor]
   });
 
-  return {
-    theme,
-    nodePath,
-    pythonPath,
-    ollamaHost,
-    historySize,
-    shortcuts,
-    models,
-    regexps,
-    scripts,
-    prompts,
-    entries
-  };
+  // 导入时立即初始化所有 stores
+  return { stores };
 };

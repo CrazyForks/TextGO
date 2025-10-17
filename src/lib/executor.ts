@@ -1,5 +1,5 @@
 import { PROMPT_MARK, SCRIPT_MARK } from '$lib/constants';
-import { entries, historySize, prompts, scripts } from '$lib/states.svelte';
+import { entries, historySize, prompts, scripts } from '$lib/stores.svelte';
 import type { Entry, Hotkey, Prompt, Script } from '$lib/types';
 import { invoke } from '@tauri-apps/api/core';
 import { readText, writeText } from '@tauri-apps/plugin-clipboard-manager';
