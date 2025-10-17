@@ -10,11 +10,59 @@
   import { onMount, untrack } from 'svelte';
 
   let entry: Entry | null = $state(null);
-  let chatMode: boolean = $derived.by(() => entry?.actionType === 'prompt');
 
-  let autoScroll = $state(true);
+  let chatMode: boolean = $derived.by(() => entry?.actionType === 'prompt');
+  let streaming: boolean | null = $state(null);
+
+  let autoScroll = $state(false);
   let scrollElement: HTMLElement | null = $state(null);
   let scrollInterval: ReturnType<typeof setInterval> | null = $state(null);
+
+  $effect(() => {
+    if (chatMode && streaming === null) {
+      untrack(async () => {
+        if (!entry || !entry.result || !entry.model) {
+          return;
+        }
+        try {
+          // 开始流式传输
+          streaming = true;
+          // 开始自动滚动
+          startAutoScroll();
+          // 添加用户提示词
+          const messages = [{ role: 'user', content: entry.result }];
+          // 添加系统提示词
+          const systemPrompt = entry.systemPrompt?.trim();
+          if (systemPrompt) {
+            messages.unshift({ role: 'system', content: systemPrompt });
+          }
+          const response = await ollama.chat({
+            model: entry.model,
+            messages: messages,
+            stream: true
+          });
+          // 保存回复内容
+          entry.response = '';
+          for await (const part of response) {
+            if (streaming === null) {
+              // 中止流式传输
+              break;
+            }
+            entry.response += part.message.content;
+          }
+        } catch (error) {
+          if (error instanceof Error && error.name !== 'AbortError') {
+            entry.response = error.message || '发生未知错误';
+          }
+        } finally {
+          // 结束流式传输
+          streaming = false;
+          // 停止自动滚动
+          stopAutoScroll();
+        }
+      });
+    }
+  });
 
   /**
    * 关闭当前窗口
@@ -29,18 +77,6 @@
   }
 
   /**
-   * 自动滚动到底部
-   */
-  function scrollToEnd() {
-    if (autoScroll && scrollElement) {
-      scrollElement.scrollTo({
-        top: scrollElement.scrollHeight,
-        behavior: 'smooth'
-      });
-    }
-  }
-
-  /**
    * 开始自动滚动
    */
   function startAutoScroll() {
@@ -48,7 +84,14 @@
       clearInterval(scrollInterval);
     }
     autoScroll = true;
-    scrollInterval = setInterval(scrollToEnd, 100);
+    scrollInterval = setInterval(() => {
+      if (autoScroll && scrollElement) {
+        scrollElement.scrollTo({
+          top: scrollElement.scrollHeight,
+          behavior: 'smooth'
+        });
+      }
+    }, 100);
   }
 
   /**
@@ -86,67 +129,20 @@
     }
   }
 
-  let streaming: boolean | null = $state(null);
-
-  $effect(() => {
-    if (chatMode && entry && entry.result && streaming === null) {
-      untrack(async () => {
-        if (!entry || !entry.model) {
-          return;
-        }
-        try {
-          // 如果是聊天模式，请求 ollama 接口并获取回复
-          streaming = true;
-          // 开始自动滚动
-          startAutoScroll();
-          const messages = [{ role: 'user', content: entry.result! }];
-          if (entry.systemPrompt && entry.systemPrompt.trim().length > 0) {
-            // 加入系统提示词
-            messages.unshift({ role: 'system', content: entry.systemPrompt });
-          }
-          const response = await ollama.chat({
-            model: entry.model,
-            messages: messages,
-            stream: true
-          });
-          // 保存回复内容
-          entry.response = '';
-          for await (const part of response) {
-            if (streaming === null) {
-              // 已经确认离开，停止接收
-              break;
-            }
-            entry.response += part.message.content;
-          }
-        } catch (error) {
-          console.error(error);
-          if (error instanceof Error) {
-            entry.response = error.message;
-          }
-        } finally {
-          streaming = false;
-          // 停止自动滚动
-          stopAutoScroll();
-        }
-      });
-    }
-  });
-
   onMount(() => {
+    const setup = (data: Entry | null) => {
+      entry = data;
+      streaming && ollama.abort();
+      streaming = null;
+      autoScroll && stopAutoScroll();
+      autoScroll = false;
+    };
     // 监听主进程发送的事件
     const unlisten = listen<string>('popup', (event) => {
-      entry = JSON.parse(event.payload) as Entry;
-      if (streaming) {
-        ollama.abort();
-      }
-      streaming = null;
+      setup(JSON.parse(event.payload) as Entry);
     });
     return () => {
-      if (streaming) {
-        ollama.abort();
-      }
-      entry = null;
-      stopAutoScroll();
+      setup(null);
       unlisten.then((fn) => fn());
     };
   });
