@@ -1,6 +1,6 @@
 import { predict } from '$lib/classifier';
-import { MODEL_MARK, MODELS_KEY } from '$lib/constants';
-import { getPersisted } from '$lib/states.svelte';
+import { MODEL_MARK } from '$lib/constants';
+import { models } from '$lib/states.svelte';
 import type { Hotkey, Model, Option } from '$lib/types';
 import { ModelOperations, type ModelResult } from '@vscode/vscode-languagedetection';
 import { franc } from 'franc-min';
@@ -217,8 +217,7 @@ export async function match(text: string, hotkeys: Hotkey[]): Promise<Hotkey | n
     // 自定义模型识别
     if (_case.startsWith(MODEL_MARK)) {
       const modelId = _case.substring(MODEL_MARK.length);
-      const models = await getPersisted<Model[]>(MODELS_KEY);
-      const model = models?.find((m) => m.id === modelId);
+      const model = models.current.find((m) => m.id === modelId);
       if (model) {
         try {
           if (await matchModelCase(model, text)) {

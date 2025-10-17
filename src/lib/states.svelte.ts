@@ -1,5 +1,4 @@
 import { manager } from '$lib/manager';
-import { ENTRIES_KEY, MODELS_KEY, PROMPTS_KEY, REGEXPS_KEY, SCRIPTS_KEY, SHORTCUTS_KEY } from '$lib/constants';
 import type { Entry, Hotkey, Model, Prompt, Regexp, Script } from '$lib/types';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { LazyStore } from '@tauri-apps/plugin-store';
@@ -33,7 +32,7 @@ export const historySize = persisted<number>('historySize', 5);
 
 // 快捷键组
 export const shortcuts = persisted<Record<string, Hotkey[]>>(
-  SHORTCUTS_KEY,
+  'shortcuts',
   {},
   {
     onload: async (shortcuts) => {
@@ -48,19 +47,19 @@ export const shortcuts = persisted<Record<string, Hotkey[]>>(
 );
 
 // 分类模型
-export const models = persisted<Model[]>(MODELS_KEY, []);
+export const models = persisted<Model[]>('models', []);
 
 // 正则表达式
-export const regexps = persisted<Regexp[]>(REGEXPS_KEY, []);
+export const regexps = persisted<Regexp[]>('regexps', []);
 
 // 脚本
-export const scripts = persisted<Script[]>(SCRIPTS_KEY, []);
+export const scripts = persisted<Script[]>('scripts', []);
 
 // 提示词
-export const prompts = persisted<Prompt[]>(PROMPTS_KEY, []);
+export const prompts = persisted<Prompt[]>('prompts', []);
 
 // 触发记录
-export const entries = persisted<Entry[]>(ENTRIES_KEY, []);
+export const entries = persisted<Entry[]>('entries', []);
 
 /**
  * 创建持久化状态的选项
@@ -145,23 +144,6 @@ export function persisted<T>(key: string, initial: T, options?: Options<T>) {
       state = value;
     }
   };
-}
-
-/**
- * 获取持久化的状态数据
- *
- * @param key - 本地存储的键
- * @param defaultValue - 如果键不存在时的默认值
- * @returns 返回获取到的值或默认值
- */
-export async function getPersisted<T>(key: string, defaultValue?: T): Promise<T | undefined> {
-  try {
-    const value = await store.get<T>(key);
-    return value !== undefined ? value : defaultValue;
-  } catch (error) {
-    console.error(error);
-    return defaultValue;
-  }
 }
 
 /**

@@ -1,5 +1,5 @@
-import { PROMPT_MARK, PROMPTS_KEY, SCRIPT_MARK, SCRIPTS_KEY } from '$lib/constants';
-import { entries, getPersisted, historySize } from '$lib/states.svelte';
+import { PROMPT_MARK, SCRIPT_MARK } from '$lib/constants';
+import { entries, historySize, prompts, scripts } from '$lib/states.svelte';
 import type { Entry, Hotkey, Prompt, Script } from '$lib/types';
 import { invoke } from '@tauri-apps/api/core';
 import { readText, writeText } from '@tauri-apps/plugin-clipboard-manager';
@@ -44,8 +44,7 @@ export async function execute(hotkey: Hotkey, selection: string): Promise<void> 
   // 根据动作标识执行对应的操作
   if (action.startsWith(SCRIPT_MARK)) {
     const scriptId = action.substring(SCRIPT_MARK.length);
-    const scripts = await getPersisted<Script[]>(SCRIPTS_KEY);
-    const script = scripts?.find((s) => s.id === scriptId);
+    const script = scripts.current.find((s) => s.id === scriptId);
     if (script) {
       console.debug(`开始执行脚本: ${scriptId}`);
       const result = await executeScript(script, data);
@@ -71,8 +70,7 @@ export async function execute(hotkey: Hotkey, selection: string): Promise<void> 
     }
   } else if (action.startsWith(PROMPT_MARK)) {
     const promptId = action.substring(PROMPT_MARK.length);
-    const prompts = await getPersisted<Prompt[]>(PROMPTS_KEY);
-    const prompt = prompts?.find((p) => p.id === promptId);
+    const prompt = prompts.current.find((p) => p.id === promptId);
     if (prompt) {
       console.debug(`开始生成提示词: ${promptId}`);
       const result = await renderPrompt(prompt, data);
