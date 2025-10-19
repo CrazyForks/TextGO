@@ -36,7 +36,6 @@
   let promptModal: Modal;
   let nameInputElement: HTMLInputElement;
   let collapseCheckbox: HTMLInputElement;
-
   export const showModal = (id?: string) => {
     if (id) {
       const prompt = prompts.find((p) => p.id === id);

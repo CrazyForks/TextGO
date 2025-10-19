@@ -1,9 +1,9 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
   import { alert, Button, confirm, List, Modal, Rule, Shortcut } from '$lib/components';
-  import { PROMPT_MARK, SCRIPT_MARK } from '$lib/constants';
+  import { MODEL_MARK, PROMPT_MARK, REGEXP_MARK, SCRIPT_MARK } from '$lib/constants';
   import { buildFormSchema } from '$lib/constraint';
-  import { JavaScript, LMStudio, NoData, Ollama, Python } from '$lib/icons';
+  import { JavaScript, LMStudio, NoData, Ollama, Python, Regexp, Tensorflow } from '$lib/icons';
   import { prompts, scripts, shortcuts } from '$lib/stores.svelte';
   import { type } from '@tauri-apps/plugin-os';
   import {
@@ -188,7 +188,13 @@
             {#if item.case === ''}
               <span class="truncate opacity-30">{caseLabel}</span>
             {:else if caseLabel}
-              <FingerprintSimple class="size-5 shrink-0 opacity-60" />
+              {#if item.case.startsWith(MODEL_MARK)}
+                <Tensorflow class="h-5 shrink-0" />
+              {:else if item.case.startsWith(REGEXP_MARK)}
+                <Regexp class="h-5 shrink-0" />
+              {:else}
+                <FingerprintSimple class="size-5 shrink-0 opacity-60" />
+              {/if}
               <span class="truncate">{caseLabel}</span>
             {:else}
               <Warning class="size-5 shrink-0 opacity-50" />
