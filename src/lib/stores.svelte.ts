@@ -71,6 +71,8 @@ function persisted<T>(key: string, initial: T, options?: Options<T>) {
       // 同步到 localStorage
       if (snapshot) {
         localStorage.setItem(key, JSON.stringify(snapshot));
+      } else {
+        localStorage.removeItem(key);
       }
     });
     // 确保不被清理
@@ -79,8 +81,12 @@ function persisted<T>(key: string, initial: T, options?: Options<T>) {
 
   // 监听 localStorage 变化以实现跨窗口同步
   window.addEventListener('storage', (event) => {
-    if (event.key === key && event.newValue) {
-      state = JSON.parse(event.newValue);
+    if (event.key === key) {
+      if (event.newValue) {
+        state = JSON.parse(event.newValue);
+      } else {
+        state = initial;
+      }
     }
   });
 

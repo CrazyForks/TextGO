@@ -21,7 +21,7 @@
   import { fade } from 'svelte/transition';
 
   let entry: Entry | undefined = $derived(entries.current.find((e) => e.id === page.params.id));
-  let chatMode: boolean = $derived.by(() => entry?.actionType === 'prompt');
+  let promptMode: boolean = $derived.by(() => entry?.actionType === 'prompt');
   let clipboardExpanded = $state(false);
   let selectionExpanded = $state(false);
 </script>
@@ -108,7 +108,7 @@
     <li>
       <hr />
       <div class="timeline-middle">
-        {#if chatMode}
+        {#if promptMode}
           <FileMd class="size-5" />
         {:else if entry?.scriptLang === 'javascript'}
           <FileJs class="size-5" />
@@ -119,7 +119,7 @@
       <div class="timeline-end w-[calc(100%-0.5rem)] pt-1">
         <div class="flex items-center gap-2">
           <time class="pr-1 text-sm font-semibold italic">{entry?.actionLabel}</time>
-          {#if chatMode}
+          {#if promptMode}
             <span class="badge shrink-0 gap-0.5 border badge-xs">
               <Cube class="size-3" />
               {entry?.model}
@@ -132,8 +132,8 @@
           {/if}
         </div>
         <CodeMirror
-          title={chatMode ? '提示词' : '脚本执行结果'}
-          language={chatMode ? markdown() : undefined}
+          title={promptMode ? '提示词' : '脚本执行结果'}
+          language={promptMode ? markdown() : undefined}
           document={entry?.result}
           class="mt-2"
         />

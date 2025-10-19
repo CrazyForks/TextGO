@@ -1,27 +1,43 @@
 <script lang="ts">
   import { Button, CodeMirror } from '$lib/components';
+  import { ollamaHost } from '$lib/stores.svelte';
   import type { Entry } from '$lib/types';
-  import { markdown } from '@codemirror/lang-markdown';
   import { listen } from '@tauri-apps/api/event';
-  import { getCurrentWindow } from '@tauri-apps/api/window';
   import { marked } from 'marked';
-  import ollama from 'ollama/browser';
+  import { Ollama } from 'ollama';
   import { ArrowCounterClockwise, CopySimple, Robot, TextIndent } from 'phosphor-svelte';
   import { onMount, untrack } from 'svelte';
 
+  // 快捷键触发记录
   let entry: Entry | null = $state(null);
 
+  // CodeMirror 实例
   let codeMirror: CodeMirror | null = $state(null);
 
-  let chatMode: boolean = $derived.by(() => entry?.actionType === 'prompt');
+  // 是否为提示词模式
+  let promptMode: boolean = $derived.by(() => entry?.actionType === 'prompt');
+
+  // 流式传输状态
   let streaming: boolean | null = $state(null);
 
+  // Ollama 实例
+  let ollama = new Ollama();
+  $effect(() => {
+    ollama = new Ollama({ host: ollamaHost.current || undefined });
+  });
+
+  // 自动滚动状态
   let autoScroll = $state(false);
+
+  // 滚动容器元素
   let scrollElement: HTMLElement | null = $state(null);
+
+  // 滚动定时器
   let scrollInterval: ReturnType<typeof setInterval> | null = $state(null);
 
+  // 开启对话
   $effect(() => {
-    if (chatMode && streaming === null) {
+    if (promptMode && streaming === null) {
       untrack(async () => {
         if (!entry || !entry.result || !entry.model) {
           return;
@@ -142,13 +158,13 @@
   <main class="h-screen w-screen overflow-hidden">
     <div class="flex h-8 items-center justify-between gap-2 bg-base-300 pr-2 pl-20" data-tauri-drag-region>
       <div class="pointer-events-none flex items-center gap-2 truncate">
-        {#if chatMode}
+        {#if promptMode}
           <Robot class="size-4.5 shrink-0" />
           <span class="truncate text-sm text-base-content/80">{entry?.model}</span>
         {/if}
       </div>
       <div class="flex items-center gap-1">
-        {#if !chatMode}
+        {#if !promptMode}
           <Button icon={ArrowCounterClockwise} onclick={() => codeMirror?.reset()} />
           <Button icon={TextIndent} onclick={() => codeMirror?.format()} />
           <Button icon={CopySimple} onclick={() => codeMirror?.copy()} />
@@ -156,7 +172,7 @@
       </div>
     </div>
     <div class="size-full overflow-auto" bind:this={scrollElement} onscroll={handleScroll}>
-      {#if chatMode}
+      {#if promptMode}
         <div class="px-4 pt-2 pb-10">
           {#if streaming && !entry?.response}
             <div class="loading loading-sm loading-dots opacity-70"></div>
