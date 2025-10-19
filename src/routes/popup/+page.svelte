@@ -67,18 +67,6 @@
   });
 
   /**
-   * 关闭当前窗口
-   */
-  async function closeWindow() {
-    try {
-      const currentWindow = getCurrentWindow();
-      await currentWindow.hide();
-    } catch (error) {
-      console.error('关闭当前窗口失败:', error);
-    }
-  }
-
-  /**
    * 开始自动滚动
    */
   function startAutoScroll() {
