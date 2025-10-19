@@ -1,7 +1,7 @@
 import { execute } from '$lib/executor';
 import { match } from '$lib/matcher';
 import { shortcuts } from '$lib/stores.svelte';
-import type { Hotkey } from '$lib/types';
+import type { Rule } from '$lib/types';
 import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
 import { getCurrentWindow } from '@tauri-apps/api/window';
@@ -39,46 +39,46 @@ export class Manager {
    */
   private async handleShortcutEvent(key: string, selection: string): Promise<void> {
     try {
-      // 获取所有绑定到该键位的快捷键
-      const hotkeys = shortcuts.current[key];
-      if (!hotkeys || hotkeys.length === 0) {
+      // 获取所有绑定到该键位的规则
+      const rules = shortcuts.current[key];
+      if (!rules || rules.length === 0) {
         return;
       }
       // 匹配要执行的动作
-      const hotkey = await match(selection, hotkeys);
-      if (hotkey === null) {
-        console.warn('没有匹配的快捷键动作');
+      const rule = await match(selection, rules);
+      if (rule === null) {
+        console.warn('没有匹配的规则');
         return;
       }
       // 执行默认动作
-      if (hotkey.action === '') {
+      if (rule.action === '') {
         await invoke('show_window');
         return;
       }
       // 执行动作
-      await execute(hotkey, selection);
+      await execute(rule, selection);
     } catch (error) {
       console.error('处理快捷键事件失败:', error);
     }
   }
 
   /**
-   * 注册全局快捷键
+   * 注册规则
    *
-   * @param hotkey - 快捷键配置
+   * @param rule - 规则对象
    */
-  async register(hotkey: Hotkey): Promise<void> {
+  async register(rule: Rule): Promise<void> {
     try {
-      // 检查后端 shortcut 是否注册
-      const isRegistered = await invoke('is_shortcut_registered', { key: hotkey.key });
+      // 检查后端快捷键是否注册
+      const isRegistered = await invoke('is_shortcut_registered', { key: rule.key });
       if (!isRegistered) {
-        // 注册后端 shortcut
-        await invoke('register_shortcut', { key: hotkey.key });
+        // 注册后端快捷键
+        await invoke('register_shortcut', { key: rule.key });
       }
-      // 保存 hotkey 到前端注册表中
-      const hotkeys = shortcuts.current[hotkey.key];
-      if (hotkeys && !hotkeys.find((h) => h.id === hotkey.id)) {
-        hotkeys.push(hotkey);
+      // 保存规则到前端注册表中
+      const rules = shortcuts.current[rule.key];
+      if (rules && !rules.find((r) => r.id === rule.id)) {
+        rules.push(rule);
       }
     } catch (error) {
       console.error(error);
@@ -87,22 +87,22 @@ export class Manager {
   }
 
   /**
-   * 注销全局快捷键
+   * 注销规则
    *
-   * @param hotkey - 快捷键配置
+   * @param rule - 规则对象
    */
-  async unregister(hotkey: Hotkey): Promise<void> {
+  async unregister(rule: Rule): Promise<void> {
     try {
-      // 从前端注册表中移除 hotkey
-      const hotkeys = shortcuts.current[hotkey.key];
-      if (hotkeys) {
-        const index = hotkeys.findIndex((h) => h.id === hotkey.id);
+      // 从前端注册表中移除规则
+      const rules = shortcuts.current[rule.key];
+      if (rules) {
+        const index = rules.findIndex((r) => r.id === rule.id);
         if (index !== -1) {
-          hotkeys.splice(index, 1);
+          rules.splice(index, 1);
         }
-        // 没有剩余的 hotkey 时注销后端 shortcut
-        if (hotkeys.length === 0) {
-          await invoke('unregister_shortcut', { key: hotkey.key });
+        // 没有剩余规则时注销后端快捷键
+        if (rules.length === 0) {
+          await invoke('unregister_shortcut', { key: rule.key });
         }
       }
     } catch (error) {

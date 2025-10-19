@@ -6,7 +6,7 @@
   import { BUILTIN_CASES, NATURAL_CASES, PROGRAM_CASES } from '$lib/matcher';
   import { Loading } from '$lib/states.svelte';
   import { models, prompts, scripts, shortcuts } from '$lib/stores.svelte';
-  import type { Hotkey, Option } from '$lib/types';
+  import type { Option, Rule } from '$lib/types';
   import { ArrowFatLineRight, FingerprintSimple, Sparkle } from 'phosphor-svelte';
 
   // 加载状态
@@ -72,11 +72,11 @@
     return option ? option.label : null;
   }
 
-  // 快捷键新增模态框
-  let hotkeyModal: Modal;
+  // 规则新增模态框
+  let ruleModal: Modal;
   export const showModal = (key: string) => {
     lastKey = key.toUpperCase();
-    hotkeyModal.show();
+    ruleModal.show();
   };
 
   let lastKey: string = $state('');
@@ -84,29 +84,29 @@
   let actionId: string = $state('');
 
   /**
-   * 保存并注册快捷键
+   * 保存并注册规则
    *
    * @param form - 表单元素
    */
   async function register(form: HTMLFormElement) {
-    const hotkeys = shortcuts.current[lastKey];
-    if (hotkeys.find((h) => h.key === lastKey && h.case === textCase)) {
+    const rules = shortcuts.current[lastKey];
+    if (rules.find((r) => r.key === lastKey && r.case === textCase)) {
       alert({ level: 'error', message: '该类型已被使用' });
       return;
     }
     loading.start();
     try {
-      const hotkey: Hotkey = {
+      const rule: Rule = {
         id: crypto.randomUUID(),
         key: lastKey,
         case: textCase,
         action: actionId
       };
 
-      await manager.register(hotkey);
+      await manager.register(rule);
 
       form.reset();
-      hotkeyModal.close();
+      ruleModal.close();
       alert('规则添加成功');
     } catch (error) {
       console.error('规则添加失败:', error);
@@ -116,20 +116,20 @@
   }
 
   /**
-   * 注销并删除快捷键
+   * 注销并删除规则
    *
-   * @param hotkey - 快捷键配置
+   * @param rule - 规则对象
    */
-  export async function unregister(hotkey: Hotkey) {
+  export async function unregister(rule: Rule) {
     try {
-      await manager.unregister(hotkey);
+      await manager.unregister(rule);
     } catch (error) {
-      console.error('注销快捷键失败:', error);
+      console.error('规则注销失败:', error);
     }
   }
 </script>
 
-<Modal icon={Sparkle} title="新增规则" bind:this={hotkeyModal}>
+<Modal icon={Sparkle} title="新增规则" bind:this={ruleModal}>
   <form
     method="post"
     use:enhance={({ formElement, cancel }) => {
@@ -144,7 +144,7 @@
       <Select bind:value={actionId} options={actionIds} class="w-full" />
     </fieldset>
     <div class="modal-action">
-      <button type="button" class="btn" onclick={() => hotkeyModal?.close()}>取 消</button>
+      <button type="button" class="btn" onclick={() => ruleModal?.close()}>取 消</button>
       <button type="submit" class="btn btn-submit" disabled={loading.started}>
         确 定
         {#if loading.delayed}

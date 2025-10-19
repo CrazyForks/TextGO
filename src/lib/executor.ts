@@ -1,6 +1,6 @@
 import { PROMPT_MARK, SCRIPT_MARK } from '$lib/constants';
 import { entries, historySize, prompts, scripts } from '$lib/stores.svelte';
-import type { Entry, Hotkey, Prompt, Script } from '$lib/types';
+import type { Entry, Prompt, Rule, Script } from '$lib/types';
 import { invoke } from '@tauri-apps/api/core';
 import { readText, writeText } from '@tauri-apps/plugin-clipboard-manager';
 
@@ -19,12 +19,12 @@ type Data = {
 /**
  * 执行动作
  *
- * @param hotkey - 快捷键对象
+ * @param rule - 规则对象
  * @param selection - 选中的文本
  */
-export async function execute(hotkey: Hotkey, selection: string): Promise<void> {
+export async function execute(rule: Rule, selection: string): Promise<void> {
   // 动作标识
-  const action = hotkey.action;
+  const action = rule.action;
   // 组装数据
   const data: Data = {
     selection: selection,
@@ -34,9 +34,9 @@ export async function execute(hotkey: Hotkey, selection: string): Promise<void> 
   // 生成记录
   const entry: Entry = {
     id: crypto.randomUUID(),
-    key: hotkey.key,
-    caseLabel: hotkey.caseLabel,
-    // actionLabel: hotkey.actionLabel,
+    key: rule.key,
+    caseLabel: rule.caseLabel,
+    // actionLabel: rule.actionLabel,
     datetime: data.datetime,
     clipboard: data.clipboard,
     selection: data.selection

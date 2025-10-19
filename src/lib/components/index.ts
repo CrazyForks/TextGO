@@ -1,12 +1,12 @@
 export { default as Button } from './Button.svelte';
 export { default as CodeMirror } from './CodeMirror.svelte';
-export { default as Hotkey } from './Hotkey.svelte';
 export { default as Label } from './Label.svelte';
 export { default as List } from './List.svelte';
 export { default as Modal } from './Modal.svelte';
 export { default as Model } from './Model.svelte';
 export { default as Prompt } from './Prompt.svelte';
 export { default as Regexp } from './Regexp.svelte';
+export { default as Rule } from './Rule.svelte';
 export { default as Script } from './Script.svelte';
 export { default as Select } from './Select.svelte';
 export { default as Setting } from './Setting.svelte';

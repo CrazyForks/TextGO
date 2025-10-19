@@ -1,7 +1,7 @@
 import { predict } from '$lib/classifier';
 import { MODEL_MARK } from '$lib/constants';
 import { models } from '$lib/stores.svelte';
-import type { Hotkey, Model, Option } from '$lib/types';
+import type { Model, Option, Rule } from '$lib/types';
 import { ModelOperations, type ModelResult } from '@vscode/vscode-languagedetection';
 import { franc } from 'franc-min';
 
@@ -161,27 +161,27 @@ export const PROGRAM_CASES: Option[] = [
  * 根据文本类型匹配要执行的快捷键动作
  *
  * @param text - 待匹配的文本
- * @param keys - 指定的快捷键标识列表
- * @returns 匹配到的快捷键对象，未匹配到则返回`null`
+ * @param rules - 指定的规则列表
+ * @returns 匹配到的规则对象，未匹配到则返回`null`
  */
-export async function match(text: string, hotkeys: Hotkey[]): Promise<Hotkey | null> {
-  console.debug(`获取待匹配模式: ${hotkeys.map((h) => h.case || '跳过').join('、')}`);
+export async function match(text: string, rules: Rule[]): Promise<Rule | null> {
+  console.debug(`获取待匹配模式: ${rules.map((r) => r.case || '跳过').join('、')}`);
   let langDetected = false;
   let langDetectedResult: ModelResult[] = [];
-  // 循环所有绑定的快捷键，找到第一个匹配的文本类型
-  for (const hotkey of hotkeys) {
-    const _case = hotkey.case;
+  // 循环所有绑定的规则，找到第一个匹配的文本类型
+  for (const rule of rules) {
+    const _case = rule.case;
     // 空字符串表示不进行任何识别
     if (_case === '') {
       console.debug('%c跳过文本识别', 'color: rgba(0,0,0,0.5)');
-      return hotkey;
+      return rule;
     }
     // 内置正则匹配
     const builtin = BUILTIN_CASES.find((c) => c.value === _case);
     if (builtin && builtin.pattern && builtin.pattern.test(text)) {
       console.debug(`内置正则表达式匹配成功: ${builtin.label}`);
-      hotkey.caseLabel = builtin.label;
-      return hotkey;
+      rule.caseLabel = builtin.label;
+      return rule;
     }
     // 自然语言识别
     const natural = NATURAL_CASES.find((c) => c.value === _case);
@@ -189,8 +189,8 @@ export async function match(text: string, hotkeys: Hotkey[]): Promise<Hotkey | n
       try {
         if (franc(text, { minLength: 2 }) === _case) {
           console.debug(`自然语言识别成功: ${natural.label}`);
-          hotkey.caseLabel = natural.label;
-          return hotkey;
+          rule.caseLabel = natural.label;
+          return rule;
         }
       } catch (error) {
         console.error('自然语言识别失败:', error);
@@ -207,8 +207,8 @@ export async function match(text: string, hotkeys: Hotkey[]): Promise<Hotkey | n
         }
         if (matchProgramCase(_case, langDetectedResult)) {
           console.debug(`编程语言识别成功: ${program.label}`);
-          hotkey.caseLabel = program.label;
-          return hotkey;
+          rule.caseLabel = program.label;
+          return rule;
         }
       } catch (error) {
         console.error('编程语言识别失败:', error);
@@ -222,8 +222,8 @@ export async function match(text: string, hotkeys: Hotkey[]): Promise<Hotkey | n
         try {
           if (await matchModelCase(model, text)) {
             console.debug(`自定义模型识别成功: ${model.id}`);
-            hotkey.caseLabel = model.id;
-            return hotkey;
+            rule.caseLabel = model.id;
+            return rule;
           }
         } catch (error) {
           console.error('自定义模型识别失败:', error);

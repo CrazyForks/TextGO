@@ -62,10 +62,10 @@ export type Entry = {
 };
 
 /**
- * 快捷键
+ * 规则
  */
-export type Hotkey = {
-  /** 快捷键标识 */
+export type Rule = {
+  /** 规则标识 */
   id: string;
   /** 绑定的快捷键 */
   key: string;

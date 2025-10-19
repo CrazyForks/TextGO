@@ -1,5 +1,5 @@
 import { manager } from '$lib/manager';
-import type { Entry, Hotkey, Model, Prompt, Regexp, Script } from '$lib/types';
+import type { Entry, Rule, Model, Prompt, Regexp, Script } from '$lib/types';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { LazyStore } from '@tauri-apps/plugin-store';
 import { untrack } from 'svelte';
@@ -124,15 +124,15 @@ export const ollamaHost = persisted<string>('ollamaHost', '');
 export const historySize = persisted<number>('historySize', 5);
 
 // 快捷键组
-export const shortcuts = persisted<Record<string, Hotkey[]>>(
+export const shortcuts = persisted<Record<string, Rule[]>>(
   'shortcuts',
   {},
   {
     onload: async (shortcuts) => {
-      // 主窗口初始化时注册所有快捷键
+      // 主窗口初始化时注册所有快捷键组
       if (getCurrentWindow().label === 'main') {
-        for (const hotkey of Object.values(shortcuts).flat()) {
-          await manager.register(hotkey);
+        for (const rule of Object.values(shortcuts).flat()) {
+          await manager.register(rule);
         }
       }
     }

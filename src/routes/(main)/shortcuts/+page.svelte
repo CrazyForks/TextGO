@@ -1,6 +1,6 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
-  import { alert, Button, confirm, Hotkey, List, Modal, Shortcut } from '$lib/components';
+  import { alert, Button, confirm, Rule, List, Modal, Shortcut } from '$lib/components';
   import { PROMPT_MARK, SCRIPT_MARK } from '$lib/constants';
   import { buildFormSchema } from '$lib/constraint';
   import { JavaScript, LMStudio, NoData, Ollama, Python } from '$lib/icons';
@@ -24,7 +24,7 @@
   let key: string = $state('');
   let keyModal: Modal;
 
-  let hotkey = $state<Hotkey>();
+  let ruleManager: Rule | null = $state(null);
 
   // 表单约束
   const schema = buildFormSchema(({ text }) => ({
@@ -78,7 +78,7 @@
     keyModal.close();
     key = '';
     alert({ message: `快捷键组【 ${newKey} 】注册成功` });
-    // 等待 DOM 更新后滚动到新注册的快捷键位置
+    // 等待 DOM 更新后滚动到新注册的快捷键组位置
     await tick();
     const element = document.querySelector(`[data-shortcut-key="${newKey}"]`);
     if (element) {
@@ -141,7 +141,7 @@
           onclick={() => {
             const clear = () => {
               for (const item of shortcuts.current[key] || []) {
-                hotkey?.unregister(item);
+                ruleManager?.unregister(item);
               }
               delete shortcuts.current[key];
             };
@@ -162,8 +162,8 @@
         name="规则"
         hint="选中文本后按下快捷键触发动作"
         bind:data={shortcuts.current[key]}
-        oncreate={() => hotkey?.showModal(key)}
-        ondelete={(item) => hotkey?.unregister(item)}
+        oncreate={() => ruleManager?.showModal(key)}
+        ondelete={(item) => ruleManager?.unregister(item)}
       >
         {#snippet title()}
           <Sparkle class="mx-1 size-4 opacity-60" />
@@ -176,8 +176,8 @@
           </span>
         {/snippet}
         {#snippet row(item)}
-          {@const caseLabel = hotkey?.getCaseLabel(item.case)}
-          {@const actionLabel = hotkey?.getActionLabel(item.action)}
+          {@const caseLabel = ruleManager?.getCaseLabel(item.case)}
+          {@const actionLabel = ruleManager?.getActionLabel(item.action)}
           <div class="ml-4 flex w-60 items-center gap-1 truncate" title={caseLabel}>
             {#if item.case === ''}
               <span class="truncate opacity-30">{caseLabel}</span>
@@ -260,4 +260,4 @@
   </form>
 </Modal>
 
-<Hotkey bind:this={hotkey} />
+<Rule bind:this={ruleManager} />
