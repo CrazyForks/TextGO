@@ -1,6 +1,6 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
-  import { alert, Button, confirm, Rule, List, Modal, Shortcut } from '$lib/components';
+  import { alert, Button, confirm, List, Modal, Rule, Shortcut } from '$lib/components';
   import { PROMPT_MARK, SCRIPT_MARK } from '$lib/constants';
   import { buildFormSchema } from '$lib/constraint';
   import { JavaScript, LMStudio, NoData, Ollama, Python } from '$lib/icons';
@@ -21,27 +21,32 @@
   import { onMount, tick } from 'svelte';
   import { fly } from 'svelte/transition';
 
-  let key: string = $state('');
-  let keyModal: Modal;
-
-  let ruleManager: Rule | null = $state(null);
-
-  // 表单约束
-  const schema = buildFormSchema(({ text }) => ({
-    key: text().maxlength(1).pattern('^[a-zA-Z0-9]$').oninvalid(oninvalid('暂不支持该键位'))
-  }));
-
   // 操作系统类型
   const osType = type();
 
   // 计算总规则数
   let totalRules = $derived(Object.values(shortcuts.current).reduce((sum, arr) => sum + arr.length, 0));
 
+  // 要注册的键位
+  let key: string = $state('');
+
+  // 注册键位的弹窗
+  let keyModal: Modal;
+
   // 是否处于输入法组合状态
   let compositing: boolean = false;
 
+  // 表单验证规则
+  const schema = buildFormSchema(({ text }) => ({
+    key: text().maxlength(1).pattern('^[a-zA-Z0-9]$').oninvalid(oninvalid('暂不支持该键位'))
+  }));
+
+  // 规则管理器
+  let ruleManager: Rule | null = $state(null);
+
   /**
    * 输入无效时的处理
+   *
    * @param message - 提示信息
    */
   function oninvalid(message: string) {
@@ -55,6 +60,7 @@
 
   /**
    * 检查是否重复
+   *
    * @param value - 输入值
    */
   function checkDuplicate(value: string) {
