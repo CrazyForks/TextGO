@@ -293,8 +293,8 @@ async fn show_popup_window(app: tauri::AppHandle, payload: String) -> Result<(),
 }
 
 #[tauri::command]
-async fn execute_javascript(code: String, data: String) -> Result<String, String> {
-    // 创建 JavaScript 代码包装器
+async fn execute_javascript(code: String, data: String, node_path: Option<String>) -> Result<String, String> {
+    // 创建 JavaScript 代码包装
     let wrapped_code = format!(
         r#"
 const data = {};
@@ -304,6 +304,38 @@ console.log(typeof result === 'string' ? result : JSON.stringify(result));
         "#,
         data, code
     );
+
+    // 如果提供了自定义路径，直接使用
+    if let Some(program) = node_path {
+        if !program.is_empty() {
+            let mut command = Command::new(&program);
+            command
+                .arg("-e")
+                .arg(&wrapped_code)
+                .stdout(Stdio::piped())
+                .stderr(Stdio::piped());
+
+            match command.spawn() {
+                Ok(child) => {
+                    let output = child
+                        .wait_with_output()
+                        .await
+                        .map_err(|e| format!("Failed to wait for node process: {}", e))?;
+
+                    if output.status.success() {
+                        let stdout = String::from_utf8_lossy(&output.stdout);
+                        return Ok(stdout.trim().to_string());
+                    } else {
+                        let stderr = String::from_utf8_lossy(&output.stderr);
+                        return Err(format!("JavaScript execution failed: {}", stderr));
+                    }
+                }
+                Err(e) => {
+                    return Err(format!("Failed to execute custom path '{}': {}", program, e));
+                }
+            }
+        }
+    }
 
     // 获取用户主目录
     #[cfg(target_os = "windows")]
@@ -388,8 +420,8 @@ console.log(typeof result === 'string' ? result : JSON.stringify(result));
 }
 
 #[tauri::command]
-async fn execute_python(code: String, data: String) -> Result<String, String> {
-    // 创建 Python 代码包装器
+async fn execute_python(code: String, data: String, python_path: Option<String>) -> Result<String, String> {
+    // 创建 Python 代码包装
     let wrapped_code = format!(
         r#"
 import json
@@ -400,6 +432,38 @@ print(result if isinstance(result, str) else json.dumps(result, ensure_ascii=Fal
         "#,
         data, code
     );
+
+    // 如果提供了自定义路径，直接使用
+    if let Some(program) = python_path {
+        if !program.is_empty() {
+            let mut command = Command::new(&program);
+            command
+                .arg("-c")
+                .arg(&wrapped_code)
+                .stdout(Stdio::piped())
+                .stderr(Stdio::piped());
+
+            match command.spawn() {
+                Ok(child) => {
+                    let output = child
+                        .wait_with_output()
+                        .await
+                        .map_err(|e| format!("Failed to wait for python process: {}", e))?;
+
+                    if output.status.success() {
+                        let stdout = String::from_utf8_lossy(&output.stdout);
+                        return Ok(stdout.trim().to_string());
+                    } else {
+                        let stderr = String::from_utf8_lossy(&output.stderr);
+                        return Err(format!("Python execution failed: {}", stderr));
+                    }
+                }
+                Err(e) => {
+                    return Err(format!("Failed to execute custom path '{}': {}", program, e));
+                }
+            }
+        }
+    }
 
     // 获取用户主目录
     #[cfg(target_os = "windows")]

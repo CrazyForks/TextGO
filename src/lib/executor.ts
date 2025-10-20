@@ -1,5 +1,5 @@
 import { PROMPT_MARK, SCRIPT_MARK } from '$lib/constants';
-import { entries, historySize, prompts, scripts } from '$lib/stores.svelte';
+import { entries, historySize, nodePath, prompts, pythonPath, scripts } from '$lib/stores.svelte';
 import type { Entry, Prompt, Rule, Script } from '$lib/types';
 import { invoke } from '@tauri-apps/api/core';
 import { readText, writeText } from '@tauri-apps/plugin-clipboard-manager';
@@ -104,13 +104,15 @@ export async function executeScript(script: Script, data: Data): Promise<string>
     if (script.lang === 'javascript') {
       const result = await invoke<string>('execute_javascript', {
         code: script.script,
-        data: JSON.stringify(data)
+        data: JSON.stringify(data),
+        nodePath: nodePath.current
       });
       return result;
     } else if (script.lang === 'python') {
       const result = await invoke<string>('execute_python', {
         code: script.script,
-        data: JSON.stringify(data)
+        data: JSON.stringify(data),
+        pythonPath: pythonPath.current
       });
       return result;
     } else {
