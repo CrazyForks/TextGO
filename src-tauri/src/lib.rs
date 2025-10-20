@@ -15,6 +15,40 @@ use tauri_plugin_clipboard_manager::ClipboardExt;
 use tauri_plugin_global_shortcut::{Code, GlobalShortcutExt, Modifiers, Shortcut};
 use tokio::{process::Command, time::sleep};
 
+// 自定义错误类型，自动打印错误到控制台
+#[derive(Debug, Clone)]
+pub struct AppError(String);
+
+impl std::fmt::Display for AppError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
+impl From<String> for AppError {
+    fn from(error: String) -> Self {
+        eprintln!("[ERROR] {}", error); // 自动打印错误
+        AppError(error)
+    }
+}
+
+impl From<&str> for AppError {
+    fn from(error: &str) -> Self {
+        eprintln!("[ERROR] {}", error); // 自动打印错误
+        AppError(error.to_string())
+    }
+}
+
+// 实现 Serialize，使其可以作为 Tauri 命令的返回类型
+impl serde::Serialize for AppError {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.serialize_str(&self.0)
+    }
+}
+
 // Global, shared Enigo wrapped in a Mutex
 // The Enigo struct should be created once and then reused for efficiency
 static ENIGO: LazyLock<Mutex<Enigo>> =
@@ -84,7 +118,7 @@ fn show_shortcuts(app: tauri::AppHandle) {
 }
 
 #[tauri::command]
-fn send_copy_key() -> Result<(), String> {
+fn send_copy_key() -> Result<(), AppError> {
     let mut enigo = ENIGO
         .lock()
         .map_err(|e| format!("Failed to lock Enigo: {}", e))?;
@@ -97,19 +131,19 @@ fn send_copy_key() -> Result<(), String> {
     // 发送 Cmd+C 或 Ctrl+C
     enigo
         .key(modifier, Direction::Press)
-        .map_err(|e| e.to_string())?;
+        .map_err(|e| AppError::from(e.to_string()))?;
     enigo
         .key(Key::Unicode('c'), Direction::Click)
-        .map_err(|e| e.to_string())?;
+        .map_err(|e| AppError::from(e.to_string()))?;
     enigo
         .key(modifier, Direction::Release)
-        .map_err(|e| e.to_string())?;
+        .map_err(|e| AppError::from(e.to_string()))?;
 
     Ok(())
 }
 
 #[tauri::command]
-fn send_paste_key() -> Result<(), String> {
+fn send_paste_key() -> Result<(), AppError> {
     let mut enigo = ENIGO
         .lock()
         .map_err(|e| format!("Failed to lock Enigo: {}", e))?;
@@ -122,19 +156,19 @@ fn send_paste_key() -> Result<(), String> {
     // 发送 Cmd+V 或 Ctrl+V
     enigo
         .key(modifier, Direction::Press)
-        .map_err(|e| e.to_string())?;
+        .map_err(|e| AppError::from(e.to_string()))?;
     enigo
         .key(Key::Unicode('v'), Direction::Click)
-        .map_err(|e| e.to_string())?;
+        .map_err(|e| AppError::from(e.to_string()))?;
     enigo
         .key(modifier, Direction::Release)
-        .map_err(|e| e.to_string())?;
+        .map_err(|e| AppError::from(e.to_string()))?;
 
     Ok(())
 }
 
 #[tauri::command]
-async fn get_selection(app: tauri::AppHandle) -> Result<String, String> {
+async fn get_selection(app: tauri::AppHandle) -> Result<String, AppError> {
     // 获取剪贴板管理器
     let clipboard = app.clipboard();
 
@@ -143,7 +177,7 @@ async fn get_selection(app: tauri::AppHandle) -> Result<String, String> {
 
     // 清空剪贴板内容
     if let Err(e) = clipboard.clear() {
-        return Err(format!("清空剪贴板失败: {}", e));
+        return Err(format!("清空剪贴板失败: {}", e).into());
     }
 
     // 发送复制快捷键
@@ -192,7 +226,7 @@ async fn get_selection(app: tauri::AppHandle) -> Result<String, String> {
 }
 
 #[tauri::command]
-async fn show_popup_window(app: tauri::AppHandle, payload: String) -> Result<(), String> {
+async fn show_popup_window(app: tauri::AppHandle, payload: String) -> Result<(), AppError> {
     // 获取当前鼠标位置
     let (mouse_x, mouse_y) = {
         let enigo = ENIGO
@@ -213,7 +247,7 @@ async fn show_popup_window(app: tauri::AppHandle, payload: String) -> Result<(),
         let monitor = window
             .current_monitor()
             .map_err(|e| format!("Failed to get current monitor: {}", e))?
-            .ok_or("No monitor found")?;
+            .ok_or_else(|| AppError::from("No monitor found"))?;
 
         // 获取缩放因子以统一单位
         let scale_factor = monitor.scale_factor();
@@ -286,14 +320,18 @@ async fn show_popup_window(app: tauri::AppHandle, payload: String) -> Result<(),
             .emit("popup", payload)
             .map_err(|e| format!("Failed to emit payload data: {}", e))?;
     } else {
-        return Err("Popup window not found".to_string());
+        return Err("Popup window not found".into());
     }
 
     Ok(())
 }
 
 #[tauri::command]
-async fn execute_javascript(code: String, data: String, node_path: Option<String>) -> Result<String, String> {
+async fn execute_javascript(
+    code: String,
+    data: String,
+    node_path: Option<String>,
+) -> Result<String, AppError> {
     // 创建 JavaScript 代码包装
     let wrapped_code = format!(
         r#"
@@ -327,11 +365,13 @@ console.log(typeof result === 'string' ? result : JSON.stringify(result));
                         return Ok(stdout.trim().to_string());
                     } else {
                         let stderr = String::from_utf8_lossy(&output.stderr);
-                        return Err(format!("JavaScript execution failed: {}", stderr));
+                        return Err(format!("JavaScript execution failed: {}", stderr).into());
                     }
                 }
                 Err(e) => {
-                    return Err(format!("Failed to execute custom path '{}': {}", program, e));
+                    return Err(
+                        format!("Failed to execute custom path '{}': {}", program, e).into(),
+                    );
                 }
             }
         }
@@ -409,18 +449,22 @@ console.log(typeof result === 'string' ? result : JSON.stringify(result));
                     {
                         continue;
                     }
-                    return Err(format!("JavaScript execution failed: {}", stderr));
+                    return Err(format!("JavaScript execution failed: {}", stderr).into());
                 }
             }
             Err(_) => continue, // 尝试下一个命令
         }
     }
 
-    Err("JavaScript runtime not found. Please install Node.js or Deno.".to_string())
+    Err("JavaScript runtime not found. Please install Node.js or Deno.".into())
 }
 
 #[tauri::command]
-async fn execute_python(code: String, data: String, python_path: Option<String>) -> Result<String, String> {
+async fn execute_python(
+    code: String,
+    data: String,
+    python_path: Option<String>,
+) -> Result<String, AppError> {
     // 创建 Python 代码包装
     let wrapped_code = format!(
         r#"
@@ -455,11 +499,13 @@ print(result if isinstance(result, str) else json.dumps(result, ensure_ascii=Fal
                         return Ok(stdout.trim().to_string());
                     } else {
                         let stderr = String::from_utf8_lossy(&output.stderr);
-                        return Err(format!("Python execution failed: {}", stderr));
+                        return Err(format!("Python execution failed: {}", stderr).into());
                     }
                 }
                 Err(e) => {
-                    return Err(format!("Failed to execute custom path '{}': {}", program, e));
+                    return Err(
+                        format!("Failed to execute custom path '{}': {}", program, e).into(),
+                    );
                 }
             }
         }
@@ -550,21 +596,21 @@ print(result if isinstance(result, str) else json.dumps(result, ensure_ascii=Fal
                     {
                         continue;
                     }
-                    return Err(format!("Python execution failed: {}", stderr));
+                    return Err(format!("Python execution failed: {}", stderr).into());
                 }
             }
             Err(_) => continue, // 尝试下一个命令
         }
     }
 
-    Err("Python interpreter not found. Please install Python.".to_string())
+    Err("Python interpreter not found. Please install Python.".into())
 }
 
 #[tauri::command]
-async fn register_shortcut(app: tauri::AppHandle, key: String) -> Result<(), String> {
+async fn register_shortcut(app: tauri::AppHandle, key: String) -> Result<(), AppError> {
     // 验证输入参数
     if key.len() != 1 || !key.chars().all(|c| c.is_alphanumeric()) {
-        return Err("快捷键必须是单个字母或数字".to_string());
+        return Err("快捷键必须是单个字母或数字".into());
     }
 
     let key_upper = key.to_uppercase();
@@ -576,7 +622,7 @@ async fn register_shortcut(app: tauri::AppHandle, key: String) -> Result<(), Str
             .lock()
             .map_err(|e| format!("锁定失败: {}", e))?;
         if registered.contains_key(&shortcut_str) {
-            return Err(format!("快捷键 {} 已经被注册", shortcut_str));
+            return Err(format!("快捷键 {} 已经被注册", shortcut_str).into());
         }
     }
 
@@ -594,7 +640,7 @@ async fn register_shortcut(app: tauri::AppHandle, key: String) -> Result<(), Str
 
     let code = code_str
         .parse::<Code>()
-        .map_err(|_| "不支持的按键".to_string())?;
+        .map_err(|_| AppError::from("不支持的按键"))?;
     let shortcut = Shortcut::new(Some(modifiers), code);
 
     // 使用插件注册快捷键
@@ -615,10 +661,10 @@ async fn register_shortcut(app: tauri::AppHandle, key: String) -> Result<(), Str
 }
 
 #[tauri::command]
-async fn unregister_shortcut(app: tauri::AppHandle, key: String) -> Result<(), String> {
+async fn unregister_shortcut(app: tauri::AppHandle, key: String) -> Result<(), AppError> {
     // 验证输入参数
     if key.len() != 1 || !key.chars().all(|c| c.is_alphanumeric()) {
-        return Err("快捷键必须是单个字母或数字".to_string());
+        return Err("快捷键必须是单个字母或数字".into());
     }
 
     let key_upper = key.to_uppercase();
@@ -630,7 +676,7 @@ async fn unregister_shortcut(app: tauri::AppHandle, key: String) -> Result<(), S
             .lock()
             .map_err(|e| format!("锁定失败: {}", e))?;
         if !registered.contains_key(&shortcut_str) {
-            return Err(format!("快捷键 {} 未注册", shortcut_str));
+            return Err(format!("快捷键 {} 未注册", shortcut_str).into());
         }
     }
 
@@ -648,7 +694,7 @@ async fn unregister_shortcut(app: tauri::AppHandle, key: String) -> Result<(), S
 
     let code = code_str
         .parse::<Code>()
-        .map_err(|_| "不支持的按键".to_string())?;
+        .map_err(|_| AppError::from("不支持的按键"))?;
     let shortcut = Shortcut::new(Some(modifiers), code);
 
     // 注销快捷键
@@ -669,10 +715,10 @@ async fn unregister_shortcut(app: tauri::AppHandle, key: String) -> Result<(), S
 }
 
 #[tauri::command]
-async fn is_shortcut_registered(key: String) -> Result<bool, String> {
+async fn is_shortcut_registered(key: String) -> Result<bool, AppError> {
     // 验证输入参数
     if key.len() != 1 || !key.chars().all(|c| c.is_alphanumeric()) {
-        return Err("快捷键必须是单个字母或数字".to_string());
+        return Err("快捷键必须是单个字母或数字".into());
     }
 
     let key_upper = key.to_uppercase();
