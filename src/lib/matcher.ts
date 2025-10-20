@@ -165,7 +165,7 @@ export const PROGRAM_CASES: Option[] = [
  * @returns 匹配到的规则对象，未匹配到则返回`null`
  */
 export async function match(text: string, rules: Rule[]): Promise<Rule | null> {
-  console.debug(`获取待匹配模式: ${rules.map((r) => r.case || '跳过').join('、')}`);
+  console.debug('获取待匹配模式:', rules.map((r) => r.case || '跳过').join('、'));
   let langDetected = false;
   let langDetectedResult: ModelResult[] = [];
   // 循环所有绑定的规则，找到第一个匹配的文本类型
@@ -179,7 +179,7 @@ export async function match(text: string, rules: Rule[]): Promise<Rule | null> {
     // 内置正则匹配
     const builtin = BUILTIN_CASES.find((c) => c.value === _case);
     if (builtin && builtin.pattern && builtin.pattern.test(text)) {
-      console.debug(`内置正则表达式匹配成功: ${builtin.label}`);
+      console.debug('内置正则表达式匹配成功:', builtin.label);
       rule.caseLabel = builtin.label;
       return rule;
     }
@@ -188,7 +188,7 @@ export async function match(text: string, rules: Rule[]): Promise<Rule | null> {
     if (natural) {
       try {
         if (franc(text, { minLength: 2 }) === _case) {
-          console.debug(`自然语言识别成功: ${natural.label}`);
+          console.debug('自然语言识别成功:', natural.label);
           rule.caseLabel = natural.label;
           return rule;
         }
@@ -206,7 +206,7 @@ export async function match(text: string, rules: Rule[]): Promise<Rule | null> {
           console.debug('编程语言识别结果:', langDetectedResult);
         }
         if (matchProgramCase(_case, langDetectedResult)) {
-          console.debug(`编程语言识别成功: ${program.label}`);
+          console.debug('编程语言识别成功:', program.label);
           rule.caseLabel = program.label;
           return rule;
         }
@@ -222,7 +222,7 @@ export async function match(text: string, rules: Rule[]): Promise<Rule | null> {
         try {
           const pattern = new RegExp(regexp.pattern, regexp.flags);
           if (pattern.test(text)) {
-            console.debug(`自定义正则表达式匹配成功: ${regexp.id}`);
+            console.debug('自定义正则表达式匹配成功:', regexp.id);
             rule.caseLabel = regexp.id;
             return rule;
           }
@@ -238,7 +238,7 @@ export async function match(text: string, rules: Rule[]): Promise<Rule | null> {
       if (model) {
         try {
           if (await matchModelCase(model, text)) {
-            console.debug(`自定义模型识别成功: ${model.id}`);
+            console.debug('自定义模型识别成功:', model.id);
             rule.caseLabel = model.id;
             return rule;
           }

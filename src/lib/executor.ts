@@ -46,9 +46,9 @@ export async function execute(rule: Rule, selection: string): Promise<void> {
     const scriptId = action.substring(SCRIPT_MARK.length);
     const script = scripts.current.find((s) => s.id === scriptId);
     if (script) {
-      console.debug(`开始执行脚本: ${scriptId}`);
+      console.debug('开始执行脚本:', scriptId);
       const result = await executeScript(script, data);
-      console.debug(`脚本执行成功: ${result}`);
+      console.debug('脚本执行成功:', result);
       // 保存记录
       entry.actionType = 'script';
       entry.actionLabel = scriptId;
@@ -72,9 +72,9 @@ export async function execute(rule: Rule, selection: string): Promise<void> {
     const promptId = action.substring(PROMPT_MARK.length);
     const prompt = prompts.current.find((p) => p.id === promptId);
     if (prompt) {
-      console.debug(`开始生成提示词: ${promptId}`);
+      console.debug('开始生成提示词:', promptId);
       const result = await renderPrompt(prompt, data);
-      console.debug(`提示词生成成功: ${result}`);
+      console.debug('提示词生成成功:', result);
       // 保存记录
       entry.actionType = 'prompt';
       entry.actionLabel = promptId;

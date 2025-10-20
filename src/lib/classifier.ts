@@ -4,9 +4,9 @@ import * as tf from '@tensorflow/tfjs';
  * 模型存储键名常量
  */
 const STORAGE = {
-  CLASSIFIER: 'sctc',
-  CONFIG: 'sctc_config',
-  TOKENIZER: 'sctc_tokenizer'
+  CLASSIFIER: 'classifier',
+  CONFIG: 'classifier_config',
+  TOKENIZER: 'classifier_tokenizer'
 } as const;
 
 /**
@@ -32,24 +32,6 @@ const MODEL_CACHE = new Map<string, ModelCache>();
 
 /**
  * 基于合成负样本的文本分类器
- *
- * 功能说明:
- * - 只需要提供正样本数据即可训练二分类模型
- * - 自动生成负样本来补充训练数据
- * - 支持多种文本模式识别（车牌号、ISBN、身份证等）
- * - 返回0-1之间的置信度分数
- *
- * 实现原理:
- * 1. 特征工程: 提取字符级、词级、模式、位置等多维特征
- * 2. 负样本生成: 通过随机化和噪声添加生成合成负样本
- * 3. 神经网络: 嵌入层 + 全局平均池化 + 全连接层的轻量级架构
- * 4. 二分类训练: 使用正样本(标签1) + 负样本(标签0)进行监督学习
- *
- * 技术特点:
- * - 支持多模型管理（通过ID区分不同用途的分类器）
- * - 本地存储持久化（模型、分词器、配置自动保存）
- * - 小数据集友好（最少3个正样本即可训练）
- * - 快速训练推理（轻量级架构，适合浏览器环境）
  */
 export class Classifier {
   private model: tf.LayersModel | null = null;
@@ -178,7 +160,7 @@ export class Classifier {
       this.tokenizer.set(token, tokenIndex++);
     });
 
-    console.debug(`词汇表大小: ${this.tokenizer.size}`);
+    console.debug('词汇表大小:', this.tokenizer.size);
   }
 
   // 通用文本标记化（适用于任意类型的文本模式）
@@ -223,19 +205,16 @@ export class Classifier {
     else features.push('VERY_LONG');
 
     // 数字模式
-    if (/^\d+$/.test(text)) features.push('ALL_DIGITS');
+    if (/^\d+$/.test(text)) {
+      features.push('ALL_DIGITS');
+      // 添加具体长度特征（常见长度范围）
+      const len = text.length;
+      if (len >= 4 && len <= 20) {
+        features.push(`DIGITS_${len}`);
+      }
+    }
     if (/^\d{4}-\d{2}-\d{2}$/.test(text)) features.push('DATE_FORMAT');
     if (/^\d{4}\d{2}\d{2}$/.test(text)) features.push('DATE_COMPACT');
-    if (/^\d{13}$/.test(text)) features.push('ISBN13');
-    if (/^\d{10}$/.test(text)) features.push('ISBN10');
-    if (/^\d{15}$/.test(text)) features.push('ID_15_DIGITS');
-    if (/^\d{18}$/.test(text)) features.push('ID_18_DIGITS');
-
-    // 车牌号模式（中国）
-    if (/^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领][A-Z][A-Z0-9]{5}$/.test(text)) {
-      features.push('CHINA_LICENSE_PLATE');
-    }
-    if (/^[A-Z]{2,3}\d{3,4}[A-Z]?$/.test(text)) features.push('LICENSE_PLATE_PATTERN');
 
     // 字母数字混合模式
     if (/^[A-Z0-9-]+$/.test(text.toUpperCase())) features.push('ALPHANUMERIC_DASH');
