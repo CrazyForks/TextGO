@@ -142,6 +142,8 @@ export async function renderPrompt(prompt: Prompt, data: Data): Promise<string> 
 
 /**
  * 显示窗口
+ *
+ * @param entry - 记录对象
  */
 async function showWindow(entry: Entry): Promise<void> {
   try {

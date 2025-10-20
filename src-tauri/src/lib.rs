@@ -11,7 +11,7 @@ use tauri::{
     tray::TrayIconBuilder,
     Emitter, Manager, RunEvent, WindowEvent,
 };
-use tauri_plugin_clipboard_manager::{ClipboardExt};
+use tauri_plugin_clipboard_manager::ClipboardExt;
 use tauri_plugin_global_shortcut::{Code, GlobalShortcutExt, Modifiers, Shortcut};
 use tokio::{process::Command, time::sleep};
 
@@ -139,9 +139,7 @@ async fn get_selection(app: tauri::AppHandle) -> Result<String, String> {
     let clipboard = app.clipboard();
 
     // 保存当前剪贴板内容
-    let original_clipboard = clipboard
-        .read_text()
-        .unwrap_or_else(|_| String::new());
+    let original_clipboard = clipboard.read_text().unwrap_or_else(|_| String::new());
 
     // 清空剪贴板内容
     if let Err(e) = clipboard.clear() {
@@ -178,7 +176,10 @@ async fn get_selection(app: tauri::AppHandle) -> Result<String, String> {
     }
 
     // 超时后仍然没有变化，可能没有选中任何文字
-    eprintln!("剪贴板内容在 {}ms 内未发生变化，可能没有选中任何文本", max_wait_time.as_millis());
+    eprintln!(
+        "剪贴板内容在 {}ms 内未发生变化，可能没有选中任何文本",
+        max_wait_time.as_millis()
+    );
 
     // 恢复原来的剪贴板内容
     if !original_clipboard.is_empty() {
@@ -226,16 +227,18 @@ async fn show_popup_window(app: tauri::AppHandle, payload: String) -> Result<(),
         let logical_screen_y = (screen_position.y as f64 / scale_factor) as i32;
 
         // 使用配置文件中定义的逻辑窗口大小
-        let window_width = 500;  // 对应配置文件中的 width
+        let window_width = 500; // 对应配置文件中的 width
         let window_height = 400; // 对应配置文件中的 height
 
         println!("缩放因子: {}", scale_factor);
-        println!("物理屏幕大小: {}x{}, 位置: ({}, {})",
-                 screen_size.width, screen_size.height,
-                 screen_position.x, screen_position.y);
-        println!("逻辑屏幕大小: {}x{}, 位置: ({}, {})",
-                 logical_screen_width, logical_screen_height,
-                 logical_screen_x, logical_screen_y);
+        println!(
+            "物理屏幕大小: {}x{}, 位置: ({}, {})",
+            screen_size.width, screen_size.height, screen_position.x, screen_position.y
+        );
+        println!(
+            "逻辑屏幕大小: {}x{}, 位置: ({}, {})",
+            logical_screen_width, logical_screen_height, logical_screen_x, logical_screen_y
+        );
         println!("鼠标位置: ({}, {})", mouse_x, mouse_y);
 
         // 计算逻辑屏幕边界
@@ -291,7 +294,7 @@ async fn show_popup_window(app: tauri::AppHandle, payload: String) -> Result<(),
 
 #[tauri::command]
 async fn execute_javascript(code: String, data: String) -> Result<String, String> {
-    // 创建 JavaScript 包装器
+    // 创建 JavaScript 代码包装器
     let wrapped_code = format!(
         r#"
 const data = {};
@@ -303,43 +306,56 @@ console.log(typeof result === 'string' ? result : JSON.stringify(result));
     );
 
     // 获取用户主目录
-    let home_dir = std::env::var("HOME").unwrap_or_default();
+    #[cfg(target_os = "windows")]
+    let home = std::env::var("USERPROFILE").unwrap_or_default();
+    #[cfg(not(target_os = "windows"))]
+    let home = std::env::var("HOME").unwrap_or_default();
 
-    // 常见的可执行文件路径
-    let nvm_path = format!("{}/.nvm/versions/node/*/bin", home_dir);
-    let deno_path = format!("{}/.deno/bin", home_dir);
-    let local_path = format!("{}/.local/bin", home_dir);
-
-    let common_paths = vec![
-        "/usr/local/bin",
-        "/opt/homebrew/bin",
-        "/opt/local/bin",
-        "/usr/bin",
-        "/bin",
-        &nvm_path,
-        &deno_path,
-        &local_path,
-    ];
+    // 常见的 JavaScript 运行环境路径
+    #[cfg(target_os = "windows")]
+    let paths: Vec<String> = {
+        vec![
+            "C:\\Program Files\\nodejs".to_string(),
+            "C:\\Program Files (x86)\\nodejs".to_string(),
+            format!("{}\\AppData\\Local\\Programs\\nodejs", home),
+            format!("{}\\AppData\\Roaming\\npm", home),
+            format!("{}\\.deno\\bin", home),
+        ]
+    };
+    #[cfg(not(target_os = "windows"))]
+    let paths: Vec<String> = {
+        vec![
+            "/usr/local/bin".to_string(),
+            "/opt/homebrew/bin".to_string(),
+            "/opt/local/bin".to_string(),
+            "/usr/bin".to_string(),
+            "/bin".to_string(),
+            format!("{}/.local/bin", home),
+            format!("{}/.deno/bin", home),
+        ]
+    };
 
     // 构建 PATH 环境变量
-    let current_path = std::env::var("PATH").unwrap_or_default();
-    let extended_path = if current_path.is_empty() {
-        common_paths.join(":")
-    } else {
-        format!("{}:{}", common_paths.join(":"), current_path)
+    #[cfg(target_os = "windows")]
+    let separator = ";";
+    #[cfg(not(target_os = "windows"))]
+    let separator = ":";
+
+    let path = match std::env::var("PATH") {
+        Ok(path) if !path.is_empty() => format!("{}{}{}", path, separator, paths.join(separator)),
+        _ => paths.join(separator),
     };
 
     // 尝试使用 node，如果失败则尝试 deno
-    let js_commands = [("node", vec!["-e"]), ("deno", vec!["eval"])];
-
-    for (cmd, args) in &js_commands {
+    let commands = [("node", vec!["-e"]), ("deno", vec!["eval"])];
+    for (cmd, args) in &commands {
         let mut command = Command::new(cmd);
         for arg in args {
             command.arg(arg);
         }
         command
             .arg(&wrapped_code)
-            .env("PATH", &extended_path)
+            .env("PATH", &path)
             .stdout(Stdio::piped())
             .stderr(Stdio::piped());
 
@@ -373,7 +389,7 @@ console.log(typeof result === 'string' ? result : JSON.stringify(result));
 
 #[tauri::command]
 async fn execute_python(code: String, data: String) -> Result<String, String> {
-    // 创建 Python 包装器
+    // 创建 Python 代码包装器
     let wrapped_code = format!(
         r#"
 import json
@@ -386,39 +402,69 @@ print(result if isinstance(result, str) else json.dumps(result, ensure_ascii=Fal
     );
 
     // 获取用户主目录
-    let home_dir = std::env::var("HOME").unwrap_or_default();
+    #[cfg(target_os = "windows")]
+    let home = std::env::var("USERPROFILE").unwrap_or_default();
+    #[cfg(not(target_os = "windows"))]
+    let home = std::env::var("HOME").unwrap_or_default();
 
-    // 常见的 Python 可执行文件路径
-    let pyenv_path = format!("{}/.pyenv/shims", home_dir);
-    let local_path = format!("{}/.local/bin", home_dir);
-
-    let common_paths = vec![
-        &pyenv_path,
-        "/usr/local/bin",
-        "/opt/homebrew/bin",
-        "/opt/local/bin",
-        "/usr/bin",
-        "/bin",
-        &local_path,
-    ];
+    // 常见的 Python 运行环境路径
+    #[cfg(target_os = "windows")]
+    let paths: Vec<String> = {
+        // 添加所有常见 Python 版本及其 Scripts 目录
+        let mut paths = vec![format!("{}\\AppData\\Local\\Microsoft\\WindowsApps", home)];
+        let versions = [
+            "Python313",
+            "Python312",
+            "Python311",
+            "Python310",
+            "Python39",
+        ];
+        for version in versions {
+            paths.push(format!(
+                "{}\\AppData\\Local\\Programs\\Python\\{}",
+                home, version
+            ));
+            paths.push(format!(
+                "{}\\AppData\\Local\\Programs\\Python\\{}\\Scripts",
+                home, version
+            ));
+            paths.push(format!("C:\\{}", version));
+            paths.push(format!("C:\\{}\\Scripts", version));
+        }
+        paths
+    };
+    #[cfg(not(target_os = "windows"))]
+    let paths: Vec<String> = {
+        vec![
+            format!("{}/.pyenv/shims", home),
+            "/usr/local/bin".to_string(),
+            "/opt/homebrew/bin".to_string(),
+            "/opt/local/bin".to_string(),
+            "/usr/bin".to_string(),
+            "/bin".to_string(),
+            format!("{}/.local/bin", home),
+        ]
+    };
 
     // 构建 PATH 环境变量
-    let current_path = std::env::var("PATH").unwrap_or_default();
-    let extended_path = if current_path.is_empty() {
-        common_paths.join(":")
-    } else {
-        format!("{}:{}", common_paths.join(":"), current_path)
+    #[cfg(target_os = "windows")]
+    let separator = ";";
+    #[cfg(not(target_os = "windows"))]
+    let separator = ":";
+
+    let path = match std::env::var("PATH") {
+        Ok(path) if !path.is_empty() => format!("{}{}{}", path, separator, paths.join(separator)),
+        _ => paths.join(separator),
     };
 
     // 尝试使用 python3，如果失败则尝试 python
-    let python_commands = ["python3", "python"];
-
-    for python_cmd in &python_commands {
-        let mut command = Command::new(python_cmd);
+    let commands = ["python3", "python"];
+    for cmd in &commands {
+        let mut command = Command::new(cmd);
         command
             .arg("-c")
             .arg(&wrapped_code)
-            .env("PATH", &extended_path)
+            .env("PATH", &path)
             .stdout(Stdio::piped())
             .stderr(Stdio::piped());
 
@@ -606,7 +652,8 @@ pub fn run() {
                                         "key": key_char_clone,
                                         "selection": selection
                                     });
-                                    if let Err(e) = app_clone.emit("shortcut-triggered", event_data) {
+                                    if let Err(e) = app_clone.emit("shortcut-triggered", event_data)
+                                    {
                                         eprintln!("发送快捷键事件失败: {}", e);
                                     }
                                 }
@@ -617,7 +664,8 @@ pub fn run() {
                                         "key": key_char_clone,
                                         "selection": ""
                                     });
-                                    if let Err(e) = app_clone.emit("shortcut-triggered", event_data) {
+                                    if let Err(e) = app_clone.emit("shortcut-triggered", event_data)
+                                    {
                                         eprintln!("发送快捷键事件失败: {}", e);
                                     }
                                 }
