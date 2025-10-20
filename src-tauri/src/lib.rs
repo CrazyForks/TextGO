@@ -27,14 +27,16 @@ impl std::fmt::Display for AppError {
 
 impl From<String> for AppError {
     fn from(error: String) -> Self {
-        eprintln!("[ERROR] {}", error); // 自动打印错误
+        // 自动打印错误
+        eprintln!("[ERROR] {}", error);
         AppError(error)
     }
 }
 
 impl From<&str> for AppError {
     fn from(error: &str) -> Self {
-        eprintln!("[ERROR] {}", error); // 自动打印错误
+        // 自动打印错误
+        eprintln!("[ERROR] {}", error);
         AppError(error.to_string())
     }
 }
@@ -131,13 +133,13 @@ fn send_copy_key() -> Result<(), AppError> {
     // 发送 Cmd+C 或 Ctrl+C
     enigo
         .key(modifier, Direction::Press)
-        .map_err(|e| AppError::from(e.to_string()))?;
+        .map_err(|e| e.to_string())?;
     enigo
         .key(Key::Unicode('c'), Direction::Click)
-        .map_err(|e| AppError::from(e.to_string()))?;
+        .map_err(|e| e.to_string())?;
     enigo
         .key(modifier, Direction::Release)
-        .map_err(|e| AppError::from(e.to_string()))?;
+        .map_err(|e| e.to_string())?;
 
     Ok(())
 }
@@ -156,13 +158,13 @@ fn send_paste_key() -> Result<(), AppError> {
     // 发送 Cmd+V 或 Ctrl+V
     enigo
         .key(modifier, Direction::Press)
-        .map_err(|e| AppError::from(e.to_string()))?;
+        .map_err(|e| e.to_string())?;
     enigo
         .key(Key::Unicode('v'), Direction::Click)
-        .map_err(|e| AppError::from(e.to_string()))?;
+        .map_err(|e| e.to_string())?;
     enigo
         .key(modifier, Direction::Release)
-        .map_err(|e| AppError::from(e.to_string()))?;
+        .map_err(|e| e.to_string())?;
 
     Ok(())
 }
@@ -177,7 +179,7 @@ async fn get_selection(app: tauri::AppHandle) -> Result<String, AppError> {
 
     // 清空剪贴板内容
     if let Err(e) = clipboard.clear() {
-        return Err(format!("清空剪贴板失败: {}", e).into());
+        return Err(format!("Failed to clear clipboard: {}", e).into());
     }
 
     // 发送复制快捷键
@@ -201,7 +203,7 @@ async fn get_selection(app: tauri::AppHandle) -> Result<String, AppError> {
                 // 恢复原来的剪贴板内容（如果有的话）
                 if !original_clipboard.is_empty() {
                     if let Err(e) = clipboard.write_text(original_clipboard) {
-                        eprintln!("恢复剪贴板内容失败: {}", e);
+                        return Err(format!("Failed to restore clipboard content: {}", e).into());
                     }
                 }
                 return Ok(current_clipboard);
@@ -210,15 +212,16 @@ async fn get_selection(app: tauri::AppHandle) -> Result<String, AppError> {
     }
 
     // 超时后仍然没有变化，可能没有选中任何文字
-    eprintln!(
-        "剪贴板内容在 {}ms 内未发生变化，可能没有选中任何文本",
+    let warning_msg = format!(
+        "Clipboard content did not change within {}ms, possibly no text selected",
         max_wait_time.as_millis()
     );
+    eprintln!("[WARNING] {}", warning_msg);
 
     // 恢复原来的剪贴板内容
     if !original_clipboard.is_empty() {
         if let Err(e) = clipboard.write_text(original_clipboard.clone()) {
-            eprintln!("恢复剪贴板内容失败: {}", e);
+            return Err(format!("Failed to restore clipboard content: {}", e).into());
         }
     }
 
@@ -240,9 +243,6 @@ async fn show_popup_window(app: tauri::AppHandle, payload: String) -> Result<(),
 
     // 检查是否已有结果窗口
     if let Some(window) = app.get_webview_window("popup") {
-        println!("结果窗口已存在，显示并聚焦");
-        println!("鼠标位置: ({}, {})", mouse_x, mouse_y);
-
         // 获取主显示器信息
         let monitor = window
             .current_monitor()
@@ -264,17 +264,6 @@ async fn show_popup_window(app: tauri::AppHandle, payload: String) -> Result<(),
         let window_width = 500; // 对应配置文件中的 width
         let window_height = 400; // 对应配置文件中的 height
 
-        println!("缩放因子: {}", scale_factor);
-        println!(
-            "物理屏幕大小: {}x{}, 位置: ({}, {})",
-            screen_size.width, screen_size.height, screen_position.x, screen_position.y
-        );
-        println!(
-            "逻辑屏幕大小: {}x{}, 位置: ({}, {})",
-            logical_screen_width, logical_screen_height, logical_screen_x, logical_screen_y
-        );
-        println!("鼠标位置: ({}, {})", mouse_x, mouse_y);
-
         // 计算逻辑屏幕边界
         let screen_right = logical_screen_x + logical_screen_width;
         let screen_bottom = logical_screen_y + logical_screen_height;
@@ -286,8 +275,6 @@ async fn show_popup_window(app: tauri::AppHandle, payload: String) -> Result<(),
         let min_y = logical_screen_y + margin;
         let max_y = screen_bottom - window_height - margin;
 
-        println!("可用位置范围: x={}~{}, y={}~{}", min_x, max_x, min_y, max_y);
-
         // 优先尝试鼠标右下方
         let mut window_x = mouse_x + 15;
         let mut window_y = mouse_y + 15;
@@ -295,8 +282,6 @@ async fn show_popup_window(app: tauri::AppHandle, payload: String) -> Result<(),
         // 限制在安全范围内
         window_x = window_x.clamp(min_x, max_x);
         window_y = window_y.clamp(min_y, max_y);
-
-        println!("调整后窗口位置: ({}, {})", window_x, window_y);
 
         // 设置调整后的窗口位置
         window
@@ -315,7 +300,7 @@ async fn show_popup_window(app: tauri::AppHandle, payload: String) -> Result<(),
             .set_focus()
             .map_err(|e| format!("Failed to focus window: {}", e))?;
 
-        // 发送 log 数据到前端
+        // 发送数据到前端
         window
             .emit("popup", payload)
             .map_err(|e| format!("Failed to emit payload data: {}", e))?;
@@ -620,9 +605,9 @@ async fn register_shortcut(app: tauri::AppHandle, key: String) -> Result<(), App
     {
         let registered = REGISTERED_SHORTCUTS
             .lock()
-            .map_err(|e| format!("锁定失败: {}", e))?;
+            .map_err(|e| format!("Failed to lock: {}", e))?;
         if registered.contains_key(&shortcut_str) {
-            return Err(format!("快捷键 {} 已经被注册", shortcut_str).into());
+            return Err(format!("Shortcut {} is already registered", shortcut_str).into());
         }
     }
 
@@ -640,23 +625,22 @@ async fn register_shortcut(app: tauri::AppHandle, key: String) -> Result<(), App
 
     let code = code_str
         .parse::<Code>()
-        .map_err(|_| AppError::from("不支持的按键"))?;
+        .map_err(|_| AppError::from("Unsupported key"))?;
     let shortcut = Shortcut::new(Some(modifiers), code);
 
     // 使用插件注册快捷键
     app.global_shortcut()
         .register(shortcut)
-        .map_err(|e| format!("注册快捷键失败: {}", e))?;
+        .map_err(|e| format!("Failed to register shortcut: {}", e))?;
 
     // 保存到注册表
     {
         let mut registered = REGISTERED_SHORTCUTS
             .lock()
-            .map_err(|e| format!("锁定失败: {}", e))?;
+            .map_err(|e| format!("Failed to lock: {}", e))?;
         registered.insert(shortcut_str.clone(), key_upper);
     }
 
-    println!("成功注册快捷键: {}", shortcut_str);
     Ok(())
 }
 
@@ -664,7 +648,7 @@ async fn register_shortcut(app: tauri::AppHandle, key: String) -> Result<(), App
 async fn unregister_shortcut(app: tauri::AppHandle, key: String) -> Result<(), AppError> {
     // 验证输入参数
     if key.len() != 1 || !key.chars().all(|c| c.is_alphanumeric()) {
-        return Err("快捷键必须是单个字母或数字".into());
+        return Err("Shortcut key must be a single letter or digit".into());
     }
 
     let key_upper = key.to_uppercase();
@@ -674,9 +658,9 @@ async fn unregister_shortcut(app: tauri::AppHandle, key: String) -> Result<(), A
     {
         let registered = REGISTERED_SHORTCUTS
             .lock()
-            .map_err(|e| format!("锁定失败: {}", e))?;
+            .map_err(|e| format!("Failed to lock: {}", e))?;
         if !registered.contains_key(&shortcut_str) {
-            return Err(format!("快捷键 {} 未注册", shortcut_str).into());
+            return Err(format!("Shortcut {} is not registered", shortcut_str).into());
         }
     }
 
@@ -694,23 +678,22 @@ async fn unregister_shortcut(app: tauri::AppHandle, key: String) -> Result<(), A
 
     let code = code_str
         .parse::<Code>()
-        .map_err(|_| AppError::from("不支持的按键"))?;
+        .map_err(|_| AppError::from("Unsupported key"))?;
     let shortcut = Shortcut::new(Some(modifiers), code);
 
     // 注销快捷键
     app.global_shortcut()
         .unregister(shortcut)
-        .map_err(|e| format!("注销快捷键失败: {}", e))?;
+        .map_err(|e| format!("Failed to unregister shortcut: {}", e))?;
 
     // 从注册表中移除
     {
         let mut registered = REGISTERED_SHORTCUTS
             .lock()
-            .map_err(|e| format!("锁定失败: {}", e))?;
+            .map_err(|e| format!("Failed to lock: {}", e))?;
         registered.remove(&shortcut_str);
     }
 
-    println!("成功注销快捷键: {}", shortcut_str);
     Ok(())
 }
 
@@ -718,7 +701,7 @@ async fn unregister_shortcut(app: tauri::AppHandle, key: String) -> Result<(), A
 async fn is_shortcut_registered(key: String) -> Result<bool, AppError> {
     // 验证输入参数
     if key.len() != 1 || !key.chars().all(|c| c.is_alphanumeric()) {
-        return Err("快捷键必须是单个字母或数字".into());
+        return Err("Shortcut key must be a single letter or digit".into());
     }
 
     let key_upper = key.to_uppercase();
@@ -727,7 +710,7 @@ async fn is_shortcut_registered(key: String) -> Result<bool, AppError> {
     // 检查注册状态
     let registered = REGISTERED_SHORTCUTS
         .lock()
-        .map_err(|e| format!("锁定失败: {}", e))?;
+        .map_err(|e| format!("Failed to lock: {}", e))?;
     let is_registered = registered.contains_key(&shortcut_str);
 
     Ok(is_registered)
@@ -743,13 +726,9 @@ pub fn run() {
             tauri_plugin_global_shortcut::Builder::new()
                 .with_handler(|app, shortcut, event| {
                     if event.state() == tauri_plugin_global_shortcut::ShortcutState::Pressed {
-                        println!("快捷键被触发: {:?}", shortcut);
-
                         // 从 shortcut.key 格式化字符串中提取最后一个字符
                         let key_str = format!("{}", shortcut.key);
                         let key_char = key_str.chars().last().unwrap_or('?').to_string();
-
-                        println!("提取到按键: {}", key_char);
 
                         let app_clone = app.clone();
                         let key_char_clone = key_char.clone();
@@ -764,11 +743,11 @@ pub fn run() {
                                     });
                                     if let Err(e) = app_clone.emit("shortcut-triggered", event_data)
                                     {
-                                        eprintln!("发送快捷键事件失败: {}", e);
+                                        eprintln!("[ERROR] Failed to emit shortcut event: {}", e);
                                     }
                                 }
                                 Err(e) => {
-                                    eprintln!("获取选中文本失败: {}", e);
+                                    eprintln!("[ERROR] Failed to get selection: {}", e);
                                     // 即使获取选中文本失败，也发送事件，但选中文本为空
                                     let event_data = serde_json::json!({
                                         "key": key_char_clone,
@@ -776,7 +755,7 @@ pub fn run() {
                                     });
                                     if let Err(e) = app_clone.emit("shortcut-triggered", event_data)
                                     {
-                                        eprintln!("发送快捷键事件失败: {}", e);
+                                        eprintln!("[ERROR] Failed to emit shortcut event: {}", e);
                                     }
                                 }
                             }
