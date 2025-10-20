@@ -1,6 +1,6 @@
 import { predict } from '$lib/classifier';
-import { MODEL_MARK } from '$lib/constants';
-import { models } from '$lib/stores.svelte';
+import { MODEL_MARK, REGEXP_MARK } from '$lib/constants';
+import { models, regexps } from '$lib/stores.svelte';
 import type { Model, Option, Rule } from '$lib/types';
 import { ModelOperations, type ModelResult } from '@vscode/vscode-languagedetection';
 import { franc } from 'franc-min';
@@ -212,6 +212,23 @@ export async function match(text: string, rules: Rule[]): Promise<Rule | null> {
         }
       } catch (error) {
         console.error('编程语言识别失败:', error);
+      }
+    }
+    // 自定义正则匹配
+    if (_case.startsWith(REGEXP_MARK)) {
+      const regexpId = _case.substring(REGEXP_MARK.length);
+      const regexp = regexps.current.find((r) => r.id === regexpId);
+      if (regexp && regexp.pattern) {
+        try {
+          const pattern = new RegExp(regexp.pattern, regexp.flags);
+          if (pattern.test(text)) {
+            console.debug(`自定义正则表达式匹配成功: ${regexp.id}`);
+            rule.caseLabel = regexp.id;
+            return rule;
+          }
+        } catch (error) {
+          console.error('自定义正则表达式匹配失败:', error);
+        }
       }
     }
     // 自定义模型识别

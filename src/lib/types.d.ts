@@ -125,8 +125,10 @@ export type Model = {
  * 正则表达式
  */
 export type Regexp = {
-  /** 正则表达式标识 */
+  /** 正则标识 */
   id: string;
-  /** 正则表达式内容 */
+  /** 正则模式 */
   pattern: string;
+  /** 正则修饰符 */
+  flags?: string;
 };
