@@ -13,7 +13,7 @@ use tauri::{
 };
 use tauri_plugin_clipboard_manager::ClipboardExt;
 use tauri_plugin_global_shortcut::{Code, GlobalShortcutExt, Modifiers, Shortcut};
-use tokio::{process::Command, time::sleep};
+use tokio::{io::AsyncWriteExt, process::Command, time::sleep};
 
 // 自定义错误类型，自动打印错误到控制台
 #[derive(Debug, Clone)]
@@ -331,15 +331,40 @@ console.log(typeof result === 'string' ? result : JSON.stringify(result));
     // 如果提供了自定义路径，直接使用
     if let Some(program) = node_path {
         if !program.is_empty() {
-            let mut command = Command::new(&program);
+            // 在 Windows 上，如果是 .bat 文件，需要特殊处理
+            #[cfg(target_os = "windows")]
+            let use_stdin = program.to_lowercase().ends_with(".bat");
+            #[cfg(not(target_os = "windows"))]
+            let use_stdin = false;
+
+            let mut command = if use_stdin {
+                // 对于 .bat 文件，通过 stdin 传递代码，避免参数转义问题
+                let mut cmd = Command::new(&program);
+                cmd.stdin(Stdio::piped());
+                cmd
+            } else {
+                // 对于普通可执行文件，使用 -e 参数
+                let mut cmd = Command::new(&program);
+                cmd.arg("-e").arg(&wrapped_code);
+                cmd
+            };
+
             command
-                .arg("-e")
-                .arg(&wrapped_code)
                 .stdout(Stdio::piped())
                 .stderr(Stdio::piped());
 
             match command.spawn() {
-                Ok(child) => {
+                Ok(mut child) => {
+                    // 如果使用 stdin，写入代码
+                    if use_stdin {
+                        if let Some(mut stdin) = child.stdin.take() {
+                            stdin.write_all(wrapped_code.as_bytes())
+                                .await
+                                .map_err(|e| format!("Failed to write to stdin: {}", e))?;
+                            drop(stdin); // 关闭 stdin
+                        }
+                    }
+
                     let output = child
                         .wait_with_output()
                         .await
@@ -465,15 +490,40 @@ print(result if isinstance(result, str) else json.dumps(result, ensure_ascii=Fal
     // 如果提供了自定义路径，直接使用
     if let Some(program) = python_path {
         if !program.is_empty() {
-            let mut command = Command::new(&program);
+            // 在 Windows 上，如果是 .bat 文件，需要特殊处理
+            #[cfg(target_os = "windows")]
+            let use_stdin = program.to_lowercase().ends_with(".bat");
+            #[cfg(not(target_os = "windows"))]
+            let use_stdin = false;
+
+            let mut command = if use_stdin {
+                // 对于 .bat 文件，通过 stdin 传递代码，避免参数转义问题
+                let mut cmd = Command::new(&program);
+                cmd.stdin(Stdio::piped());
+                cmd
+            } else {
+                // 对于普通可执行文件，使用 -c 参数
+                let mut cmd = Command::new(&program);
+                cmd.arg("-c").arg(&wrapped_code);
+                cmd
+            };
+
             command
-                .arg("-c")
-                .arg(&wrapped_code)
                 .stdout(Stdio::piped())
                 .stderr(Stdio::piped());
 
             match command.spawn() {
-                Ok(child) => {
+                Ok(mut child) => {
+                    // 如果使用 stdin，写入代码
+                    if use_stdin {
+                        if let Some(mut stdin) = child.stdin.take() {
+                            stdin.write_all(wrapped_code.as_bytes())
+                                .await
+                                .map_err(|e| format!("Failed to write to stdin: {}", e))?;
+                            drop(stdin); // 关闭 stdin
+                        }
+                    }
+
                     let output = child
                         .wait_with_output()
                         .await
