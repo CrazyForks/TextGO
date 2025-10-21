@@ -877,6 +877,7 @@ pub fn run() {
         .expect("error while running tauri application")
         .run(|app_handle, event| {
             // 处理 Reopen 事件
+            #[cfg(target_os = "macos")]
             if let RunEvent::Reopen {
                 has_visible_windows: false,
                 ..
