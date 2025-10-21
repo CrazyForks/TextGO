@@ -3,10 +3,14 @@
   import { ollamaHost } from '$lib/stores.svelte';
   import type { Entry } from '$lib/types';
   import { listen } from '@tauri-apps/api/event';
+  import { type } from '@tauri-apps/plugin-os';
   import { marked } from 'marked';
   import { Ollama } from 'ollama/browser';
   import { ArrowCounterClockwise, CopySimple, Robot, TextIndent } from 'phosphor-svelte';
   import { onMount, untrack } from 'svelte';
+
+  // 操作系统类型
+  const osType = type();
 
   // 快捷键触发记录
   let entry: Entry | null = $state(null);
@@ -156,7 +160,10 @@
 
 {#key entry?.id}
   <main class="h-screen w-screen overflow-hidden">
-    <div class="flex h-8 items-center justify-between gap-2 bg-base-300 pr-2 pl-20" data-tauri-drag-region>
+    <div
+      class="flex h-8 items-center justify-between gap-2 bg-base-300 px-2 {osType === 'macos' ? 'pl-20' : ''}"
+      data-tauri-drag-region
+    >
       <div class="pointer-events-none flex items-center gap-2 truncate">
         {#if promptMode}
           <Robot class="size-4.5 shrink-0" />
