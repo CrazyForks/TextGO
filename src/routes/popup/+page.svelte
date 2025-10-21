@@ -4,7 +4,7 @@
   import type { Entry } from '$lib/types';
   import { listen } from '@tauri-apps/api/event';
   import { marked } from 'marked';
-  import { Ollama } from 'ollama';
+  import { Ollama } from 'ollama/browser';
   import { ArrowCounterClockwise, CopySimple, Robot, TextIndent } from 'phosphor-svelte';
   import { onMount, untrack } from 'svelte';
 
