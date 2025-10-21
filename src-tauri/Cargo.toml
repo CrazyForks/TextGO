@@ -1,6 +1,6 @@
 [package]
 name = "text-go"
-version = "0.1.0"
+version = "1.0.0"
 description = "Smart shortcuts to boost your productivity"
 authors = ["Xylitol <jam.xylitol@gmail.com>"]
 license = "MIT"
