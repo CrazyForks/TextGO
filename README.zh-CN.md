@@ -37,6 +37,21 @@
 
 从 [GitHub Releases](https://github.com/C5H12O5/TextGO/releases) 下载对应平台的安装包，按照安装说明进行安装后即可使用。
 
+#### 常见问题
+
+<details>
+<summary>1. macOS 安装后打开提示“App已损坏，无法打开。”</summary>
+
+<br>
+
+_可以在终端运行以下命令解决：_
+
+```bash
+sudo xattr -r -d com.apple.quarantine /Applications/TextGO.app
+```
+
+</details>
+
 ## 🛠️ 依赖项目
 
 | 名称                                           | 说明                                         |

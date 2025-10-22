@@ -37,6 +37,21 @@ Here are the features you can achieve using `TextGO`:
 
 Download the installer for your platform from [GitHub Releases](https://github.com/C5H12O5/TextGO/releases) and follow the installation instructions.
 
+#### FAQ
+
+<details>
+<summary>1. macOS shows "App is damaged and can’t be opened." after installation</summary>
+
+<br>
+
+_Run the following command in the terminal to resolve:_
+
+```bash
+sudo xattr -r -d com.apple.quarantine /Applications/TextGO.app
+```
+
+</details>
+
 ## 🛠️ Dependencies
 
 | Name                                           | Description                                                                           |
