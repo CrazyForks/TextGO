@@ -3,6 +3,8 @@
   import { Button, Label, List, Modal, Model, Prompt, Regexp, Script, Select, Setting } from '$lib/components';
   import { buildFormSchema } from '$lib/constraint';
   import { JavaScript, LMStudio, Ollama, Python, Regexp as RegexpIcon, Tensorflow } from '$lib/icons';
+  import { m } from '$lib/paraglide/messages';
+  import { getLocale, setLocale, type Locale } from '$lib/paraglide/runtime';
   import {
     historySize,
     models,
@@ -34,29 +36,37 @@
     Warning
   } from 'phosphor-svelte';
 
+  // 当前语言
+  let locale: Locale = $state(getLocale());
+
+  // 表单约束
   const schema = buildFormSchema(({ text }) => ({
     nodePath: text().maxlength(256),
     pythonPath: text().maxlength(256),
     ollamaHost: text().maxlength(256)
   }));
 
+  // 分类模型
   let modelCreator: Model;
   let modelUpdater: Model;
 
+  // 正则表达式
   let regexpCreator: Regexp;
   let regexpUpdater: Regexp;
 
+  // 脚本
   let scriptCreator: Script;
   let scriptUpdater: Script;
   let scriptOptions: Modal;
 
+  // 提示词
   let promptCreator: Prompt;
   let promptUpdater: Prompt;
   let promptOptions: Modal;
 </script>
 
 <div class="flex flex-col gap-2">
-  <Setting icon={FingerprintSimple} title="文本类型" tip="自定义可识别的文本类型">
+  <Setting icon={FingerprintSimple} title={m.text_type()} tip="自定义可识别的文本类型">
     <List
       icon={Sphere}
       title="分类模型"
@@ -200,7 +210,19 @@
     <div class="flex flex-col gap-1 px-1">
       <fieldset class="flex items-center justify-between">
         <Label icon={Translate}>语言设置</Label>
-        <Select options={[{ value: 'zh-CN', label: '简体中文' }]} class="w-36 select-sm" />
+        <Select
+          value={locale}
+          options={[
+            { value: 'en', label: 'English' },
+            { value: 'zh-cn', label: '简体中文' }
+          ]}
+          class="w-36 select-sm"
+          onchange={(event) => {
+            const target = event.currentTarget;
+            locale = target.value as Locale;
+            setLocale(locale);
+          }}
+        />
       </fieldset>
       <div class="divider my-0 opacity-60"></div>
       <fieldset class="flex items-center justify-between">
