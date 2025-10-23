@@ -1,10 +1,27 @@
-.DS_Store
+# Packages
 node_modules
-/build
-/.svelte-kit
-/package
+
+# Output
+.output
+.vercel
+.netlify
+.wrangler
+build/
+.svelte-kit/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
 .env
 .env.*
 !.env.example
+!.env.test
+
+# Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Paraglide
+src/lib/paraglide
