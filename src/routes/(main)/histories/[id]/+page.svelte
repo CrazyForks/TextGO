@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from '$app/state';
   import { CodeMirror } from '$lib/components';
+  import { m } from '$lib/paraglide/messages';
   import { entries } from '$lib/stores.svelte';
   import type { Entry } from '$lib/types';
   import { formatISO8601 } from '$lib/utils';
@@ -46,7 +47,7 @@
         <div class="timeline-end mb-10 w-[calc(100%-0.5rem)] pt-1">
           <div class="flex items-center gap-2">
             <button class="flex cursor-pointer items-center" onclick={() => (clipboardExpanded = !clipboardExpanded)}>
-              <span class="pr-1 text-sm font-semibold italic">剪贴版</span>
+              <span class="pr-1 text-sm font-semibold italic">{m.clipboard()}</span>
               <span class="inline-flex">
                 {#if clipboardExpanded}
                   <CaretDown class="size-4" />
@@ -77,7 +78,7 @@
         <div class="timeline-end mb-10 w-[calc(100%-0.5rem)] pt-1">
           <div class="flex items-center gap-2">
             <button class="flex cursor-pointer items-center" onclick={() => (selectionExpanded = !selectionExpanded)}>
-              <span class="pr-1 text-sm font-semibold italic">选中文本</span>
+              <span class="pr-1 text-sm font-semibold italic">{m.selected_text()}</span>
               <span class="inline-flex">
                 {#if selectionExpanded}
                   <CaretDown class="size-4" />
@@ -127,12 +128,12 @@
           {:else if entry?.quietMode}
             <span class="badge shrink-0 gap-0.5 border badge-xs">
               <Empty class="size-3" />
-              静默模式
+              {m.silent_mode()}
             </span>
           {/if}
         </div>
         <CodeMirror
-          title={promptMode ? '提示词' : '脚本执行结果'}
+          title={promptMode ? m.prompt() : m.script_execution_result()}
           language={promptMode ? markdown() : undefined}
           document={entry?.result}
           class="mt-2"

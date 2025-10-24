@@ -4,6 +4,7 @@
   import { MODEL_MARK, PROMPT_MARK, REGEXP_MARK, SCRIPT_MARK } from '$lib/constants';
   import { buildFormSchema } from '$lib/constraint';
   import { JavaScript, LMStudio, NoData, Ollama, Python, Regexp, Tensorflow } from '$lib/icons';
+  import { m } from '$lib/paraglide/messages';
   import { prompts, scripts, shortcuts } from '$lib/stores.svelte';
   import { type } from '@tauri-apps/plugin-os';
   import {
@@ -38,7 +39,7 @@
 
   // 表单验证规则
   const schema = buildFormSchema(({ text }) => ({
-    key: text().maxlength(1).pattern('^[a-zA-Z0-9]$').oninvalid(oninvalid('暂不支持该键位'))
+    key: text().maxlength(1).pattern('^[a-zA-Z0-9]$').oninvalid(oninvalid(m.key_not_supported()))
   }));
 
   // 规则管理器
@@ -65,7 +66,7 @@
    */
   function checkDuplicate(value: string) {
     if (value && shortcuts.current[value.toUpperCase()]) {
-      oninvalid('该键位已被注册')();
+      oninvalid(m.key_already_registered())();
       return false;
     }
     return true;
@@ -83,7 +84,7 @@
     shortcuts.current[newKey] = [];
     keyModal.close();
     key = '';
-    alert({ message: `快捷键组【 ${newKey} 】注册成功` });
+    alert({ message: m.shortcut_registered_success({ key: newKey }) });
     // 等待 DOM 更新后滚动到新注册的快捷键组位置
     await tick();
     const element = document.querySelector(`[data-shortcut-key="${newKey}"]`);
@@ -124,13 +125,13 @@
 <div class="relative min-h-(--app-h) rounded-container">
   <div class="flex items-center justify-between">
     <span class="pl-1 text-sm opacity-60">
-      已注册快捷键组数量: {Object.keys(shortcuts.current).length}
+      {m.registered_shortcut_count()}: {Object.keys(shortcuts.current).length}
       {#if totalRules > 0}
-        <span class="text-xs tracking-wider opacity-50">({totalRules}条规则)</span>
+        <span class="text-xs tracking-wider opacity-50">({totalRules}{m.rules_count()})</span>
       {/if}
     </span>
     <button class="btn text-sm btn-sm btn-submit" onclick={() => keyModal.show()}>
-      <StackPlus class="size-5" />注册快捷键组
+      <StackPlus class="size-5" />{m.register_shortcut()}
     </button>
   </div>
   {#if showNoData && Object.keys(shortcuts.current).length === 0}
@@ -154,8 +155,8 @@
             // 规则为空时直接删除，否则需要确认
             if (shortcuts.current[key].length > 0) {
               confirm({
-                title: `删除快捷键组[${key}]`,
-                message: '数据删除后无法恢复，是否继续？',
+                title: m.delete_shortcut_title({ key }),
+                message: m.delete_confirm_message(),
                 onconfirm: clear
               });
             } else {
@@ -165,8 +166,8 @@
         ></Button>
       </div>
       <List
-        name="规则"
-        hint="选中文本后按下快捷键触发动作"
+        name={m.rule()}
+        hint={m.rule_hint()}
         bind:data={shortcuts.current[key]}
         oncreate={() => ruleManager?.showModal(key)}
         ondelete={(item) => ruleManager?.unregister(item)}
@@ -175,9 +176,9 @@
           <Sparkle class="mx-1 size-4 opacity-60" />
           <span class="text-sm tracking-wide opacity-60">
             {#if shortcuts.current[key].length > 0}
-              {shortcuts.current[key].length} 条规则
+              {shortcuts.current[key].length} {m.rules_count()}
             {:else}
-              暂无规则
+              {m.no_rules()}
             {/if}
           </span>
         {/snippet}
@@ -198,7 +199,7 @@
               <span class="truncate">{caseLabel}</span>
             {:else}
               <Warning class="size-5 shrink-0 opacity-50" />
-              <span class="truncate opacity-50">类型已失效</span>
+              <span class="truncate opacity-50">{m.type_invalid()}</span>
             {/if}
           </div>
           <ArrowFatLineRight class="size-5 shrink-0 opacity-15" />
@@ -224,7 +225,7 @@
               <span class="truncate">{actionLabel}</span>
             {:else}
               <Warning class="size-5 shrink-0 opacity-50" />
-              <span class="truncate opacity-50">动作已失效</span>
+              <span class="truncate opacity-50">{m.action_invalid()}</span>
             {/if}
           </div>
         {/snippet}
@@ -233,7 +234,7 @@
   {/each}
 </div>
 
-<Modal maxWidth="20rem" icon={StackPlus} title="注册快捷键组" bind:this={keyModal}>
+<Modal maxWidth="20rem" icon={StackPlus} title={m.register_shortcut_title()} bind:this={keyModal}>
   <form
     method="post"
     use:enhance={({ cancel }) => {
@@ -266,7 +267,7 @@
         />
       </div>
       <div class="flex items-center justify-center gap-1 text-xs tracking-wider opacity-30">
-        <Info class="size-4" />请输入要注册的字母或数字键
+        <Info class="size-4" />{m.register_key_tip()}
       </div>
     </fieldset>
   </form>

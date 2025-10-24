@@ -4,6 +4,7 @@
   import { MODEL_MARK, PROMPT_MARK, REGEXP_MARK, SCRIPT_MARK } from '$lib/constants';
   import { manager } from '$lib/manager';
   import { BUILTIN_CASES, NATURAL_CASES, PROGRAM_CASES } from '$lib/matcher';
+  import { m } from '$lib/paraglide/messages';
   import { Loading } from '$lib/states.svelte';
   import { models, prompts, regexps, scripts, shortcuts } from '$lib/stores.svelte';
   import type { Option, Rule } from '$lib/types';
@@ -30,26 +31,26 @@
 
   // 文本类型选项
   const textCases: Option[] = $derived.by(() => {
-    const options: Option[] = [{ value: '', label: '跳过' }];
+    const options: Option[] = [{ value: '', label: m.skip() }];
     if (models.current && models.current.length > 0) {
-      options.push({ value: '--model--', label: '-- 分类模型 --', disabled: true });
-      for (const m of models.current) {
-        options.push({ value: MODEL_MARK + m.id, label: m.id });
+      options.push({ value: '--model--', label: `-- ${m.classification_model()} --`, disabled: true });
+      for (const model of models.current) {
+        options.push({ value: MODEL_MARK + model.id, label: model.id });
       }
     }
     if (regexps.current && regexps.current.length > 0) {
-      options.push({ value: '--regexp--', label: '-- 正则表达式 --', disabled: true });
+      options.push({ value: '--regexp--', label: `-- ${m.regular_expression()} --`, disabled: true });
       for (const r of regexps.current) {
         options.push({ value: REGEXP_MARK + r.id, label: r.id });
       }
     }
     options.push(
       ...[
-        { value: '--builtin--', label: '-- 常规 --', disabled: true },
+        { value: '--builtin--', label: `-- ${m.general()} --`, disabled: true },
         ...BUILTIN_CASES,
-        { value: '--natural--', label: '-- 自然语言 --', disabled: true },
+        { value: '--natural--', label: `-- ${m.natural_language()} --`, disabled: true },
         ...NATURAL_CASES,
-        { value: '--program--', label: '-- 编程语言 --', disabled: true },
+        { value: '--program--', label: `-- ${m.programming_language()} --`, disabled: true },
         ...PROGRAM_CASES
       ]
     );
@@ -58,15 +59,15 @@
 
   // 动作标识选项
   const actionIds: Option[] = $derived.by(() => {
-    const options: Option[] = [{ value: '', label: '显示主窗口' }];
+    const options: Option[] = [{ value: '', label: m.show_main_window() }];
     if (scripts.current && scripts.current.length > 0) {
-      options.push({ value: '--script--', label: '-- 脚本 --', disabled: true });
+      options.push({ value: '--script--', label: `-- ${m.script()} --`, disabled: true });
       for (const s of scripts.current) {
         options.push({ value: SCRIPT_MARK + s.id, label: s.id });
       }
     }
     if (prompts.current && prompts.current.length > 0) {
-      options.push({ value: '--prompt--', label: '-- 对话 --', disabled: true });
+      options.push({ value: '--prompt--', label: `-- ${m.conversation()} --`, disabled: true });
       for (const p of prompts.current) {
         options.push({ value: PROMPT_MARK + p.id, label: p.id });
       }
@@ -82,7 +83,7 @@
   async function register(form: HTMLFormElement) {
     const rules = shortcuts.current[lastKey];
     if (rules.find((r) => r.key === lastKey && r.case === textCase)) {
-      alert({ level: 'error', message: '该类型已被使用' });
+      alert({ level: 'error', message: m.type_already_used() });
       return;
     }
     loading.start();
@@ -95,7 +96,7 @@
       });
       form.reset();
       ruleModal.close();
-      alert('规则添加成功');
+      alert(m.rule_added_success());
     } catch (error) {
       console.error('规则添加失败:', error);
     } finally {
@@ -139,7 +140,7 @@
   }
 </script>
 
-<Modal icon={Sparkle} title="新增规则" bind:this={ruleModal}>
+<Modal icon={Sparkle} title={m.add_rule()} bind:this={ruleModal}>
   <form
     method="post"
     use:enhance={({ formElement, cancel }) => {
@@ -148,15 +149,15 @@
     }}
   >
     <fieldset class="fieldset">
-      <Label icon={FingerprintSimple} class="mt-4">识别类型</Label>
+      <Label icon={FingerprintSimple} class="mt-4">{m.recognize_type()}</Label>
       <Select bind:value={textCase} options={textCases} class="w-full" />
-      <Label icon={ArrowFatLineRight} class="mt-4">执行动作</Label>
+      <Label icon={ArrowFatLineRight} class="mt-4">{m.execute_action()}</Label>
       <Select bind:value={actionId} options={actionIds} class="w-full" />
     </fieldset>
     <div class="modal-action">
-      <button type="button" class="btn" onclick={() => ruleModal?.close()}>取 消</button>
+      <button type="button" class="btn" onclick={() => ruleModal?.close()}>{m.cancel()}</button>
       <button type="submit" class="btn btn-submit" disabled={loading.started}>
-        确 定
+        {m.confirm()}
         {#if loading.delayed}
           <span class="loading loading-xs loading-dots"></span>
         {/if}

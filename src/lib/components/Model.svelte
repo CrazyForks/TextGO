@@ -3,6 +3,7 @@
   import { Classifier } from '$lib/classifier';
   import { CodeMirror, Label, Modal, alert } from '$lib/components';
   import { buildFormSchema } from '$lib/constraint';
+  import { m } from '$lib/paraglide/messages';
   import { Loading } from '$lib/states.svelte';
   import type { Model } from '$lib/types';
   import { FingerprintSimple, Sphere } from 'phosphor-svelte';
@@ -22,7 +23,7 @@
   let modelModal: Modal;
   export const showModal = (id?: string) => {
     if (loading.started) {
-      alert({ level: 'error', message: '其它模型训练中，请稍后' });
+      alert({ level: 'error', message: m.model_training_waiting() });
       return;
     }
     if (id) {
@@ -46,20 +47,20 @@
     modelName = modelName.trim();
     const model = models.find((p) => p.id === modelName);
     if (model && model.id !== modelId) {
-      alert({ level: 'error', message: '该名称已被使用' });
+      alert({ level: 'error', message: m.name_already_used() });
       const nameInput = form.querySelector('input[name="name"]');
       (nameInput as HTMLInputElement | null)?.focus();
       return;
     }
     if (!Classifier.validateTrainingData(modelSample)) {
-      alert({ level: 'error', message: '训练数据格式无效或没有足够的样本' });
+      alert({ level: 'error', message: m.invalid_training_data() });
       return;
     }
     loading.start();
     if (model) {
       // 更新模型信息
       model.threshold = modelThreshold;
-      alert('模型信息更新成功');
+      alert(m.model_info_updated());
       loading.end();
     } else {
       // 训练分类模型
@@ -69,7 +70,7 @@
         sample: modelSample,
         threshold: modelThreshold
       });
-      alert('模型训练开始');
+      alert(m.model_training_started());
       // 训练模型
       const classifier = new Classifier(modelName);
       classifier
@@ -80,7 +81,7 @@
             model.modelTrained = true;
           }
           loading.end();
-          alert('模型训练成功');
+          alert(m.model_training_success());
           // 重置表单
           modelName = '';
           modelSample = '';
@@ -93,14 +94,14 @@
             model.modelTrained = false;
           }
           loading.end();
-          alert({ level: 'error', message: '模型训练失败' });
+          alert({ level: 'error', message: m.model_training_failed() });
         });
     }
     modelModal.close();
   }
 </script>
 
-<Modal icon={Sphere} title="{modelId ? '更新' : '新增'}分类模型" bind:this={modelModal}>
+<Modal icon={Sphere} title="{modelId ? m.update() : m.add()}{m.classification_model()}" bind:this={modelModal}>
   <form
     method="post"
     use:enhance={({ formElement, cancel }) => {
@@ -109,28 +110,28 @@
     }}
   >
     <fieldset class="fieldset">
-      <Label required>类型名称</Label>
+      <Label required>{m.type_name()}</Label>
       <label class="input w-full">
         <FingerprintSimple class="size-5 opacity-50" />
         <input class="autofocus grow" {...schema.name} bind:value={modelName} disabled={!!modelId} />
       </label>
-      <Label required>正向样本</Label>
+      <Label required>{m.positive_samples()}</Label>
       <CodeMirror
-        title="正向样本"
+        title={m.positive_samples()}
         readOnly={!!modelId}
-        placeholder="请输入至少 3 条正向样本，每行一条"
+        placeholder={m.positive_samples_placeholder()}
         bind:document={modelSample}
       />
-      <Label required tip="相似度大于等于该阈值的文本将被识别为该类型">置信度阈值</Label>
+      <Label required tip={m.confidence_threshold_tip()}>{m.confidence_threshold()}</Label>
       <label class="flex w-full items-center gap-4">
         <input class="range grow text-emphasis range-xs" {...schema.threshold} bind:value={modelThreshold} />
         <span class="w-10 text-base font-light tracking-widest">{(modelThreshold * 100).toFixed(0)}%</span>
       </label>
     </fieldset>
     <div class="modal-action">
-      <button type="button" class="btn" onclick={() => modelModal.close()}>取 消</button>
+      <button type="button" class="btn" onclick={() => modelModal.close()}>{m.cancel()}</button>
       <button type="submit" class="btn btn-submit" disabled={loading.started}>
-        确 定
+        {m.confirm()}
         {#if loading.delayed}
           <span class="loading loading-xs loading-dots"></span>
         {/if}

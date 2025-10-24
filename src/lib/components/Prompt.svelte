@@ -1,13 +1,15 @@
 <script lang="ts" module>
+  import { m } from '$lib/paraglide/messages';
   import type { Prompt } from '$lib/types';
 
   /**
    * 提示词模板变量说明
    */
-  const PROMPT_PLACEHOLDER = `
-提示词中可使用以下变量:
-{{clipboard}} - 剪贴板文本
-{{selection}} - 选中的文本
+  const PROMPT_PLACEHOLDER = () =>
+    `
+${m.prompt_variables_tip()}:
+{{clipboard}} - ${m.clipboard_text()}
+{{selection}} - ${m.selected_text_var()}
 `.trimStart();
 </script>
 
@@ -60,13 +62,13 @@
     promptName = promptName.trim();
     const prompt = prompts.find((p) => p.id === promptName);
     if (prompt && prompt.id !== promptId) {
-      alert({ level: 'error', message: '该名称已被使用' });
+      alert({ level: 'error', message: m.name_already_used() });
       const nameInput = form.querySelector('input[name="name"]');
       (nameInput as HTMLInputElement | null)?.focus();
       return;
     }
     if (!promptText || promptText.trim().length === 0) {
-      alert({ level: 'error', message: '提示词内容不能为空' });
+      alert({ level: 'error', message: m.prompt_content_empty() });
       return;
     }
     loading.start();
@@ -76,7 +78,7 @@
       prompt.systemPrompt = systemPromptText;
       prompt.provider = modelProvider;
       prompt.model = modelName;
-      alert('提示词模板更新成功');
+      alert(m.prompt_updated_success());
     } else {
       // 新增提示词
       prompts.push({
@@ -92,14 +94,14 @@
       systemPromptText = '';
       modelProvider = 'ollama';
       modelName = 'gemma3:4b';
-      alert('提示词模板添加成功');
+      alert(m.prompt_added_success());
     }
     promptModal.close();
     loading.end();
   }
 </script>
 
-<Modal icon={Lightbulb} title="{promptId ? '更新' : '新增'}提示词模板" bind:this={promptModal}>
+<Modal icon={Lightbulb} title="{promptId ? m.update() : m.add()}{m.prompt_template()}" bind:this={promptModal}>
   <form
     method="post"
     use:enhance={({ formElement, cancel }) => {
@@ -108,7 +110,7 @@
     }}
   >
     <fieldset class="fieldset">
-      <Label required>动作名称</Label>
+      <Label required>{m.action_name()}</Label>
       <label class="input w-full">
         <ArrowFatLineRight class="size-5 opacity-50" />
         <input
@@ -121,7 +123,7 @@
       </label>
       <div class="grid grid-cols-2 gap-2">
         <span>
-          <Label required>模型提供商</Label>
+          <Label required>{m.model_provider()}</Label>
           <Select
             bind:value={modelProvider}
             options={[
@@ -133,24 +135,29 @@
           />
         </span>
         <span>
-          <Label required>模型名称</Label>
+          <Label required>{m.model_name()}</Label>
           <label class="input w-full">
             <Cube class="size-5 opacity-50" />
             <input class="grow" {...schema.modelName} bind:value={modelName} />
           </label>
         </span>
       </div>
-      <Label required tip="明确描述您希望 AI 执行的具体任务或目标">提示词</Label>
-      <CodeMirror title="提示词" language={markdown()} placeholder={PROMPT_PLACEHOLDER} bind:document={promptText} />
+      <Label required tip={m.prompt_tip()}>{m.prompt()}</Label>
+      <CodeMirror
+        title={m.prompt()}
+        language={markdown()}
+        placeholder={PROMPT_PLACEHOLDER()}
+        bind:document={promptText}
+      />
       <div class="collapse-arrow collapse mt-2 border">
         <input type="checkbox" class="peer" bind:this={collapseCheckbox} />
         <div class="collapse-title border-b-transparent transition-all duration-200 peer-checked:border-b">
           <HeadCircuit class="size-5" />
-          系统提示词 (可选)
+          {m.system_prompt_optional()}
         </div>
-        <div class="collapse-content overflow-x-auto !p-0">
+        <div class="collapse-content overflow-x-auto p-0!">
           <CodeMirror
-            title="系统提示词"
+            title={m.system_prompt()}
             language={markdown()}
             bind:document={systemPromptText}
             class="rounded-t-none border-x-0 border-b-0"
@@ -159,9 +166,9 @@
       </div>
     </fieldset>
     <div class="modal-action">
-      <button type="button" class="btn" onclick={() => promptModal.close()}>取 消</button>
+      <button type="button" class="btn" onclick={() => promptModal.close()}>{m.cancel()}</button>
       <button type="submit" class="btn btn-submit" disabled={loading.started}>
-        确 定
+        {m.confirm()}
         {#if loading.delayed}
           <span class="loading loading-xs loading-dots"></span>
         {/if}

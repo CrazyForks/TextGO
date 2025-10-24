@@ -3,6 +3,7 @@
   import { page } from '$app/state';
   import { Button, Title } from '$lib/components';
   import { GitHub, Moon, Sun } from '$lib/icons';
+  import { m } from '$lib/paraglide/messages';
   import { theme } from '$lib/stores.svelte';
   import { listen } from '@tauri-apps/api/event';
   import { getCurrentWindow } from '@tauri-apps/api/window';
@@ -16,9 +17,9 @@
    * 导航栏菜单项
    */
   const menus = [
-    { text: '历史', icon: ClockCounterClockwise, path: '/histories' },
-    { text: '快捷键', icon: Keyboard, path: '/shortcuts' },
-    { text: '设置', icon: GearSix, path: '/settings' }
+    { text: m.history(), icon: ClockCounterClockwise, path: '/histories' },
+    { text: m.shortcuts(), icon: Keyboard, path: '/shortcuts' },
+    { text: m.settings(), icon: GearSix, path: '/settings' }
   ];
 
   /**

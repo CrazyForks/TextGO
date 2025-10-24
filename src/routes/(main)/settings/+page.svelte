@@ -66,12 +66,12 @@
 </script>
 
 <div class="flex flex-col gap-2">
-  <Setting icon={FingerprintSimple} title={m.text_type()} tip="自定义可识别的文本类型">
+  <Setting icon={FingerprintSimple} title={m.text_type()} tip={m.custom_text_types_tip()}>
     <List
       icon={Sphere}
-      title="分类模型"
-      name="分类模型"
-      hint="训练分类模型识别自定义类型"
+      title={m.classification_model()}
+      name={m.classification_model_name()}
+      hint={m.classification_model_hint()}
       bind:data={models.current}
       oncreate={() => modelCreator.showModal()}
       ondelete={(item) => Classifier.clearSavedModel(item.id)}
@@ -88,19 +88,20 @@
             </span>
             <span class="badge badge-ghost badge-sm">
               <TextT class="size-4 shrink-0 opacity-50" />
-              {vocabulary} 词汇
+              {vocabulary}
+              {m.vocabulary()}
             </span>
           {/if}
         </div>
         {#if item.modelTrained === undefined}
           <div class="flex h-8 items-center gap-2 opacity-50">
             <span class="loading loading-sm loading-spinner"></span>
-            训练中
+            {m.training()}
           </div>
         {:else if item.modelTrained === false}
           <div class="flex h-8 items-center gap-2 opacity-50">
             <Warning class="size-4 shrink-0" />
-            训练失败
+            {m.training_failed()}
           </div>
         {:else}
           <Button
@@ -116,9 +117,9 @@
     </List>
     <List
       icon={Scroll}
-      title="正则表达式"
-      name="正则表达式"
-      hint="编写正则表达式匹配自定义类型"
+      title={m.regular_expression()}
+      name={m.regular_expression_name()}
+      hint={m.regular_expression_hint()}
       bind:data={regexps.current}
       oncreate={() => regexpCreator.showModal()}
     >
@@ -138,12 +139,12 @@
       {/snippet}
     </List>
   </Setting>
-  <Setting icon={ArrowFatLineRight} title="触发动作" tip="自定义识别文本后可执行的动作">
+  <Setting icon={ArrowFatLineRight} title={m.trigger_action()} tip={m.trigger_action_tip()}>
     <List
       icon={Code}
-      title="执行脚本"
-      name="脚本"
-      hint="执行预设的脚本处理选中文本"
+      title={m.execute_script()}
+      name={m.script()}
+      hint={m.execute_script_hint()}
       bind:data={scripts.current}
       oncreate={() => scriptCreator.showModal()}
       moreActions={() => scriptOptions.show()}
@@ -159,7 +160,7 @@
           {#if item.quietMode === true}
             <span class="badge badge-ghost badge-sm">
               <Empty class="size-4 shrink-0 opacity-50" />
-              静默模式
+              {m.silent_mode()}
             </span>
           {/if}
         </div>
@@ -175,9 +176,9 @@
     </List>
     <List
       icon={Robot}
-      title="发起对话"
-      name="提示词模板"
-      hint="通过预设的提示词与 AI 模型对话"
+      title={m.start_conversation()}
+      name={m.prompt_template()}
+      hint={m.start_conversation_hint()}
       bind:data={prompts.current}
       oncreate={() => promptCreator.showModal()}
       moreActions={() => promptOptions.show()}
@@ -206,15 +207,15 @@
       {/snippet}
     </List>
   </Setting>
-  <Setting icon={SlidersHorizontal} title="常规设置">
+  <Setting icon={SlidersHorizontal} title={m.general_settings()}>
     <div class="flex flex-col gap-1 px-1">
       <fieldset class="flex items-center justify-between">
-        <Label icon={Translate}>语言设置</Label>
+        <Label icon={Translate}>{m.language_settings()}</Label>
         <Select
           value={locale}
           options={[
             { value: 'en', label: 'English' },
-            { value: 'zh-cn', label: '简体中文' }
+            { value: 'zh-cn', label: m.simplified_chinese() }
           ]}
           class="w-36 select-sm"
           onchange={(event) => {
@@ -226,11 +227,11 @@
       </fieldset>
       <div class="divider my-0 opacity-60"></div>
       <fieldset class="flex items-center justify-between">
-        <Label icon={Swatches}>主题设置</Label>
+        <Label icon={Swatches}>{m.theme_settings()}</Label>
         <Select
           options={[
-            { value: 'light', label: '浅色' },
-            { value: 'dracula', label: '深色' }
+            { value: 'light', label: m.light_theme() },
+            { value: 'dracula', label: m.dark_theme() }
           ]}
           bind:value={theme.current}
           class="w-36 select-sm"
@@ -238,14 +239,14 @@
       </fieldset>
       <div class="divider my-0 opacity-60"></div>
       <fieldset class="flex items-center justify-between">
-        <Label icon={ClockCounterClockwise}>历史记录</Label>
+        <Label icon={ClockCounterClockwise}>{m.history_records()}</Label>
         <Select
           options={[
-            { value: 0, label: '不保留' },
-            { value: 3, label: '最近 3 条' },
-            { value: 5, label: '最近 5 条' },
-            { value: 10, label: '最近 10 条' },
-            { value: 20, label: '最近 20 条' }
+            { value: 0, label: m.history_none() },
+            { value: 3, label: m.history_recent_3() },
+            { value: 5, label: m.history_recent_5() },
+            { value: 10, label: m.history_recent_10() },
+            { value: 20, label: m.history_recent_20() }
           ]}
           bind:value={historySize.current}
           class="w-36 select-sm"
@@ -267,20 +268,20 @@
 <Prompt bind:this={promptCreator} prompts={prompts.current} />
 <Prompt bind:this={promptUpdater} prompts={prompts.current} />
 
-<Modal icon={GearSix} title="脚本选项设置" bind:this={scriptOptions}>
+<Modal icon={GearSix} title={m.script_options_settings()} bind:this={scriptOptions}>
   <form>
     <fieldset class="fieldset">
-      <Label>Node.js 路径</Label>
+      <Label>{m.nodejs_path()}</Label>
       <input
         class="input w-full"
-        placeholder="例如: /usr/local/bin/node"
+        placeholder={m.nodejs_path_placeholder()}
         {...schema.nodePath}
         bind:value={nodePath.current}
       />
-      <Label>Python 路径</Label>
+      <Label>{m.python_path()}</Label>
       <input
         class="input w-full"
-        placeholder="例如: /usr/local/bin/python3"
+        placeholder={m.python_path_placeholder()}
         {...schema.pythonPath}
         bind:value={pythonPath.current}
       />
@@ -288,10 +289,10 @@
   </form>
 </Modal>
 
-<Modal icon={GearSix} title="AI 选项设置" bind:this={promptOptions}>
+<Modal icon={GearSix} title={m.ai_options_settings()} bind:this={promptOptions}>
   <form>
     <fieldset class="fieldset">
-      <Label>Ollama 服务地址</Label>
+      <Label>{m.ollama_service_address()}</Label>
       <input
         class="input w-full"
         placeholder="http://127.0.0.1:11434"

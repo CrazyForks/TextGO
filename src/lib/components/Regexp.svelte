@@ -2,6 +2,7 @@
   import { enhance } from '$app/forms';
   import { Label, Modal, alert } from '$lib/components';
   import { buildFormSchema } from '$lib/constraint';
+  import { m } from '$lib/paraglide/messages';
   import { Loading } from '$lib/states.svelte';
   import type { Regexp } from '$lib/types';
   import { FingerprintSimple, Scroll } from 'phosphor-svelte';
@@ -39,7 +40,7 @@
     regexpName = regexpName.trim();
     const regexp = regexps.find((p) => p.id === regexpName);
     if (regexp && regexp.id !== regexpId) {
-      alert({ level: 'error', message: '该名称已被使用' });
+      alert({ level: 'error', message: m.name_already_used() });
       const nameInput = form.querySelector('input[name="name"]');
       (nameInput as HTMLInputElement | null)?.focus();
       return;
@@ -48,7 +49,7 @@
     if (regexp) {
       // 更新正则表达式
       regexp.pattern = regexpPattern;
-      alert('正则表达式更新成功');
+      alert(m.regexp_updated_success());
       loading.end();
     } else {
       // 新增正则表达式
@@ -59,14 +60,14 @@
       // 重置表单
       regexpName = '';
       regexpPattern = '';
-      alert('正则表达式添加成功');
+      alert(m.regexp_added_success());
     }
     regexpModal.close();
     loading.end();
   }
 </script>
 
-<Modal icon={Scroll} title="{regexpId ? '更新' : '新增'}正则表达式" bind:this={regexpModal}>
+<Modal icon={Scroll} title="{regexpId ? m.update() : m.add()}{m.regular_expression()}" bind:this={regexpModal}>
   <form
     method="post"
     use:enhance={({ formElement, cancel }) => {
@@ -75,25 +76,25 @@
     }}
   >
     <fieldset class="fieldset">
-      <Label required>类型名称</Label>
+      <Label required>{m.type_name()}</Label>
       <label class="input w-full">
         <FingerprintSimple class="size-5 opacity-50" />
         <input class="autofocus grow" {...schema.name} bind:value={regexpName} disabled={!!regexpId} />
       </label>
-      <Label required>正则表达式</Label>
+      <Label required>{m.regexp_pattern()}</Label>
       <label class="input w-full">
         <input
           class="grow"
-          placeholder="请输入用于匹配类型的正则表达式"
+          placeholder={m.regexp_pattern_placeholder()}
           {...schema.pattern}
           bind:value={regexpPattern}
         />
       </label>
     </fieldset>
     <div class="modal-action">
-      <button type="button" class="btn" onclick={() => regexpModal.close()}>取 消</button>
+      <button type="button" class="btn" onclick={() => regexpModal.close()}>{m.cancel()}</button>
       <button type="submit" class="btn btn-submit" disabled={loading.started}>
-        确 定
+        {m.confirm()}
         {#if loading.delayed}
           <span class="loading loading-xs loading-dots"></span>
         {/if}

@@ -48,6 +48,7 @@ def process(data):
   import { enhance } from '$app/forms';
   import { CodeMirror, Label, Modal, Select, alert, confirm } from '$lib/components';
   import { buildFormSchema } from '$lib/constraint';
+  import { m } from '$lib/paraglide/messages';
   import { Loading } from '$lib/states.svelte';
   import { javascript } from '@codemirror/lang-javascript';
   import { python } from '@codemirror/lang-python';
@@ -87,7 +88,7 @@ def process(data):
     scriptName = scriptName.trim();
     const script = scripts.find((s) => s.id === scriptName);
     if (script && script.id !== scriptId) {
-      alert({ level: 'error', message: '该名称已被使用' });
+      alert({ level: 'error', message: m.name_already_used() });
       const nameInput = form.querySelector('input[name="name"]');
       (nameInput as HTMLInputElement | null)?.focus();
       return;
@@ -98,7 +99,7 @@ def process(data):
       script.lang = scriptLang;
       script.script = scriptText;
       script.quietMode = quietMode;
-      alert('脚本更新成功');
+      alert(m.script_updated_success());
     } else {
       // 新增脚本
       scripts.push({
@@ -112,14 +113,14 @@ def process(data):
       scriptLang = 'javascript';
       scriptText = JAVASCRIPT_TEMPLATE;
       quietMode = false;
-      alert('脚本添加成功');
+      alert(m.script_added_success());
     }
     scriptModal.close();
     loading.end();
   }
 </script>
 
-<Modal icon={Code} title="{scriptId ? '更新' : '新增'}脚本" bind:this={scriptModal}>
+<Modal icon={Code} title="{scriptId ? m.update() : m.add()}{m.script()}" bind:this={scriptModal}>
   <form
     method="post"
     use:enhance={({ formElement, cancel }) => {
@@ -128,12 +129,12 @@ def process(data):
     }}
   >
     <fieldset class="fieldset">
-      <Label required>动作名称</Label>
+      <Label required>{m.action_name()}</Label>
       <label class="input w-full">
         <ArrowFatLineRight class="size-5 opacity-50" />
         <input class="autofocus grow" {...schema.name} bind:value={scriptName} disabled={!!scriptId} />
       </label>
-      <Label required>脚本类型</Label>
+      <Label required>{m.script_type()}</Label>
       <Select
         value={scriptLang}
         options={[
@@ -155,7 +156,7 @@ def process(data):
           } else {
             // 确认改变类型
             confirm({
-              message: '更改脚本类型会重置当前代码，是否继续？',
+              message: m.change_script_type_confirm(),
               oncancel: () => (target.value = scriptLang),
               onconfirm: onconfirm
             });
@@ -164,7 +165,7 @@ def process(data):
       />
       {#key scriptLang}
         <CodeMirror
-          title={scriptLang === 'python' ? 'Python 脚本' : 'JavaScript 脚本'}
+          title={scriptLang === 'python' ? m.python_script() : m.javascript_script()}
           language={scriptLang === 'python' ? python() : javascript()}
           bind:document={scriptText}
           class="mt-4"
@@ -176,15 +177,15 @@ def process(data):
             ? 'text-base-content'
             : ''}"
         >
-          <Empty class="size-5" />静默模式
+          <Empty class="size-5" />{m.silent_mode()}
         </span>
         <input type="checkbox" class="checkbox" bind:checked={quietMode} />
       </label>
     </fieldset>
     <div class="modal-action">
-      <button type="button" class="btn" onclick={() => scriptModal.close()}>取 消</button>
+      <button type="button" class="btn" onclick={() => scriptModal.close()}>{m.cancel()}</button>
       <button type="submit" class="btn btn-submit" disabled={loading.started}>
-        确 定
+        {m.confirm()}
         {#if loading.delayed}
           <span class="loading loading-xs loading-dots"></span>
         {/if}
