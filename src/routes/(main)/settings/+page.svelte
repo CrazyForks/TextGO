@@ -16,6 +16,7 @@
     scripts,
     theme
   } from '$lib/stores.svelte';
+  import { invoke } from '@tauri-apps/api/core';
   import {
     ArrowFatLineRight,
     ClockCounterClockwise,
@@ -38,6 +39,20 @@
 
   // 当前语言
   let locale: Locale = $state(getLocale());
+
+  // 更新托盘菜单语言
+  async function updateTrayMenu() {
+    try {
+      await invoke('update_tray_menu', {
+        toggleText: m.tray_toggle(),
+        shortcutsText: m.tray_shortcuts(),
+        aboutText: m.tray_about(),
+        quitText: m.tray_quit()
+      });
+    } catch (error) {
+      console.error('更新托盘菜单语言失败:', error);
+    }
+  }
 
   // 表单约束
   const schema = buildFormSchema(({ text }) => ({
@@ -230,10 +245,11 @@
             { value: 'zh-cn', label: '简体中文' }
           ]}
           class="w-36 select-sm"
-          onchange={(event) => {
+          onchange={async (event) => {
             const target = event.currentTarget;
             locale = target.value as Locale;
             setLocale(locale);
+            await updateTrayMenu();
           }}
         />
       </fieldset>

@@ -81,7 +81,7 @@ export class Manager {
         rules.push(rule);
       }
     } catch (error) {
-      console.error(error);
+      console.error('注册规则失败:', error);
       throw error;
     }
   }
@@ -106,7 +106,7 @@ export class Manager {
         }
       }
     } catch (error) {
-      console.error(error);
+      console.error('注销规则失败:', error);
       throw error;
     }
   }

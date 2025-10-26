@@ -88,7 +88,7 @@
           modelThreshold = 0.5;
         })
         .catch((error) => {
-          console.error(error);
+          console.error('模型训练失败:', error);
           const model = models.find((c) => c.id === id);
           if (model) {
             model.modelTrained = false;

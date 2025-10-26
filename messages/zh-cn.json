@@ -137,5 +137,9 @@
   "lang_deu": "德文",
   "lang_spa": "西班牙文",
   "lang_por": "葡萄牙文",
-  "lang_arb": "阿拉伯文"
+  "lang_arb": "阿拉伯文",
+  "tray_toggle": "显示/隐藏窗口",
+  "tray_shortcuts": "编辑快捷键...",
+  "tray_about": "关于 TextGO",
+  "tray_quit": "退出"
 }

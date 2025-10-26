@@ -124,7 +124,7 @@
       });
       replaceDocument(view, formatted);
     } catch (error) {
-      console.error(error);
+      console.error('格式化文档失败:', error);
     }
   }
 

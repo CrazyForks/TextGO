@@ -43,7 +43,7 @@ function persisted<T>(key: string, initial: T, options?: Options<T>) {
       initialized = true;
     })
     .catch((error) => {
-      console.error(error);
+      console.error('加载持久化数据失败:', error);
       initialized = true;
     });
 
@@ -65,7 +65,7 @@ function persisted<T>(key: string, initial: T, options?: Options<T>) {
           options?.onchange?.(snapshot);
         })
         .catch((error) => {
-          console.error(error);
+          console.error('保存持久化数据失败:', error);
         });
 
       // 同步到 localStorage

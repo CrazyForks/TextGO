@@ -419,7 +419,7 @@ export class Classifier {
   // 预测文本是否属于目标类别
   predict(text: string): number {
     if (!this.model || !this.modelTrained) {
-      console.warn('模型未加载或未训练。模型存在:', !!this.model, '模型已训练:', this.modelTrained);
+      console.warn('模型未加载或未训练');
       return 0;
     }
 
@@ -438,7 +438,7 @@ export class Classifier {
     // 检查序列是否全为0
     const nonZeroCount = sequence.filter((x) => x > 0).length;
     if (nonZeroCount === 0) {
-      console.warn('所有Token都映射为0。这表明分词器不匹配。');
+      console.warn('输入文本未包含任何已知Token');
       console.debug('输入文本:', text);
       console.debug('提取的Token:', tokens.slice(0, 10));
       console.debug('分词器大小:', this.tokenizer.size);
@@ -449,7 +449,7 @@ export class Classifier {
       console.debug('找到的匹配Token:', matchingTokens.slice(0, 5));
 
       if (matchingTokens.length === 0) {
-        console.error('未找到匹配的Token。模型和输入文本完全不兼容。');
+        console.warn('未找到匹配的Token');
         return 0;
       }
     }
@@ -567,7 +567,7 @@ export class Classifier {
 
       // 验证数据完整性
       if (config.tokenizerSize && config.tokenizerSize !== this.tokenizer.size) {
-        console.warn('分词器大小不匹配。期望:', config.tokenizerSize, '实际:', this.tokenizer.size);
+        console.warn('分词器大小不匹配，期望:', config.tokenizerSize, '实际:', this.tokenizer.size);
       }
 
       // 添加到缓存

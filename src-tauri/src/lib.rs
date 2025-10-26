@@ -27,7 +27,6 @@ impl std::fmt::Display for AppError {
 
 impl From<String> for AppError {
     fn from(error: String) -> Self {
-        // 自动打印错误
         eprintln!("[ERROR] {}", error);
         AppError(error)
     }
@@ -35,7 +34,13 @@ impl From<String> for AppError {
 
 impl From<&str> for AppError {
     fn from(error: &str) -> Self {
-        // 自动打印错误
+        eprintln!("[ERROR] {}", error);
+        AppError(error.to_string())
+    }
+}
+
+impl From<tauri::Error> for AppError {
+    fn from(error: tauri::Error) -> Self {
         eprintln!("[ERROR] {}", error);
         AppError(error.to_string())
     }
@@ -349,16 +354,15 @@ console.log(typeof result === 'string' ? result : JSON.stringify(result));
                 cmd
             };
 
-            command
-                .stdout(Stdio::piped())
-                .stderr(Stdio::piped());
+            command.stdout(Stdio::piped()).stderr(Stdio::piped());
 
             match command.spawn() {
                 Ok(mut child) => {
                     // 如果使用 stdin，写入代码
                     if use_stdin {
                         if let Some(mut stdin) = child.stdin.take() {
-                            stdin.write_all(wrapped_code.as_bytes())
+                            stdin
+                                .write_all(wrapped_code.as_bytes())
                                 .await
                                 .map_err(|e| format!("Failed to write to stdin: {}", e))?;
                             drop(stdin); // 关闭 stdin
@@ -508,16 +512,15 @@ print(result if isinstance(result, str) else json.dumps(result, ensure_ascii=Fal
                 cmd
             };
 
-            command
-                .stdout(Stdio::piped())
-                .stderr(Stdio::piped());
+            command.stdout(Stdio::piped()).stderr(Stdio::piped());
 
             match command.spawn() {
                 Ok(mut child) => {
                     // 如果使用 stdin，写入代码
                     if use_stdin {
                         if let Some(mut stdin) = child.stdin.take() {
-                            stdin.write_all(wrapped_code.as_bytes())
+                            stdin
+                                .write_all(wrapped_code.as_bytes())
                                 .await
                                 .map_err(|e| format!("Failed to write to stdin: {}", e))?;
                             drop(stdin); // 关闭 stdin
@@ -766,6 +769,36 @@ async fn is_shortcut_registered(key: String) -> Result<bool, AppError> {
     Ok(is_registered)
 }
 
+#[tauri::command]
+async fn update_tray_menu(
+    app: tauri::AppHandle,
+    toggle_text: String,
+    shortcuts_text: String,
+    about_text: String,
+    quit_text: String,
+) -> Result<(), AppError> {
+    // 获取托盘图标
+    let tray = app.tray_by_id("main-tray").ok_or("Tray not found")?;
+
+    // 创建新的菜单
+    let menu = Menu::with_items(
+        &app,
+        &[
+            &MenuItem::with_id(&app, "toggle", toggle_text, true, None::<&str>)?,
+            &MenuItem::with_id(&app, "shortcuts", shortcuts_text, true, Some("CmdOrCtrl+,"))?,
+            &PredefinedMenuItem::separator(&app)?,
+            &PredefinedMenuItem::about(&app, Some(&about_text), None)?,
+            &PredefinedMenuItem::separator(&app)?,
+            &MenuItem::with_id(&app, "quit", quit_text, true, Some("CmdOrCtrl+Q"))?,
+        ],
+    )?;
+
+    // 更新托盘菜单
+    tray.set_menu(Some(menu))?;
+
+    Ok(())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -820,18 +853,18 @@ pub fn run() {
             let menu = Menu::with_items(
                 app,
                 &[
-                    &MenuItem::with_id(app, "toggle", "显示/隐藏窗口", true, None::<&str>)?,
+                    &MenuItem::with_id(app, "toggle", "Show/Hide", true, None::<&str>)?,
                     &MenuItem::with_id(
                         app,
                         "shortcuts",
-                        "编辑快捷键...",
+                        "Edit Shortcuts...",
                         true,
                         Some("CmdOrCtrl+,"),
                     )?,
                     &PredefinedMenuItem::separator(app)?,
-                    &PredefinedMenuItem::about(app, Some("关于 TextGO"), None)?,
+                    &PredefinedMenuItem::about(app, Some("About TextGO"), None)?,
                     &PredefinedMenuItem::separator(app)?,
-                    &MenuItem::with_id(app, "quit", "退出", true, Some("CmdOrCtrl+Q"))?,
+                    &MenuItem::with_id(app, "quit", "Quit", true, Some("CmdOrCtrl+Q"))?,
                 ],
             )?;
             // 创建托盘图标
@@ -921,7 +954,8 @@ pub fn run() {
             execute_python,
             register_shortcut,
             unregister_shortcut,
-            is_shortcut_registered
+            is_shortcut_registered,
+            update_tray_menu
         ])
         .build(tauri::generate_context!())
         .expect("error while running tauri application")
