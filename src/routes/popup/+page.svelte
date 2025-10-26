@@ -185,6 +185,7 @@
             <div class="loading loading-sm loading-dots opacity-70"></div>
           {:else if entry?.response}
             <div class="prose prose-sm max-w-none text-base-content/90">
+              <!-- eslint-disable-next-line svelte/no-at-html-tags -->
               {@html marked(entry.response + (streaming ? ' |' : ''))}
             </div>
           {/if}

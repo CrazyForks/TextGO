@@ -1,5 +1,6 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
+  import { resolve } from '$app/paths';
   import { page } from '$app/state';
   import { Button, Title } from '$lib/components';
   import { GitHub, Moon, Sun } from '$lib/icons';
@@ -17,9 +18,9 @@
    * 导航栏菜单项
    */
   const menus = [
-    { text: m.histories(), icon: ClockCounterClockwise, path: '/histories' },
-    { text: m.shortcuts(), icon: Keyboard, path: '/shortcuts' },
-    { text: m.settings(), icon: GearSix, path: '/settings' }
+    { text: m.histories(), icon: ClockCounterClockwise, path: resolve('/histories') },
+    { text: m.shortcuts(), icon: Keyboard, path: resolve('/shortcuts') },
+    { text: m.settings(), icon: GearSix, path: resolve('/settings') }
   ];
 
   /**
@@ -83,7 +84,7 @@
   onMount(() => {
     // 监听跳转快捷键注册页面事件
     const unlisten = listen('goto-shortcuts', async () => {
-      goto('/shortcuts');
+      goto(resolve('/shortcuts'));
     });
     return () => {
       unlisten.then((fn) => fn());
@@ -107,7 +108,10 @@
             class="border-none transition-all hover:bg-base-100 {active
               ? 'gradient bg-base-100 shadow-around'
               : 'text-base-content/80 hover:text-base-content'}"
-            onclick={() => goto(menu.path)}
+            onclick={() => {
+              // eslint-disable-next-line svelte/no-navigation-without-resolve
+              goto(menu.path);
+            }}
           ></Button>
         {/each}
       </span>

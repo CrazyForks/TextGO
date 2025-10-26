@@ -1,5 +1,6 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
+  import { resolve } from '$app/paths';
   import { page } from '$app/state';
   import { Button } from '$lib/components';
   import { m } from '$lib/paraglide/messages';
@@ -41,9 +42,12 @@
                     return;
                   }
                   // 删除后跳转到上一个日志
-                  const prev = index > 0 ? `/histories/${entries.current[index - 1].id}` : '/histories';
                   entries.current.splice(index, 1);
-                  goto(prev);
+                  if (index > 0) {
+                    goto(resolve(`/histories/${entries.current[index - 1].id}`));
+                  } else {
+                    goto(resolve('/histories'));
+                  }
                 }}
               />
             </a>

@@ -199,7 +199,7 @@
               <span class="truncate">{caseLabel}</span>
             {:else}
               <Warning class="size-5 shrink-0 opacity-50" />
-              <span class="truncate opacity-50">{m.type_invalid()}</span>
+              <span class="truncate opacity-50">{m.invalid_type()}</span>
             {/if}
           </div>
           <ArrowFatLineRight class="size-5 shrink-0 opacity-15" />
@@ -225,7 +225,7 @@
               <span class="truncate">{actionLabel}</span>
             {:else}
               <Warning class="size-5 shrink-0 opacity-50" />
-              <span class="truncate opacity-50">{m.action_invalid()}</span>
+              <span class="truncate opacity-50">{m.invalid_action()}</span>
             {/if}
           </div>
         {/snippet}

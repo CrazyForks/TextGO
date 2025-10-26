@@ -302,7 +302,7 @@ export class Classifier {
     // 按各种分隔符分割
     const words = text
       .toLowerCase()
-      .split(/[\s\-_\.\/\\:,;!?]+/)
+      .split(/[\s\-_./\\:,;!?]+/)
       .filter((word) => word.length > 0);
 
     words.forEach((word) => {

@@ -1,6 +1,17 @@
 <script lang="ts">
   import { Classifier } from '$lib/classifier';
-  import { Button, Label, List, Modal, Model, Prompt, Regexp, Script, Select, Setting } from '$lib/components';
+  import {
+    Button,
+    Label,
+    List,
+    Modal,
+    Model,
+    Prompt,
+    Regexp,
+    Script as ScriptModal,
+    Select,
+    Setting
+  } from '$lib/components';
   import { buildFormSchema } from '$lib/constraint';
   import { JavaScript, LMStudio, Ollama, Python, Regexp as RegexpIcon, Tensorflow } from '$lib/icons';
   import { m } from '$lib/paraglide/messages';
@@ -70,8 +81,8 @@
   let regexpUpdater: Regexp;
 
   // 脚本
-  let scriptCreator: Script;
-  let scriptUpdater: Script;
+  let scriptCreator: ScriptModal;
+  let scriptUpdater: ScriptModal;
   let scriptOptions: Modal;
 
   // 提示词
@@ -278,8 +289,8 @@
 <Regexp bind:this={regexpCreator} regexps={regexps.current} />
 <Regexp bind:this={regexpUpdater} regexps={regexps.current} />
 
-<Script bind:this={scriptCreator} scripts={scripts.current} />
-<Script bind:this={scriptUpdater} scripts={scripts.current} />
+<ScriptModal bind:this={scriptCreator} scripts={scripts.current} />
+<ScriptModal bind:this={scriptUpdater} scripts={scripts.current} />
 
 <Prompt bind:this={promptCreator} prompts={prompts.current} />
 <Prompt bind:this={promptUpdater} prompts={prompts.current} />
