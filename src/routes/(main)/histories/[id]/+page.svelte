@@ -47,7 +47,7 @@
         <div class="timeline-end mb-10 w-[calc(100%-0.5rem)] pt-1">
           <div class="flex items-center gap-2">
             <button class="flex cursor-pointer items-center" onclick={() => (clipboardExpanded = !clipboardExpanded)}>
-              <span class="pr-1 text-sm font-semibold italic">{m.clipboard()}</span>
+              <span class="pr-1 text-sm font-semibold italic">{m.clipboard_text()}</span>
               <span class="inline-flex">
                 {#if clipboardExpanded}
                   <CaretDown class="size-4" />
@@ -128,12 +128,12 @@
           {:else if entry?.quietMode}
             <span class="badge shrink-0 gap-0.5 border badge-xs">
               <Empty class="size-3" />
-              {m.silent_mode()}
+              {m.quiet_mode()}
             </span>
           {/if}
         </div>
         <CodeMirror
-          title={promptMode ? m.prompt() : m.script_execution_result()}
+          title={promptMode ? m.prompt() : m.script_result()}
           language={promptMode ? markdown() : undefined}
           document={entry?.result}
           class="mt-2"

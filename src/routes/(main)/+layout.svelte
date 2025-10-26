@@ -17,7 +17,7 @@
    * 导航栏菜单项
    */
   const menus = [
-    { text: m.history(), icon: ClockCounterClockwise, path: '/histories' },
+    { text: m.histories(), icon: ClockCounterClockwise, path: '/histories' },
     { text: m.shortcuts(), icon: Keyboard, path: '/shortcuts' },
     { text: m.settings(), icon: GearSix, path: '/settings' }
   ];

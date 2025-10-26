@@ -40,8 +40,8 @@
     }
     if (regexps.current && regexps.current.length > 0) {
       options.push({ value: '--regexp--', label: `-- ${m.regular_expression()} --`, disabled: true });
-      for (const r of regexps.current) {
-        options.push({ value: REGEXP_MARK + r.id, label: r.id });
+      for (const regexp of regexps.current) {
+        options.push({ value: REGEXP_MARK + regexp.id, label: regexp.id });
       }
     }
     options.push(
@@ -62,14 +62,14 @@
     const options: Option[] = [{ value: '', label: m.show_main_window() }];
     if (scripts.current && scripts.current.length > 0) {
       options.push({ value: '--script--', label: `-- ${m.script()} --`, disabled: true });
-      for (const s of scripts.current) {
-        options.push({ value: SCRIPT_MARK + s.id, label: s.id });
+      for (const script of scripts.current) {
+        options.push({ value: SCRIPT_MARK + script.id, label: script.id });
       }
     }
     if (prompts.current && prompts.current.length > 0) {
       options.push({ value: '--prompt--', label: `-- ${m.conversation()} --`, disabled: true });
-      for (const p of prompts.current) {
-        options.push({ value: PROMPT_MARK + p.id, label: p.id });
+      for (const prompt of prompts.current) {
+        options.push({ value: PROMPT_MARK + prompt.id, label: prompt.id });
       }
     }
     return options;

@@ -35,7 +35,7 @@ export type Entry = {
   key: string;
   /** 触发时间 */
   datetime: string;
-  /** 剪贴版文本 */
+  /** 剪贴板文本 */
   clipboard: string;
   /** 选中的文本 */
   selection: string;

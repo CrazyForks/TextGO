@@ -10,7 +10,7 @@ import { readText, writeText } from '@tauri-apps/plugin-clipboard-manager';
 type Data = {
   /** 选中的文本 */
   selection: string;
-  /** 剪贴版文本 */
+  /** 剪贴板文本 */
   clipboard: string;
   /** 当前日期时间 */
   datetime: string;

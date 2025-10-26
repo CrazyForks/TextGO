@@ -66,11 +66,11 @@
 </script>
 
 <div class="flex flex-col gap-2">
-  <Setting icon={FingerprintSimple} title={m.text_type()} tip={m.custom_text_types_tip()}>
+  <Setting icon={FingerprintSimple} title={m.text_type()} tip={m.text_type_tip()}>
     <List
       icon={Sphere}
       title={m.classification_model()}
-      name={m.classification_model_name()}
+      name={m.classification_model()}
       hint={m.classification_model_hint()}
       bind:data={models.current}
       oncreate={() => modelCreator.showModal()}
@@ -118,7 +118,7 @@
     <List
       icon={Scroll}
       title={m.regular_expression()}
-      name={m.regular_expression_name()}
+      name={m.regular_expression()}
       hint={m.regular_expression_hint()}
       bind:data={regexps.current}
       oncreate={() => regexpCreator.showModal()}
@@ -147,7 +147,7 @@
       hint={m.execute_script_hint()}
       bind:data={scripts.current}
       oncreate={() => scriptCreator.showModal()}
-      moreActions={() => scriptOptions.show()}
+      moreOptions={() => scriptOptions.show()}
     >
       {#snippet row(item)}
         {#if item.lang === 'javascript'}
@@ -160,7 +160,7 @@
           {#if item.quietMode === true}
             <span class="badge badge-ghost badge-sm">
               <Empty class="size-4 shrink-0 opacity-50" />
-              {m.silent_mode()}
+              {m.quiet_mode()}
             </span>
           {/if}
         </div>
@@ -181,7 +181,7 @@
       hint={m.start_conversation_hint()}
       bind:data={prompts.current}
       oncreate={() => promptCreator.showModal()}
-      moreActions={() => promptOptions.show()}
+      moreOptions={() => promptOptions.show()}
     >
       {#snippet row(item)}
         {#if item.provider === 'ollama'}
@@ -210,23 +210,6 @@
   <Setting icon={SlidersHorizontal} title={m.general_settings()}>
     <div class="flex flex-col gap-1 px-1">
       <fieldset class="flex items-center justify-between">
-        <Label icon={Translate}>{m.language_settings()}</Label>
-        <Select
-          value={locale}
-          options={[
-            { value: 'en', label: 'English' },
-            { value: 'zh-cn', label: m.simplified_chinese() }
-          ]}
-          class="w-36 select-sm"
-          onchange={(event) => {
-            const target = event.currentTarget;
-            locale = target.value as Locale;
-            setLocale(locale);
-          }}
-        />
-      </fieldset>
-      <div class="divider my-0 opacity-60"></div>
-      <fieldset class="flex items-center justify-between">
         <Label icon={Swatches}>{m.theme_settings()}</Label>
         <Select
           options={[
@@ -235,6 +218,23 @@
           ]}
           bind:value={theme.current}
           class="w-36 select-sm"
+        />
+      </fieldset>
+      <div class="divider my-0 opacity-60"></div>
+      <fieldset class="flex items-center justify-between">
+        <Label icon={Translate}>{m.language_settings()}</Label>
+        <Select
+          value={locale}
+          options={[
+            { value: 'en', label: 'English' },
+            { value: 'zh-cn', label: '简体中文' }
+          ]}
+          class="w-36 select-sm"
+          onchange={(event) => {
+            const target = event.currentTarget;
+            locale = target.value as Locale;
+            setLocale(locale);
+          }}
         />
       </fieldset>
       <div class="divider my-0 opacity-60"></div>
@@ -268,7 +268,7 @@
 <Prompt bind:this={promptCreator} prompts={prompts.current} />
 <Prompt bind:this={promptUpdater} prompts={prompts.current} />
 
-<Modal icon={GearSix} title={m.script_options_settings()} bind:this={scriptOptions}>
+<Modal icon={GearSix} title={m.script_options()} bind:this={scriptOptions}>
   <form>
     <fieldset class="fieldset">
       <Label>{m.nodejs_path()}</Label>
@@ -289,10 +289,10 @@
   </form>
 </Modal>
 
-<Modal icon={GearSix} title={m.ai_options_settings()} bind:this={promptOptions}>
+<Modal icon={GearSix} title={m.ai_options()} bind:this={promptOptions}>
   <form>
     <fieldset class="fieldset">
-      <Label>{m.ollama_service_address()}</Label>
+      <Label>{m.ollama_host()}</Label>
       <input
         class="input w-full"
         placeholder="http://127.0.0.1:11434"

@@ -1,22 +1,14 @@
 <script lang="ts" module>
   import type { Script } from '$lib/types';
+  import { m } from '$lib/paraglide/messages';
 
   /**
    * JavaScript 代码模板
    */
   const JAVASCRIPT_TEMPLATE = `
-/**
- * 输入数据结构:
- * data = {
- *     "clipboard": "",  // 剪贴板文本
- *     "selection": ""   // 选中的文本
- * }
- *
- * @param data - 输入数据
- * @returns 输出结果
- */
 function process(data) {
-    // write your code here
+    // data.clipboard - ${m.clipboard_text()}
+    // data.selection - ${m.selected_text()}
     return "";
 }
 `.trimStart();
@@ -26,20 +18,8 @@ function process(data) {
    */
   const PYTHON_TEMPLATE = `
 def process(data):
-    """
-    输入数据结构:
-    data = {
-        "clipboard": "",  # 剪贴板文本
-        "selection": ""   # 选中的文本
-    }
-
-    Args:
-        data: 输入数据
-
-    Returns:
-        输出结果
-    """
-    # write your code here
+    # data["clipboard"] - ${m.clipboard_text()}
+    # data["selection"] - ${m.selected_text()}
     return ""
 `.trimStart();
 </script>
@@ -48,7 +28,6 @@ def process(data):
   import { enhance } from '$app/forms';
   import { CodeMirror, Label, Modal, Select, alert, confirm } from '$lib/components';
   import { buildFormSchema } from '$lib/constraint';
-  import { m } from '$lib/paraglide/messages';
   import { Loading } from '$lib/states.svelte';
   import { javascript } from '@codemirror/lang-javascript';
   import { python } from '@codemirror/lang-python';
@@ -156,7 +135,7 @@ def process(data):
           } else {
             // 确认改变类型
             confirm({
-              message: m.change_script_type_confirm(),
+              message: m.change_script_message(),
               oncancel: () => (target.value = scriptLang),
               onconfirm: onconfirm
             });
@@ -165,7 +144,7 @@ def process(data):
       />
       {#key scriptLang}
         <CodeMirror
-          title={scriptLang === 'python' ? m.python_script() : m.javascript_script()}
+          title={m.script()}
           language={scriptLang === 'python' ? python() : javascript()}
           bind:document={scriptText}
           class="mt-4"
@@ -177,7 +156,7 @@ def process(data):
             ? 'text-base-content'
             : ''}"
         >
-          <Empty class="size-5" />{m.silent_mode()}
+          <Empty class="size-5" />{m.quiet_mode()}
         </span>
         <input type="checkbox" class="checkbox" bind:checked={quietMode} />
       </label>

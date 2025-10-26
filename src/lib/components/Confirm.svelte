@@ -1,4 +1,5 @@
 <script lang="ts" module>
+  import { m } from '$lib/paraglide/messages';
   import { escapeHTML, freeze, unfreeze } from '$lib/utils';
   import { Warning, type IconComponentProps } from 'phosphor-svelte';
   import { tick, type Component } from 'svelte';
@@ -70,7 +71,7 @@
    */
   function pretty(title: string): string {
     title = escapeHTML(title);
-    return title.replace(/\[([^\]]+)\]/g, '<span class="truncate font-normal opacity-60">【 $1 】</span>');
+    return title.replace(/\[([^\]]+)\]/g, '<span class="truncate font-normal opacity-60">[$1]</span>');
   }
 </script>
 
@@ -88,16 +89,16 @@
       <h3 class="modal-title">
         <Icon class="size-6" />
         <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-        {@html pretty(msg.title || '确认操作')}
+        {@html pretty(msg.title || m.default_confirm_title())}
       </h3>
       <!-- 消息内容 -->
       <p class="opacity-90">
-        {msg.message || '是否确定要继续？'}
+        {msg.message || m.default_confirm_message()}
       </p>
       <!-- 操作按钮 -->
       <div class="modal-action">
-        <button class="btn" onclick={() => close(id, msg.oncancel)}>取 消</button>
-        <button class="btn btn-submit" onclick={() => close(id, msg.onconfirm)}>确 定</button>
+        <button class="btn" onclick={() => close(id, msg.oncancel)}>{m.cancel()}</button>
+        <button class="btn btn-submit" onclick={() => close(id, msg.onconfirm)}>{m.confirm()}</button>
       </div>
     </div>
   </dialog>

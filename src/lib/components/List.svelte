@@ -11,6 +11,7 @@
   } from 'phosphor-svelte';
   import type { Component, Snippet } from 'svelte';
   import { flip } from 'svelte/animate';
+  import { m } from '$lib/paraglide/messages';
 
   type ListProps = {
     /** 列表标题 */
@@ -32,7 +33,7 @@
     /** 数据删除后的回调函数 */
     ondelete?: (item: T) => void;
     /** 点击更多操作时的回调函数 */
-    moreActions?: () => void;
+    moreOptions?: () => void;
   };
 
   let {
@@ -45,7 +46,7 @@
     class: _class,
     oncreate,
     ondelete,
-    moreActions
+    moreOptions
   }: ListProps = $props();
 
   // 选中数据ID
@@ -87,11 +88,17 @@
       {/if}
     </span>
     <span class="flex items-center gap-1">
-      <Button icon={PlusCircle} weight="bold" text="新增{name}" class="text-green-800" onclick={() => oncreate?.()} />
+      <Button
+        icon={PlusCircle}
+        weight="bold"
+        text="{m.add()}{name}"
+        class="text-green-800"
+        onclick={() => oncreate?.()}
+      />
       <Button
         icon={XCircle}
         weight="bold"
-        text="删除{name}"
+        text="{m.delete()}{name}"
         class={selectedId ? 'text-red-800' : 'btn-disabled'}
         onclick={() => {
           if (!selectedId) {
@@ -99,8 +106,8 @@
           }
           // 确认删除操作
           confirm({
-            title: `删除${name}[${selectedNum}]`,
-            message: '数据删除后无法恢复，是否继续？',
+            title: `${m.delete()}${name}[${selectedNum}]`,
+            message: m.delete_confirm_message(),
             onconfirm: () => {
               const index = data.findIndex((i) => i.id === selectedId);
               if (index !== -1) {
@@ -118,7 +125,7 @@
       <Button
         icon={ArrowCircleUp}
         weight="bold"
-        text="上移"
+        text={m.move_up()}
         class={selectedId ? 'text-surface' : 'btn-disabled'}
         onclick={() => {
           if (!selectedId) {
@@ -136,7 +143,7 @@
       <Button
         icon={ArrowCircleDown}
         weight="bold"
-        text="下移"
+        text={m.move_down()}
         class={selectedId ? 'text-surface' : 'btn-disabled'}
         onclick={() => {
           if (!selectedId) {
@@ -151,22 +158,22 @@
           scrollIntoView();
         }}
       />
-      {#if moreActions}
+      {#if moreOptions}
         <Button
           icon={DotsThree}
           weight="bold"
-          text="更多操作"
+          text={m.more_options()}
           onclick={() => {
-            moreActions?.();
+            moreOptions?.();
           }}
         />
       {/if}
     </span>
   </div>
   <ul class="list scrollbar-none overflow-y-auto bg-base-100 [&_.list-row]:min-h-10 [&_.list-row]:py-1">
-    {#if data.length === 0}
+    {#if data.length === 0 && hint}
       <li class="list-row mx-auto items-center gap-1 text-surface/35">
-        <Lightbulb class="size-3.5" />{hint || '暂无数据'}
+        <Lightbulb class="size-3.5" />{hint}
       </li>
     {/if}
     {#each data as item, index (item.id)}

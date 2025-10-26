@@ -125,7 +125,7 @@
 <div class="relative min-h-(--app-h) rounded-container">
   <div class="flex items-center justify-between">
     <span class="pl-1 text-sm opacity-60">
-      {m.registered_shortcut_count()}: {Object.keys(shortcuts.current).length}
+      {m.registered_shortcuts_count()}: {Object.keys(shortcuts.current).length}
       {#if totalRules > 0}
         <span class="text-xs tracking-wider opacity-50">({totalRules}{m.rules_count()})</span>
       {/if}
@@ -176,7 +176,7 @@
           <Sparkle class="mx-1 size-4 opacity-60" />
           <span class="text-sm tracking-wide opacity-60">
             {#if shortcuts.current[key].length > 0}
-              {shortcuts.current[key].length} {m.rules_count()}
+              {shortcuts.current[key].length}{m.rules_count()}
             {:else}
               {m.no_rules()}
             {/if}
@@ -234,7 +234,7 @@
   {/each}
 </div>
 
-<Modal maxWidth="20rem" icon={StackPlus} title={m.register_shortcut_title()} bind:this={keyModal}>
+<Modal maxWidth="20rem" icon={StackPlus} title={m.register_shortcut()} bind:this={keyModal}>
   <form
     method="post"
     use:enhance={({ cancel }) => {

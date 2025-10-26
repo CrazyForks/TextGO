@@ -5,11 +5,10 @@
   /**
    * 提示词模板变量说明
    */
-  const PROMPT_PLACEHOLDER = () =>
-    `
-${m.prompt_variables_tip()}:
+  const PROMPT_PLACEHOLDER = `
+${m.prompt_variables_tip()}
 {{clipboard}} - ${m.clipboard_text()}
-{{selection}} - ${m.selected_text_var()}
+{{selection}} - ${m.selected_text()}
 `.trimStart();
 </script>
 
@@ -146,7 +145,7 @@ ${m.prompt_variables_tip()}:
       <CodeMirror
         title={m.prompt()}
         language={markdown()}
-        placeholder={PROMPT_PLACEHOLDER()}
+        placeholder={PROMPT_PLACEHOLDER}
         bind:document={promptText}
       />
       <div class="collapse-arrow collapse mt-2 border">
