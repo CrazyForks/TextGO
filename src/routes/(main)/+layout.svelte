@@ -5,6 +5,7 @@
   import { Button, Title } from '$lib/components';
   import { GitHub, Moon, Sun } from '$lib/icons';
   import { m } from '$lib/paraglide/messages';
+  import { deLocalizeHref } from '$lib/paraglide/runtime';
   import { theme } from '$lib/stores.svelte';
   import { listen } from '@tauri-apps/api/event';
   import { getCurrentWindow } from '@tauri-apps/api/window';
@@ -98,7 +99,7 @@
       <!-- 导航菜单 -->
       <span class="mx-auto flex gap-2 pl-16">
         {#each menus as menu (menu.path)}
-          {@const active = page.url.pathname.startsWith(menu.path)}
+          {@const active = deLocalizeHref(page.url.pathname).startsWith(menu.path)}
           <Button
             size="sm"
             square={false}

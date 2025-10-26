@@ -4,6 +4,7 @@
   import { page } from '$app/state';
   import { Button } from '$lib/components';
   import { m } from '$lib/paraglide/messages';
+  import { deLocalizeHref } from '$lib/paraglide/runtime';
   import { entries } from '$lib/stores.svelte';
   import { formatISO8601 } from '$lib/utils';
   import { Trash } from 'phosphor-svelte';
@@ -23,7 +24,7 @@
       <ul class="menu w-full gap-1.5">
         {#each entries.current as entry, index (entry.id)}
           {@const href = `/histories/${entry.id}`}
-          {@const active = page.url.pathname === href}
+          {@const active = deLocalizeHref(page.url.pathname) === href}
           <li animate:flip={{ duration: 200 }}>
             <a {href} class="group gap-1 rounded-md px-1.5 {active ? 'glass bg-emphasis text-neutral-content' : ''}">
               <kbd class="kbd kbd-sm text-primary/80">{entry.key}</kbd>
@@ -37,7 +38,7 @@
                   event.stopPropagation();
                   event.preventDefault();
                   // 不是当前页面，直接删除
-                  if (page.url.pathname !== href) {
+                  if (deLocalizeHref(page.url.pathname) !== href) {
                     entries.current.splice(index, 1);
                     return;
                   }
