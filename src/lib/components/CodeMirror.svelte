@@ -1,4 +1,5 @@
 <script lang="ts" module>
+  import { m } from '$lib/paraglide/messages';
   import type { Language, LanguageSupport } from '@codemirror/language';
   import type { Extension } from '@codemirror/state';
   import type { Options } from 'prettier';
@@ -26,8 +27,6 @@
     /** 是否使用深色主题 */
     darkMode: boolean | 'auto';
 
-    /** 容器的样式 */
-    style: string | null;
     /** 容器的类名 */
     class: string;
     /** 面板的类名 */
@@ -130,28 +129,28 @@
   }
 
   /**
-   * 中文翻译配置
+   * 编辑器中短语的翻译
    */
-  const chinesePhrases: Record<string, string> = {
+  const phrases: Record<string, string> = {
     // 搜索相关翻译
-    Find: '查找',
-    Replace: '替换',
-    next: '下一个',
-    previous: '上一个',
-    all: '全部',
-    'match case': '区分大小写',
-    regexp: '正则表达式',
-    'by word': '全字匹配',
-    replace: '替换',
-    'replace all': '替换全部',
-    close: '关闭',
-    'current match': '当前匹配',
-    'on line': '在第',
-    'replaced match on line $': '已替换第 $ 行的匹配项',
-    'replaced $ matches': '已替换 $ 个匹配项',
+    Find: m.codemirror_find(),
+    Replace: m.codemirror_replace(),
+    next: m.codemirror_next(),
+    previous: m.codemirror_previous(),
+    all: m.codemirror_all(),
+    'match case': m.codemirror_match_case(),
+    regexp: m.codemirror_regexp(),
+    'by word': m.codemirror_by_word(),
+    replace: m.codemirror_replace_action(),
+    'replace all': m.codemirror_replace_all(),
+    close: m.codemirror_close(),
+    'current match': m.codemirror_current_match(),
+    'on line': m.codemirror_on_line(),
+    'replaced match on line $': m.codemirror_replaced_match_on_line(),
+    'replaced $ matches': m.codemirror_replaced_matches(),
     // 跳转相关翻译
-    'Go to line': '跳转到行',
-    go: '跳转'
+    'Go to line': m.codemirror_go_to_line(),
+    go: m.codemirror_go()
   };
 </script>
 
@@ -199,7 +198,6 @@
     readOnly = false,
     darkMode = 'auto',
 
-    style,
     class: _class,
     panelClass,
     editorClass,
@@ -259,7 +257,7 @@
     crosshairCursor(),
     drawSelection(),
     rectangularSelection(),
-    EditorState.phrases.of(chinesePhrases),
+    EditorState.phrases.of(phrases),
     EditorState.allowMultipleSelections.of(true),
     syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
     highlightSpecialChars(),
@@ -393,7 +391,7 @@
   });
 </script>
 
-<div class="shrink-0 overflow-auto rounded-box border-1 border-base-content/20 {_class}" {style}>
+<div class="shrink-0 overflow-auto rounded-box border-1 border-base-content/20 {_class}">
   <div class={editorClass} bind:this={editor}></div>
   <div class="flex items-center justify-between border-t px-2 py-1 {panelClass}">
     <span class="flex items-center gap-2">
@@ -430,10 +428,6 @@
       {lineLength}
       {readOnly}
       {darkMode}
-      {style}
-      class={_class}
-      {panelClass}
-      {editorClass}
       minHeight="60dvh"
       maxHeight="calc(90dvh - 10rem)"
       minWidth="100%"

@@ -107,5 +107,22 @@
   "python_path": "Python Path",
   "python_path_placeholder": "e.g., /usr/local/bin/python3",
   "ai_options": "AI Options",
-  "ollama_host": "Ollama Host"
+  "ollama_host": "Ollama Host",
+  "codemirror_find": "Find",
+  "codemirror_replace": "Replace",
+  "codemirror_next": "next",
+  "codemirror_previous": "previous",
+  "codemirror_all": "all",
+  "codemirror_match_case": "match case",
+  "codemirror_regexp": "regexp",
+  "codemirror_by_word": "by word",
+  "codemirror_replace_action": "replace",
+  "codemirror_replace_all": "replace all",
+  "codemirror_close": "close",
+  "codemirror_current_match": "current match",
+  "codemirror_on_line": "on line",
+  "codemirror_replaced_match_on_line": "replaced match on line $",
+  "codemirror_replaced_matches": "replaced $ matches",
+  "codemirror_go_to_line": "Go to line",
+  "codemirror_go": "go"
 }

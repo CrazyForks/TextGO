@@ -107,5 +107,22 @@
   "python_path": "Python 路径",
   "python_path_placeholder": "例如: /usr/local/bin/python3",
   "ai_options": "AI 选项设置",
-  "ollama_host": "Ollama 服务地址"
+  "ollama_host": "Ollama 服务地址",
+  "codemirror_find": "查找",
+  "codemirror_replace": "替换",
+  "codemirror_next": "下一个",
+  "codemirror_previous": "上一个",
+  "codemirror_all": "全部",
+  "codemirror_match_case": "区分大小写",
+  "codemirror_regexp": "正则表达式",
+  "codemirror_by_word": "全字匹配",
+  "codemirror_replace_action": "替换",
+  "codemirror_replace_all": "替换全部",
+  "codemirror_close": "关闭",
+  "codemirror_current_match": "当前匹配",
+  "codemirror_on_line": "在第",
+  "codemirror_replaced_match_on_line": "已替换第 $ 行的匹配项",
+  "codemirror_replaced_matches": "已替换 $ 个匹配项",
+  "codemirror_go_to_line": "跳转到行",
+  "codemirror_go": "跳转"
 }
