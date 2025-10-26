@@ -29,7 +29,6 @@
   "natural_language": "Natural Language",
   "programming_language": "Programming Language",
   "show_main_window": "Show Main Window",
-  "add_rule": "Add Rule",
   "recognize_type": "Recognize Type",
   "execute_action": "Execute Action",
   "type_already_used": "This type is already in use!",
@@ -124,5 +123,19 @@
   "codemirror_replaced_match_on_line": "replaced match on line $",
   "codemirror_replaced_matches": "replaced $ matches",
   "codemirror_go_to_line": "Go to line",
-  "codemirror_go": "go"
+  "codemirror_go": "go",
+  "type_url": "URL",
+  "type_email": "Email",
+  "type_ipv4": "IPv4 Address",
+  "type_ipv6": "IPv6 Address",
+  "lang_cmn": "Chinese",
+  "lang_eng": "English",
+  "lang_jpn": "Japanese",
+  "lang_kor": "Korean",
+  "lang_rus": "Russian",
+  "lang_fra": "French",
+  "lang_deu": "German",
+  "lang_spa": "Spanish",
+  "lang_por": "Portuguese",
+  "lang_arb": "Arabic"
 }

@@ -1,5 +1,6 @@
 import { predict } from '$lib/classifier';
 import { MODEL_MARK, REGEXP_MARK } from '$lib/constants';
+import { m } from '$lib/paraglide/messages';
 import { models, regexps } from '$lib/stores.svelte';
 import type { Model, Option, Rule } from '$lib/types';
 import { ModelOperations, type ModelResult } from '@vscode/vscode-languagedetection';
@@ -57,25 +58,24 @@ const RELATIVE_THRESHOLD = 0.15;
 export const BUILTIN_CASES: Option[] = [
   {
     value: 'url',
-    label: '网址',
-    pattern:
-      /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/
+    label: m.type_url(),
+    pattern: /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/
   },
   {
     value: 'email',
-    label: '邮箱',
+    label: m.type_email(),
     pattern:
       /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/
   },
   {
     value: 'ipv4',
-    label: 'IPv4 地址',
+    label: m.type_ipv4(),
     pattern:
       /^(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
   },
   {
     value: 'ipv6',
-    label: 'IPv6 地址',
+    label: m.type_ipv6(),
     pattern:
       /^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$/
   }
@@ -85,16 +85,16 @@ export const BUILTIN_CASES: Option[] = [
  * 自然语言识别选项
  */
 export const NATURAL_CASES: Option[] = [
-  { value: 'cmn', label: '中文' },
-  { value: 'eng', label: '英文' },
-  { value: 'jpn', label: '日文' },
-  { value: 'kor', label: '韩文' },
-  { value: 'rus', label: '俄文' },
-  { value: 'fra', label: '法文' },
-  { value: 'deu', label: '德文' },
-  { value: 'spa', label: '西班牙文' },
-  { value: 'por', label: '葡萄牙文' },
-  { value: 'arb', label: '阿拉伯文' }
+  { value: 'cmn', label: m.lang_cmn() },
+  { value: 'eng', label: m.lang_eng() },
+  { value: 'jpn', label: m.lang_jpn() },
+  { value: 'kor', label: m.lang_kor() },
+  { value: 'rus', label: m.lang_rus() },
+  { value: 'fra', label: m.lang_fra() },
+  { value: 'deu', label: m.lang_deu() },
+  { value: 'spa', label: m.lang_spa() },
+  { value: 'por', label: m.lang_por() },
+  { value: 'arb', label: m.lang_arb() }
 ];
 
 /**

@@ -234,7 +234,7 @@
   {/each}
 </div>
 
-<Modal maxWidth="20rem" icon={StackPlus} title={m.register_shortcut()} bind:this={keyModal}>
+<Modal maxWidth="22rem" icon={StackPlus} title={m.register_shortcut()} bind:this={keyModal}>
   <form
     method="post"
     use:enhance={({ cancel }) => {

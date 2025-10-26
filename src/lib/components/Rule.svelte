@@ -140,7 +140,7 @@
   }
 </script>
 
-<Modal icon={Sparkle} title={m.add_rule()} bind:this={ruleModal}>
+<Modal icon={Sparkle} title="{m.add()}{m.rule()}" bind:this={ruleModal}>
   <form
     method="post"
     use:enhance={({ formElement, cancel }) => {
