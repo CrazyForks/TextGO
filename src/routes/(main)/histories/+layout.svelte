@@ -19,7 +19,7 @@
 
 <div class="relative h-(--app-h) rounded-container p-0">
   <div class="absolute inset-y-0 left-0 flex flex-col border-r" style:width={SIDEBAR_WIDTH}>
-    <div class="menu-title text-xs tracking-wide text-base-content/60">{m.history_records()}</div>
+    <div class="menu-title pt-3 text-xs tracking-wide text-base-content/60">{m.history_records()}</div>
     <div class="h-full overflow-y-auto">
       <ul class="menu w-full gap-1.5">
         {#each entries.current as entry, index (entry.id)}
