@@ -6,8 +6,8 @@
   import { type } from '@tauri-apps/plugin-os';
   import { marked } from 'marked';
   import { Ollama } from 'ollama/browser';
-  import { ArrowCounterClockwise, CopySimple, Robot, TextIndent } from 'phosphor-svelte';
-  import { onMount, untrack } from 'svelte';
+  import { ArrowCounterClockwise, CopySimple, Robot, StopCircle, TextIndent } from 'phosphor-svelte';
+  import { onMount } from 'svelte';
 
   // 操作系统类型
   const osType = type();
@@ -22,7 +22,7 @@
   let promptMode: boolean = $derived.by(() => entry?.actionType === 'prompt');
 
   // 流式传输状态
-  let streaming: boolean | null = $state(null);
+  let streaming: boolean = $state(false);
 
   // Ollama 实例
   let ollama = new Ollama();
@@ -39,52 +39,66 @@
   // 滚动定时器
   let scrollInterval: ReturnType<typeof setInterval> | null = $state(null);
 
-  // 开启对话
-  $effect(() => {
-    if (promptMode && streaming === null) {
-      untrack(async () => {
-        if (!entry || !entry.result || !entry.model) {
-          return;
-        }
-        try {
-          // 开始流式传输
-          streaming = true;
-          // 开始自动滚动
-          startAutoScroll();
-          // 添加用户提示词
-          const messages = [{ role: 'user', content: entry.result }];
-          // 添加系统提示词
-          const systemPrompt = entry.systemPrompt?.trim();
-          if (systemPrompt) {
-            messages.unshift({ role: 'system', content: systemPrompt });
-          }
-          const response = await ollama.chat({
-            model: entry.model,
-            messages: messages,
-            stream: true
-          });
-          // 保存回复内容
-          entry.response = '';
-          for await (const part of response) {
-            if (streaming === null) {
-              // 中止流式传输
-              break;
-            }
-            entry.response += part.message.content;
-          }
-        } catch (error) {
-          if (error instanceof Error && error.name !== 'AbortError') {
-            entry.response = error.message || '发生未知错误';
-          }
-        } finally {
-          // 结束流式传输
-          streaming = false;
-          // 停止自动滚动
-          stopAutoScroll();
-        }
-      });
+  /**
+   * 开启对话
+   */
+  async function chat() {
+    if (streaming || !entry || !entry.result || !entry.model || entry.actionType !== 'prompt') {
+      return;
     }
-  });
+    let aborted = false;
+    try {
+      // 开始流式传输
+      streaming = true;
+      // 开始自动滚动
+      startAutoScroll();
+      // 添加用户提示词
+      const messages = [{ role: 'user', content: entry.result }];
+      // 添加系统提示词
+      const systemPrompt = entry.systemPrompt?.trim();
+      if (systemPrompt) {
+        messages.unshift({ role: 'system', content: systemPrompt });
+      }
+      const response = await ollama.chat({
+        model: entry.model,
+        messages: messages,
+        stream: true
+      });
+      // 保存回复内容
+      entry.response = '';
+      for await (const part of response) {
+        if (!streaming) {
+          // 中止流式传输
+          break;
+        }
+        entry.response += part.message.content;
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          aborted = true;
+        } else {
+          entry.response = error.message || '发生未知错误';
+        }
+      }
+    } finally {
+      if (!aborted) {
+        // 停止自动滚动
+        stopAutoScroll();
+        // 结束流式传输
+        streaming = false;
+      }
+    }
+  }
+
+  /**
+   * 中止对话
+   */
+  function abort() {
+    autoScroll && stopAutoScroll();
+    streaming && ollama.abort();
+    streaming = false;
+  }
 
   /**
    * 开始自动滚动
@@ -142,14 +156,12 @@
   onMount(() => {
     const setup = (data: Entry | null) => {
       entry = data;
-      streaming && ollama.abort();
-      streaming = null;
-      autoScroll && stopAutoScroll();
-      autoScroll = false;
+      abort();
     };
     // 监听主进程发送的事件
     const unlisten = listen<string>('popup', (event) => {
       setup(JSON.parse(event.payload) as Entry);
+      chat();
     });
     return () => {
       setup(null);
@@ -171,7 +183,9 @@
         {/if}
       </div>
       <div class="flex items-center gap-1">
-        {#if !promptMode}
+        {#if promptMode}
+          <Button icon={StopCircle} weight="bold" disabled={!(streaming && entry?.response)} onclick={() => abort()} />
+        {:else}
           <Button icon={ArrowCounterClockwise} onclick={() => codeMirror?.reset()} />
           <Button icon={TextIndent} onclick={() => codeMirror?.format()} />
           <Button icon={CopySimple} onclick={() => codeMirror?.copy()} />
