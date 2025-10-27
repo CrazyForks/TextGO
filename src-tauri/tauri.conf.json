@@ -14,7 +14,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "Main",
+        "title": "TextGO",
         "width": 755,
         "height": 635,
         "minWidth": 755,
@@ -27,7 +27,7 @@
       },
       {
         "label": "popup",
-        "title": "Popup",
+        "title": "TextGO",
         "url": "/popup",
         "width": 400,
         "height": 300,

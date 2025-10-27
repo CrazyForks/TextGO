@@ -135,6 +135,11 @@ fn send_copy_key() -> Result<(), AppError> {
     #[cfg(not(target_os = "macos"))]
     let modifier = Key::Control;
 
+    // 释放 Shift 键
+    enigo
+        .key(Key::Shift, Direction::Release)
+        .map_err(|e| e.to_string())?;
+
     // 发送 Cmd+C 或 Ctrl+C
     enigo
         .key(modifier, Direction::Press)
@@ -159,6 +164,11 @@ fn send_paste_key() -> Result<(), AppError> {
     let modifier = Key::Meta;
     #[cfg(not(target_os = "macos"))]
     let modifier = Key::Control;
+
+    // 释放 Shift 键
+    enigo
+        .key(Key::Shift, Direction::Release)
+        .map_err(|e| e.to_string())?;
 
     // 发送 Cmd+V 或 Ctrl+V
     enigo
