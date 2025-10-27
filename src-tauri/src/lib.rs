@@ -853,7 +853,7 @@ pub fn run() {
             let menu = Menu::with_items(
                 app,
                 &[
-                    &MenuItem::with_id(app, "toggle", "Show/Hide", true, None::<&str>)?,
+                    &MenuItem::with_id(app, "toggle", "Show / Hide", true, None::<&str>)?,
                     &MenuItem::with_id(
                         app,
                         "shortcuts",
