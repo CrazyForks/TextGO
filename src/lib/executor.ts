@@ -65,7 +65,7 @@ export async function execute(rule: Rule, selection: string): Promise<void> {
         await writeText(result);
         await invoke('send_paste_key');
       } else {
-        await showWindow(entry);
+        await showPopup(entry);
       }
     }
   } else if (action.startsWith(PROMPT_MARK)) {
@@ -87,7 +87,7 @@ export async function execute(rule: Rule, selection: string): Promise<void> {
       if (entries.current.length > historySize.current) {
         entries.current = entries.current.slice(0, historySize.current);
       }
-      await showWindow(entry);
+      await showPopup(entry);
     }
   }
 }
@@ -143,14 +143,14 @@ export async function renderPrompt(prompt: Prompt, data: Data): Promise<string> 
 }
 
 /**
- * 显示窗口
+ * 显示弹出窗口
  *
  * @param entry - 记录对象
  */
-async function showWindow(entry: Entry): Promise<void> {
+async function showPopup(entry: Entry): Promise<void> {
   try {
-    await invoke('show_popup_window', { payload: JSON.stringify(entry) });
+    await invoke('show_popup', { payload: JSON.stringify(entry) });
   } catch (error) {
-    console.error('显示窗口失败:', error);
+    console.error('显示弹出窗口失败:', error);
   }
 }

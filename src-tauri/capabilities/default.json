@@ -14,6 +14,7 @@
     "core:window:allow-start-dragging",
     "os:default",
     "store:default",
+    "dialog:default",
     "opener:default",
     "clipboard-manager:allow-clear",
     "clipboard-manager:allow-read-text",

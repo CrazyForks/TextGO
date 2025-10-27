@@ -114,7 +114,7 @@ fn toggle_window(app: tauri::AppHandle) {
 }
 
 #[tauri::command]
-fn show_shortcuts(app: tauri::AppHandle) {
+fn goto_shortcuts(app: tauri::AppHandle) {
     if let Some(window) = app.get_webview_window("main") {
         let _ = window.show();
         let _ = window.set_focus();
@@ -244,7 +244,7 @@ async fn get_selection(app: tauri::AppHandle) -> Result<String, AppError> {
 }
 
 #[tauri::command]
-async fn show_popup_window(app: tauri::AppHandle, payload: String) -> Result<(), AppError> {
+async fn show_popup(app: tauri::AppHandle, payload: String) -> Result<(), AppError> {
     // 获取当前鼠标位置
     let (mouse_x, mouse_y) = {
         let enigo = ENIGO
@@ -658,7 +658,7 @@ print(result if isinstance(result, str) else json.dumps(result, ensure_ascii=Fal
 async fn register_shortcut(app: tauri::AppHandle, key: String) -> Result<(), AppError> {
     // 验证输入参数
     if key.len() != 1 || !key.chars().all(|c| c.is_alphanumeric()) {
-        return Err("快捷键必须是单个字母或数字".into());
+        return Err("Shortcut key must be a single letter or digit".into());
     }
 
     let key_upper = key.to_uppercase();
@@ -797,7 +797,10 @@ async fn update_tray_menu(
             &MenuItem::with_id(&app, "toggle", toggle_text, true, None::<&str>)?,
             &MenuItem::with_id(&app, "shortcuts", shortcuts_text, true, Some("CmdOrCtrl+,"))?,
             &PredefinedMenuItem::separator(&app)?,
+            #[cfg(target_os = "macos")]
             &PredefinedMenuItem::about(&app, Some(&about_text), None)?,
+            #[cfg(not(target_os = "macos"))]
+            &MenuItem::with_id(&app, "about", about_text, true, None::<&str>)?,
             &PredefinedMenuItem::separator(&app)?,
             &MenuItem::with_id(&app, "quit", quit_text, true, Some("CmdOrCtrl+Q"))?,
         ],
@@ -809,12 +812,28 @@ async fn update_tray_menu(
     Ok(())
 }
 
+#[tauri::command]
+fn show_about(app: tauri::AppHandle) {
+    use tauri_plugin_dialog::{DialogExt, MessageDialogKind};
+
+    let package_info = app.package_info();
+
+    // 使用 dialog 插件显示消息框
+    app.dialog()
+        .message(format!("Version {}", package_info.version.to_string()))
+        .title(package_info.name.clone())
+        .kind(MessageDialogKind::Info)
+        .blocking_show();
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_os::init())
+        .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_clipboard_manager::init())
+        .plugin(tauri_plugin_store::Builder::default().build())
         .plugin(
             tauri_plugin_global_shortcut::Builder::new()
                 .with_handler(|app, shortcut, event| {
@@ -857,7 +876,6 @@ pub fn run() {
                 })
                 .build(),
         )
-        .plugin(tauri_plugin_store::Builder::default().build())
         .setup(|app| {
             // 创建托盘菜单
             let menu = Menu::with_items(
@@ -872,7 +890,10 @@ pub fn run() {
                         Some("CmdOrCtrl+,"),
                     )?,
                     &PredefinedMenuItem::separator(app)?,
+                    #[cfg(target_os = "macos")]
                     &PredefinedMenuItem::about(app, Some("About TextGO"), None)?,
+                    #[cfg(not(target_os = "macos"))]
+                    &MenuItem::with_id(app, "about", "About TextGO", true, None::<&str>)?,
                     &PredefinedMenuItem::separator(app)?,
                     &MenuItem::with_id(app, "quit", "Quit", true, Some("CmdOrCtrl+Q"))?,
                 ],
@@ -885,12 +906,13 @@ pub fn run() {
                 .show_menu_on_left_click(true) // 左键也显示菜单
                 .on_menu_event(|app, event| match event.id.as_ref() {
                     "toggle" => {
-                        // 调用 toggle_window 命令
                         toggle_window(app.clone());
                     }
                     "shortcuts" => {
-                        // 调用 show_shortcuts 命令
-                        show_shortcuts(app.clone());
+                        goto_shortcuts(app.clone());
+                    }
+                    "about" => {
+                        show_about(app.clone());
                     }
                     "quit" => {
                         app.exit(0);
@@ -955,17 +977,18 @@ pub fn run() {
             show_window,
             hide_window,
             toggle_window,
-            show_shortcuts,
+            goto_shortcuts,
             send_copy_key,
             send_paste_key,
             get_selection,
-            show_popup_window,
+            show_popup,
             execute_javascript,
             execute_python,
             register_shortcut,
             unregister_shortcut,
             is_shortcut_registered,
-            update_tray_menu
+            update_tray_menu,
+            show_about
         ])
         .build(tauri::generate_context!())
         .expect("error while running tauri application")
