@@ -43,7 +43,7 @@
   .border-r,
   .border-b,
   .border-l {
-    @apply !border-(--color-border);
+    @apply border-border!;
   }
 
   .input,
@@ -52,7 +52,7 @@
     &:has(> select[disabled]),
     &:is(:disabled, [disabled]),
     fieldset:disabled & {
-      @apply !border-base-content/10;
+      @apply border-base-content/10!;
     }
   }
 
@@ -63,12 +63,12 @@
     @apply transition-colors;
     &:focus,
     &:focus-within {
-      @apply !border-primary/80 !outline-none;
+      @apply border-primary/80! outline-none!;
     }
   }
 
   .modal-box {
-    @apply mt-4 flex !max-h-[90%] flex-col gap-4 !overscroll-none !p-3;
+    @apply mt-4 flex max-h-[90%]! flex-col gap-4 overscroll-none! p-3!;
     > form {
       @apply flex flex-col gap-4;
     }
@@ -82,7 +82,7 @@
       }
     }
     .modal-action {
-      @apply !mt-4;
+      @apply mt-4!;
       > button {
         @apply min-w-20;
       }
@@ -90,7 +90,7 @@
   }
 
   .collapse-title {
-    @apply flex items-center gap-1 bg-base-150 !py-2 text-sm text-base-content/80 [&:after]:!top-[1.2rem];
+    @apply flex items-center gap-1 bg-base-150 py-2! text-sm text-base-content/80 [&:after]:top-[1.2rem]!;
   }
 }
 
@@ -119,7 +119,7 @@
 }
 
 @utility rounded-container {
-  @apply rounded-box border border-(--color-border) bg-base-100 p-4 shadow-xs;
+  @apply rounded-box border border-border bg-base-100 p-4 shadow-xs;
 }
 
 .tippy-box[data-theme~='neutral'] {

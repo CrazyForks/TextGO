@@ -1,5 +1,6 @@
 <script lang="ts" generics="T extends { id: string }">
   import { Button, confirm } from '$lib/components';
+  import { m } from '$lib/paraglide/messages';
   import {
     ArrowCircleDown,
     ArrowCircleUp,
@@ -11,7 +12,6 @@
   } from 'phosphor-svelte';
   import type { Component, Snippet } from 'svelte';
   import { flip } from 'svelte/animate';
-  import { m } from '$lib/paraglide/messages';
 
   type ListProps = {
     /** 列表标题 */
@@ -106,7 +106,7 @@
           }
           // 确认删除操作
           confirm({
-            title: `${m.delete()}${name}[${selectedNum}]`,
+            title: `${m.delete()}${name} [ ${selectedNum} ]`,
             message: m.delete_confirm_message(),
             onconfirm: () => {
               const index = data.findIndex((i) => i.id === selectedId);

@@ -9,13 +9,13 @@
 <div class="flex items-center gap-1 text-emphasis {_class}">
   <kbd class="kbd px-1.5 kbd-sm">
     {#if osType === 'macos'}
-      <Command class="size-[14px]" />
+      <Command class="size-3.5" />
     {:else}
-      <Control class="size-[14px]" />
+      <Control class="size-3.5" />
     {/if}
   </kbd>
   <kbd class="kbd px-1.5 kbd-sm">
-    <ArrowFatUp class="size-[14px]" />
+    <ArrowFatUp class="size-3.5" />
   </kbd>
   <kbd class="kbd px-2 kbd-sm">
     <div class="text-sm font-light">{key}</div>

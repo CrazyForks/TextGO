@@ -33,7 +33,7 @@
       <div class="timeline-middle">
         <Clock class="size-5 opacity-50" />
       </div>
-      <div class="timeline-end mb-10 w-[calc(100%-0.5rem)] pt-[1px]">
+      <div class="timeline-end mb-10 w-[calc(100%-0.5rem)] pt-px">
         <time class="pr-1 text-sm italic opacity-50">{formatISO8601(entry?.datetime)}</time>
       </div>
       <hr />

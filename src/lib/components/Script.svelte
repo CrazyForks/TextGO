@@ -1,6 +1,6 @@
 <script lang="ts" module>
-  import type { Script } from '$lib/types';
   import { m } from '$lib/paraglide/messages';
+  import type { Script } from '$lib/types';
 
   /**
    * JavaScript 代码模板
@@ -151,11 +151,7 @@ def process(data):
         />
       {/key}
       <label class="label mt-2 justify-between rounded-box border p-2">
-        <span
-          class="flex items-center gap-2 text-base tracking-wider transition-colors {quietMode
-            ? 'text-base-content'
-            : ''}"
-        >
+        <span class="flex items-center gap-2 text-base transition-colors {quietMode ? 'text-base-content' : ''}">
           <Empty class="size-5" />{m.quiet_mode()}
         </span>
         <input type="checkbox" class="checkbox" bind:checked={quietMode} />

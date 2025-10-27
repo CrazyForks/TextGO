@@ -391,7 +391,7 @@
   });
 </script>
 
-<div class="shrink-0 overflow-auto rounded-box border-1 border-base-content/20 {_class}">
+<div class="shrink-0 overflow-auto rounded-box border {_class}">
   <div class={editorClass} bind:this={editor}></div>
   <div class="flex items-center justify-between border-t px-2 py-1 {panelClass}">
     <span class="flex items-center gap-2">
