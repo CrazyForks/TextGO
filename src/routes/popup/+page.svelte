@@ -170,29 +170,32 @@
   });
 </script>
 
+{#snippet panel()}
+  <div class="pointer-events-none flex items-center gap-2 truncate">
+    {#if promptMode}
+      <Robot class="size-4.5 shrink-0" />
+      <span class="truncate text-sm text-base-content/80">{entry?.model}</span>
+    {/if}
+  </div>
+  <div class="flex items-center gap-1">
+    {#if promptMode}
+      <Button icon={StopCircle} weight="bold" disabled={!(streaming && entry?.response)} onclick={() => abort()} />
+    {:else}
+      <Button icon={ArrowCounterClockwise} onclick={() => codeMirror?.reset()} />
+      <Button icon={TextIndent} onclick={() => codeMirror?.format()} />
+      <Button icon={CopySimple} onclick={() => codeMirror?.copy()} />
+    {/if}
+  </div>
+{/snippet}
+
 {#key entry?.id}
   <main class="h-screen w-screen overflow-hidden">
-    <div
-      class="flex h-8 items-center justify-between gap-2 bg-base-300 px-2 {osType === 'macos' ? 'pl-20' : ''}"
-      data-tauri-drag-region
-    >
-      <div class="pointer-events-none flex items-center gap-2 truncate">
-        {#if promptMode}
-          <Robot class="size-4.5 shrink-0" />
-          <span class="truncate text-sm text-base-content/80">{entry?.model}</span>
-        {/if}
+    {#if osType === 'macos'}
+      <div class="flex h-8 items-center justify-between gap-2 bg-base-300 px-2 pl-20" data-tauri-drag-region>
+        {@render panel()}
       </div>
-      <div class="flex items-center gap-1">
-        {#if promptMode}
-          <Button icon={StopCircle} weight="bold" disabled={!(streaming && entry?.response)} onclick={() => abort()} />
-        {:else}
-          <Button icon={ArrowCounterClockwise} onclick={() => codeMirror?.reset()} />
-          <Button icon={TextIndent} onclick={() => codeMirror?.format()} />
-          <Button icon={CopySimple} onclick={() => codeMirror?.copy()} />
-        {/if}
-      </div>
-    </div>
-    <div class="size-full overflow-auto" bind:this={scrollElement} onscroll={handleScroll}>
+    {/if}
+    <div class="h-[calc(100%-2rem)] w-full overflow-auto" bind:this={scrollElement} onscroll={handleScroll}>
       {#if promptMode}
         <div class="px-4 pt-2 pb-10">
           {#if streaming && !entry?.response}
@@ -215,5 +218,10 @@
         />
       {/if}
     </div>
+    {#if osType !== 'macos'}
+      <div class="flex h-8 items-center justify-between gap-2 bg-base-300 px-2">
+        {@render panel()}
+      </div>
+    {/if}
   </main>
 {/key}

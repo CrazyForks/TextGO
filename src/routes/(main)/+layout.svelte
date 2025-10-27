@@ -10,10 +10,14 @@
   import { listen } from '@tauri-apps/api/event';
   import { getCurrentWindow } from '@tauri-apps/api/window';
   import { openUrl } from '@tauri-apps/plugin-opener';
+  import { type } from '@tauri-apps/plugin-os';
   import { ClockCounterClockwise, GearSix, Keyboard } from 'phosphor-svelte';
   import { onMount, type Snippet } from 'svelte';
 
   let { children }: { children: Snippet } = $props();
+
+  // 操作系统类型
+  const osType = type();
 
   /**
    * 导航栏菜单项
@@ -97,7 +101,7 @@
   <Title class="sticky top-0 z-101 bg-base-300/80 backdrop-blur-sm {titleBorder ? 'border-b' : ''}">
     {#snippet fallback()}
       <!-- 导航菜单 -->
-      <span class="mx-auto flex gap-2 pl-16">
+      <span class="flex gap-2 {osType === 'macos' ? 'mx-auto pl-16' : 'mr-auto pl-2'}">
         {#each menus as menu (menu.path)}
           {@const active = deLocalizeHref(page.url.pathname).startsWith(menu.path)}
           <Button
