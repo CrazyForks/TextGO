@@ -133,7 +133,7 @@
           {/if}
         </div>
         <CodeMirror
-          title={promptMode ? m.prompt() : m.script_result()}
+          title={promptMode ? m.prompt() : m.script_output()}
           language={promptMode ? markdown() : undefined}
           document={entry?.result}
           class="mt-2"

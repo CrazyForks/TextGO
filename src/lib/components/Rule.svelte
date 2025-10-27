@@ -39,7 +39,7 @@
       }
     }
     if (regexps.current && regexps.current.length > 0) {
-      options.push({ value: '--regexp--', label: `-- ${m.regular_expression()} --`, disabled: true });
+      options.push({ value: '--regexp--', label: `-- ${m.regexp()} --`, disabled: true });
       for (const regexp of regexps.current) {
         options.push({ value: REGEXP_MARK + regexp.id, label: regexp.id });
       }

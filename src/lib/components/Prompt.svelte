@@ -152,7 +152,7 @@ ${m.prompt_variables_tip()}
         <input type="checkbox" class="peer" bind:this={collapseCheckbox} />
         <div class="collapse-title border-b-transparent transition-all duration-200 peer-checked:border-b">
           <HeadCircuit class="size-5" />
-          {m.system_prompt_optional()}
+          {m.system_prompt_explain()}
         </div>
         <div class="collapse-content overflow-x-auto p-0!">
           <CodeMirror

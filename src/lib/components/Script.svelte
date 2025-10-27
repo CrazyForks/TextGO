@@ -41,7 +41,7 @@ def process(data):
   let scriptName: string = $state('');
   let scriptLang: 'javascript' | 'python' = $state('javascript');
   let scriptText: string = $state(JAVASCRIPT_TEMPLATE);
-  let quietMode: boolean = $state(false);
+  let quietMode: boolean = $state(true);
 
   let scriptModal: Modal;
   export const showModal = (id?: string) => {
@@ -142,17 +142,17 @@ def process(data):
           }
         }}
       />
+      <Label required>{m.script()}</Label>
       {#key scriptLang}
         <CodeMirror
           title={m.script()}
           language={scriptLang === 'python' ? python() : javascript()}
           bind:document={scriptText}
-          class="mt-4"
         />
       {/key}
-      <label class="label mt-2 justify-between rounded-box border p-2">
-        <span class="flex items-center gap-2 text-base transition-colors {quietMode ? 'text-base-content' : ''}">
-          <Empty class="size-5" />{m.quiet_mode()}
+      <label class="label mt-2 justify-between rounded-box border px-2 py-1.5">
+        <span class="flex items-center gap-2 transition-colors {quietMode ? 'text-base-content' : ''}">
+          <Empty class="size-5" />{m.quiet_mode_explain()}
         </span>
         <input type="checkbox" class="checkbox" bind:checked={quietMode} />
       </label>

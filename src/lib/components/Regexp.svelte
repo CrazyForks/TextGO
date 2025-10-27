@@ -67,7 +67,7 @@
   }
 </script>
 
-<Modal icon={Scroll} title="{regexpId ? m.update() : m.add()}{m.regular_expression()}" bind:this={regexpModal}>
+<Modal icon={Scroll} title="{regexpId ? m.update() : m.add()}{m.regexp()}" bind:this={regexpModal}>
   <form
     method="post"
     use:enhance={({ formElement, cancel }) => {
@@ -81,14 +81,9 @@
         <FingerprintSimple class="size-5 opacity-50" />
         <input class="autofocus grow" {...schema.name} bind:value={regexpName} disabled={!!regexpId} />
       </label>
-      <Label required>{m.regexp_pattern()}</Label>
+      <Label required>{m.regexp()}</Label>
       <label class="input w-full">
-        <input
-          class="grow"
-          placeholder={m.regexp_pattern_placeholder()}
-          {...schema.pattern}
-          bind:value={regexpPattern}
-        />
+        <input class="grow" placeholder={m.regexp_placeholder()} {...schema.pattern} bind:value={regexpPattern} />
       </label>
     </fieldset>
     <div class="modal-action">

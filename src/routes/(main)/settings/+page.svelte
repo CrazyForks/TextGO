@@ -143,9 +143,9 @@
     </List>
     <List
       icon={Scroll}
-      title={m.regular_expression()}
-      name={m.regular_expression()}
-      hint={m.regular_expression_hint()}
+      title={m.regexp()}
+      name={m.regexp()}
+      hint={m.regexp_hint()}
       bind:data={regexps.current}
       oncreate={() => regexpCreator.showModal()}
     >
