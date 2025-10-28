@@ -70,7 +70,6 @@
         sample: modelSample,
         threshold: modelThreshold
       });
-      alert(m.model_training_started());
       // 训练模型
       const classifier = new Classifier(modelName);
       classifier

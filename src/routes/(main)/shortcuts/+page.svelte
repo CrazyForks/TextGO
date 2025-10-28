@@ -89,7 +89,6 @@
     shortcuts.current[newKey] = [];
     keyModal.close();
     key = '';
-    alert({ message: m.shortcut_registered_success({ key: newKey }) });
     // 等待 DOM 更新后滚动到新注册的快捷键组位置
     await tick();
     const element = document.querySelector(`[data-shortcut-key="${newKey}"]`);
