@@ -8,7 +8,7 @@
   import { Loading } from '$lib/states.svelte';
   import { models, prompts, regexps, scripts, shortcuts } from '$lib/stores.svelte';
   import type { Option, Rule } from '$lib/types';
-  import { ArrowFatLineRight, FingerprintSimple, Sparkle } from 'phosphor-svelte';
+  import { ArrowFatLineRight, Code, FingerprintSimple, Sparkle, Translate } from 'phosphor-svelte';
 
   // 加载状态
   const loading = new Loading();
@@ -49,9 +49,9 @@
         { value: '--builtin--', label: `-- ${m.general()} --`, disabled: true },
         ...BUILTIN_CASES,
         { value: '--natural--', label: `-- ${m.natural_language()} --`, disabled: true },
-        ...NATURAL_CASES,
+        ...NATURAL_CASES.map((c) => ({ ...c, icon: Translate })),
         { value: '--program--', label: `-- ${m.programming_language()} --`, disabled: true },
-        ...PROGRAM_CASES
+        ...PROGRAM_CASES.map((c) => ({ ...c, icon: Code }))
       ]
     );
     return options;
@@ -118,25 +118,23 @@
   }
 
   /**
-   * 获取文本类型标签
+   * 获取文本类型选项
    *
    * @param value - 文本类型值
-   * @returns 文本类型标签
+   * @returns 文本类型选项
    */
-  export function getCaseLabel(value: string): string | null {
-    const option = textCases.find((c) => c.value === value);
-    return option ? option.label : null;
+  export function getCaseOption(value: string): Option | undefined {
+    return textCases.find((c) => c.value === value);
   }
 
   /**
-   * 获取动作标识标签
+   * 获取动作标识选项
    *
    * @param value - 动作标识值
-   * @returns 动作标识标签
+   * @returns 动作标识选项
    */
-  export function getActionLabel(value: string): string | null {
-    const option = actionIds.find((a) => a.value === value);
-    return option ? option.label : null;
+  export function getActionOption(value: string): Option | undefined {
+    return actionIds.find((a) => a.value === value);
   }
 </script>
 

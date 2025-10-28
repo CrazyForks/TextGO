@@ -1,3 +1,6 @@
+import type { IconComponentProps } from 'phosphor-svelte';
+import type { Component } from 'svelte';
+
 /**
  * 将类型 T 中的所有属性转换为可为空
  */
@@ -19,10 +22,16 @@ export type OptionValue = string | number | boolean | null | undefined;
  * 选项
  */
 export type Option = {
+  /** 选项值 */
   value: OptionValue;
+  /** 选项标签 */
   label: string;
-  pattern?: RegExp;
+  /** 是否禁用 */
   disabled?: boolean;
+  /** 正则表达式 */
+  pattern?: RegExp;
+  /** 选项图标 */
+  icon?: Component<IconComponentProps>;
 };
 
 /**

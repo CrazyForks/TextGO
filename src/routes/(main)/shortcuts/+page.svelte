@@ -103,7 +103,7 @@
    * @param action - 动作ID
    */
   function getScript(action: string) {
-    const id = action.replace(SCRIPT_MARK, '');
+    const id = action.substring(SCRIPT_MARK.length);
     return scripts.current.find((item) => item.id === id);
   }
 
@@ -113,7 +113,7 @@
    * @param action - 动作ID
    */
   function getPrompt(action: string) {
-    const id = action.replace(PROMPT_MARK, '');
+    const id = action.substring(PROMPT_MARK.length);
     return prompts.current.find((item) => item.id === id);
   }
 
@@ -188,9 +188,9 @@
           </span>
         {/snippet}
         {#snippet row(item)}
-          {@const caseLabel = ruleManager?.getCaseLabel(item.case)}
-          {@const actionLabel = ruleManager?.getActionLabel(item.action)}
-          <div class="ml-4 flex w-60 items-center gap-1 truncate" title={caseLabel}>
+          {@const { label: caseLabel, icon: caseIcon } = ruleManager?.getCaseOption(item.case) ?? {}}
+          {@const { label: actionLabel, icon: actionIcon } = ruleManager?.getActionOption(item.action) ?? {}}
+          <div class="ml-4 flex w-60 items-center gap-1.5 truncate" title={caseLabel}>
             {#if item.case === ''}
               <span class="truncate opacity-30">{caseLabel}</span>
             {:else if caseLabel}
@@ -198,8 +198,11 @@
                 <Tensorflow class="h-5 shrink-0" />
               {:else if item.case.startsWith(REGEXP_MARK)}
                 <Regexp class="h-5 shrink-0" />
+              {:else if caseIcon}
+                {@const CaseIcon = caseIcon}
+                <CaseIcon class="size-5 shrink-0 opacity-70" />
               {:else}
-                <FingerprintSimple class="size-5 shrink-0 opacity-60" />
+                <FingerprintSimple class="size-5 shrink-0 opacity-70" />
               {/if}
               <span class="truncate">{caseLabel}</span>
             {:else}
@@ -208,7 +211,7 @@
             {/if}
           </div>
           <ArrowFatLineRight class="size-5 shrink-0 opacity-15" />
-          <div class="list-col-grow ml-4 flex items-center gap-1 truncate" title={actionLabel}>
+          <div class="list-col-grow ml-4 flex items-center gap-1.5 truncate" title={actionLabel}>
             {#if item.action === ''}
               <span class="truncate opacity-30">{actionLabel}</span>
             {:else if actionLabel}
@@ -226,6 +229,9 @@
                 {:else if prompt?.provider === 'lmstudio'}
                   <LMStudio class="h-5 shrink-0" />
                 {/if}
+              {:else if actionIcon}
+                {@const ActionIcon = actionIcon}
+                <ActionIcon class="size-5 shrink-0 opacity-70" />
               {/if}
               <span class="truncate">{actionLabel}</span>
             {:else}
