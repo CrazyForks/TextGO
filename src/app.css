@@ -122,6 +122,9 @@
   @apply rounded-box border border-border bg-base-100 p-4 shadow-xs;
 }
 
-.tippy-box[data-theme~='neutral'] {
-  @apply mt-0.5 gradient bg-neutral/90 text-xs text-neutral-content;
+.tippy-box[data-theme~='default'] {
+  @apply gradient bg-neutral/90 text-xs text-neutral-content;
+}
+.tippy-box[data-theme~='follow-cursor'] {
+  @apply mt-2 ml-2 gradient bg-neutral/90 text-xs text-neutral-content;
 }

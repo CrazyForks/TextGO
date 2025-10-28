@@ -130,7 +130,7 @@
 <div class="relative min-h-(--app-h) rounded-container">
   <div class="flex items-center justify-between">
     <span class="pl-1 text-sm opacity-60">
-      {m.registered_shortcuts_count()}: {Object.keys(shortcuts.current).length}
+      {m.shortcuts_count()}: {Object.keys(shortcuts.current).length}
       {#if totalRules > 0}
         <span class="text-xs tracking-wider opacity-50">({totalRules}{m.rules_count()})</span>
       {/if}
@@ -150,6 +150,7 @@
         <Shortcut {key} />
         <Button
           icon={Trash}
+          text={m.delete_shortcut()}
           onclick={() => {
             const clear = () => {
               for (const item of shortcuts.current[key] || []) {

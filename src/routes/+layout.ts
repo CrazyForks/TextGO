@@ -15,7 +15,7 @@ export const load: LayoutLoad = async () => {
     zIndex: 100,
     maxWidth: 300,
     arrow: false,
-    theme: 'neutral',
+    theme: 'default',
     animation: 'scale',
     placement: 'bottom',
     trigger: 'mouseenter',
