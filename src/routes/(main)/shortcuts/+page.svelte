@@ -39,7 +39,14 @@
 
   // 表单验证规则
   const schema = buildFormSchema(({ text }) => ({
-    key: text().maxlength(1).pattern('^[a-zA-Z0-9]$').oninvalid(oninvalid(m.key_not_supported()))
+    key: text()
+      .maxlength(1)
+      .pattern('^[a-zA-Z0-9]$')
+      .oninvalid((event) => {
+        if ((event.target as HTMLInputElement)?.value) {
+          oninvalid(m.key_not_supported());
+        }
+      })
   }));
 
   // 规则管理器
@@ -51,12 +58,10 @@
    * @param message - 提示信息
    */
   function oninvalid(message: string) {
-    return () => {
-      // 清除输入
-      key = '';
-      // 弹出提示
-      alert({ level: 'error', message: message });
-    };
+    // 清除输入
+    key = '';
+    // 弹出提示
+    alert({ level: 'error', message: message });
   }
 
   /**
@@ -66,7 +71,7 @@
    */
   function checkDuplicate(value: string) {
     if (value && shortcuts.current[value.toUpperCase()]) {
-      oninvalid(m.key_already_registered())();
+      oninvalid(m.key_already_registered());
       return false;
     }
     return true;
