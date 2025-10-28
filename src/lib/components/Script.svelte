@@ -72,6 +72,10 @@ def process(data):
       (nameInput as HTMLInputElement | null)?.focus();
       return;
     }
+    if (!scriptText || scriptText.trim().length === 0) {
+      alert({ level: 'error', message: m.script_content_empty() });
+      return;
+    }
     loading.start();
     if (script) {
       // 更新脚本

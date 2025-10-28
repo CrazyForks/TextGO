@@ -83,7 +83,9 @@
       </label>
       <Label required>{m.regexp()}</Label>
       <label class="input w-full">
+        <span class="text-xl text-emphasis">/</span>
         <input class="grow" placeholder={m.regexp_placeholder()} {...schema.pattern} bind:value={regexpPattern} />
+        <span class="text-xl text-emphasis">/</span>
       </label>
     </fieldset>
     <div class="modal-action">

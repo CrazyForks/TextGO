@@ -106,7 +106,7 @@
           }
           // 确认删除操作
           confirm({
-            title: `${m.delete()}${name} [ ${selectedNum} ]`,
+            title: `${m.delete()}${name}[${selectedNum}]`,
             message: m.delete_confirm_message(),
             onconfirm: () => {
               const index = data.findIndex((i) => i.id === selectedId);
