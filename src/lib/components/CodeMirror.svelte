@@ -133,24 +133,24 @@
    */
   const phrases: Record<string, string> = {
     // 搜索相关翻译
-    Find: m.codemirror_find(),
-    Replace: m.codemirror_replace(),
-    next: m.codemirror_next(),
-    previous: m.codemirror_previous(),
-    all: m.codemirror_all(),
-    'match case': m.codemirror_match_case(),
-    regexp: m.codemirror_regexp(),
-    'by word': m.codemirror_by_word(),
-    replace: m.codemirror_replace_action(),
-    'replace all': m.codemirror_replace_all(),
-    close: m.codemirror_close(),
-    'current match': m.codemirror_current_match(),
-    'on line': m.codemirror_on_line(),
-    'replaced match on line $': m.codemirror_replaced_match_on_line(),
-    'replaced $ matches': m.codemirror_replaced_matches(),
+    Find: m.cm_find(),
+    Replace: m.cm_replace(),
+    next: m.cm_next(),
+    previous: m.cm_previous(),
+    all: m.cm_all(),
+    'match case': m.cm_match_case(),
+    regexp: m.cm_regexp(),
+    'by word': m.cm_by_word(),
+    replace: m.cm_replace_action(),
+    'replace all': m.cm_replace_all(),
+    close: m.cm_close(),
+    'current match': m.cm_current_match(),
+    'on line': m.cm_on_line(),
+    'replaced match on line $': m.cm_replaced_match_on_line(),
+    'replaced $ matches': m.cm_replaced_matches(),
     // 跳转相关翻译
-    'Go to line': m.codemirror_go_to_line(),
-    go: m.codemirror_go()
+    'Go to line': m.cm_go_to_line(),
+    go: m.cm_go()
   };
 </script>
 
