@@ -5,7 +5,7 @@ import { models, regexps } from '$lib/stores.svelte';
 import type { Model, Option, Rule } from '$lib/types';
 import { ModelOperations, type ModelResult } from '@vscode/vscode-languagedetection';
 import { franc } from 'franc-min';
-import { CalendarDots, Clock, Globe, GlobeSimple, Key, Link, Mailbox } from 'phosphor-svelte';
+import { CalendarDots, Clock, Folders, Globe, GlobeSimple, Key, Link, Mailbox } from 'phosphor-svelte';
 
 // 创建编程语言识别模型实例
 // 针对 Tauri 环境配置自定义加载函数
@@ -83,6 +83,12 @@ export const BUILTIN_CASES: Option[] = [
       /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i
   },
   {
+    value: 'path',
+    label: m.type_path(),
+    icon: Folders,
+    pattern: /^(?:[a-zA-Z]:\\[^<>:"|?*\n\r/]+(?:\\[^<>:"|?*\n\r/]+)*|~?\/[^<>:"|?*\n\r\\]+(?:\/[^<>:"|?*\n\r\\]+)*)$/
+  },
+  {
     value: 'ipv4',
     label: m.type_ipv4(),
     icon: GlobeSimple,
@@ -104,10 +110,10 @@ export const BUILTIN_CASES: Option[] = [
       /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|02-(?:0[1-9]|1\d|2[0-8])))T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:[+-](?:[01]\d|2[0-3]):[0-5]\d|Z)?$/
   },
   {
-    value: 'unix_time',
-    label: m.type_unix_time(),
+    value: 'timestamp',
+    label: m.type_timestamp(),
     icon: Clock,
-    // 2001~2286年间10位秒级或13位毫秒级的时间戳
+    // 2001 ~ 2286 年间10位秒级或13位毫秒级的 Unix 时间戳
     pattern: /^(?:[1-9]\d{9}|[1-9]\d{12})$/
   }
 ];
