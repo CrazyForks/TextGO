@@ -8,7 +8,7 @@
 [![GitHub Stars](https://img.shields.io/github/stars/C5H12O5/TextGO?logo=github&label=Stars&style=flat&color=yellow)](https://github.com/C5H12O5/TextGO/stargazers)
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Tauri Version](https://img.shields.io/badge/Tauri-v2.9.1-24C8D8.svg?logo=tauri)](https://tauri.app/)
-[![Svelte Version](https://img.shields.io/badge/Svelte-v5.42.3-FF3E00.svg?logo=svelte)](https://svelte.dev/)
+[![Svelte Version](https://img.shields.io/badge/Svelte-v5.43.0-FF3E00.svg?logo=svelte)](https://svelte.dev/)
 
 📖 English / [简体中文](README.zh-CN.md)
 
