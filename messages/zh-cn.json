@@ -131,6 +131,7 @@
   "type_ipv4": "IPv4 地址",
   "type_ipv6": "IPv6 地址",
   "type_iso8601": "日期 (ISO 8601)",
+  "type_unix_time": "Unix 时间戳 (2001~2286)",
   "lang_cmn": "中文",
   "lang_eng": "英文",
   "lang_jpn": "日文",

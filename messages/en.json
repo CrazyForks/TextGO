@@ -131,6 +131,7 @@
   "type_ipv4": "IPv4 Address",
   "type_ipv6": "IPv6 Address",
   "type_iso8601": "ISO 8601 Date",
+  "type_unix_time": "Unix Timestamp (2001~2286)",
   "lang_cmn": "Chinese",
   "lang_eng": "English",
   "lang_jpn": "Japanese",
