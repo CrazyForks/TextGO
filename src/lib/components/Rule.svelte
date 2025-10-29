@@ -4,6 +4,7 @@
   import { MODEL_MARK, PROMPT_MARK, REGEXP_MARK, SCRIPT_MARK } from '$lib/constants';
   import { manager } from '$lib/manager';
   import { BUILTIN_CASES, NATURAL_CASES, PROGRAM_CASES } from '$lib/matcher';
+  import { BUILTIN_ACTIONS } from '$lib/executor';
   import { m } from '$lib/paraglide/messages';
   import { Loading } from '$lib/states.svelte';
   import { models, prompts, regexps, scripts, shortcuts } from '$lib/stores.svelte';
@@ -32,46 +33,50 @@
   // 文本类型选项
   const textCases: Option[] = $derived.by(() => {
     const options: Option[] = [{ value: '', label: m.skip() }];
+    // 分类模型
     if (models.current && models.current.length > 0) {
       options.push({ value: '--model--', label: `-- ${m.classification_model()} --`, disabled: true });
       for (const model of models.current) {
         options.push({ value: MODEL_MARK + model.id, label: model.id });
       }
     }
+    // 正则表达式
     if (regexps.current && regexps.current.length > 0) {
       options.push({ value: '--regexp--', label: `-- ${m.regexp()} --`, disabled: true });
       for (const regexp of regexps.current) {
         options.push({ value: REGEXP_MARK + regexp.id, label: regexp.id });
       }
     }
-    options.push(
-      ...[
-        { value: '--builtin--', label: `-- ${m.general()} --`, disabled: true },
-        ...BUILTIN_CASES,
-        { value: '--natural--', label: `-- ${m.natural_language()} --`, disabled: true },
-        ...NATURAL_CASES.map((c) => ({ ...c, icon: Translate })),
-        { value: '--program--', label: `-- ${m.programming_language()} --`, disabled: true },
-        ...PROGRAM_CASES.map((c) => ({ ...c, icon: Code }))
-      ]
-    );
+    // 内置类型
+    options.push({ value: '--builtin--', label: `-- ${m.general()} --`, disabled: true });
+    options.push(...BUILTIN_CASES);
+    options.push({ value: '--natural--', label: `-- ${m.natural_language()} --`, disabled: true });
+    options.push(...NATURAL_CASES.map((c) => ({ ...c, icon: Translate })));
+    options.push({ value: '--program--', label: `-- ${m.programming_language()} --`, disabled: true });
+    options.push(...PROGRAM_CASES.map((c) => ({ ...c, icon: Code })));
     return options;
   });
 
   // 动作标识选项
   const actionIds: Option[] = $derived.by(() => {
     const options: Option[] = [{ value: '', label: m.show_main_window() }];
+    // 脚本
     if (scripts.current && scripts.current.length > 0) {
       options.push({ value: '--script--', label: `-- ${m.script()} --`, disabled: true });
       for (const script of scripts.current) {
         options.push({ value: SCRIPT_MARK + script.id, label: script.id });
       }
     }
+    // 提示词
     if (prompts.current && prompts.current.length > 0) {
       options.push({ value: '--prompt--', label: `-- ${m.conversation()} --`, disabled: true });
       for (const prompt of prompts.current) {
         options.push({ value: PROMPT_MARK + prompt.id, label: prompt.id });
       }
     }
+    // 内置动作
+    options.push({ value: '--builtin--', label: `-- ${m.general()} --`, disabled: true });
+    options.push(...BUILTIN_ACTIONS);
     return options;
   });
 

@@ -1,8 +1,11 @@
 import { PROMPT_MARK, SCRIPT_MARK } from '$lib/constants';
+import { m } from '$lib/paraglide/messages';
 import { entries, historySize, nodePath, prompts, pythonPath, scripts } from '$lib/stores.svelte';
-import type { Entry, Prompt, Rule, Script } from '$lib/types';
+import type { Entry, Option, Prompt, Rule, Script } from '$lib/types';
 import { invoke } from '@tauri-apps/api/core';
 import { readText, writeText } from '@tauri-apps/plugin-clipboard-manager';
+import { camelCase, kebabCase, lowerCase, pascalCase, snakeCase, upperCase } from 'es-toolkit';
+import { TextAa } from 'phosphor-svelte';
 
 /**
  * 数据类型
@@ -15,6 +18,55 @@ type Data = {
   /** 当前日期时间 */
   datetime: string;
 };
+
+/**
+ * 内置动作类型
+ */
+type Processor = Option & {
+  process: (selection: string) => string;
+};
+
+/**
+ * 内置动作选项
+ */
+export const BUILTIN_ACTIONS: Processor[] = [
+  {
+    value: 'camel_case',
+    label: m.camel_case(),
+    icon: TextAa,
+    process: camelCase
+  },
+  {
+    value: 'pascal_case',
+    label: m.pascal_case(),
+    icon: TextAa,
+    process: pascalCase
+  },
+  {
+    value: 'snake_case',
+    label: m.snake_case(),
+    icon: TextAa,
+    process: snakeCase
+  },
+  {
+    value: 'kebab_case',
+    label: m.kebab_case(),
+    icon: TextAa,
+    process: kebabCase
+  },
+  {
+    value: 'lower_case',
+    label: m.lower_case(),
+    icon: TextAa,
+    process: lowerCase
+  },
+  {
+    value: 'upper_case',
+    label: m.upper_case(),
+    icon: TextAa,
+    process: upperCase
+  }
+];
 
 /**
  * 执行动作
@@ -88,6 +140,15 @@ export async function execute(rule: Rule, selection: string): Promise<void> {
         entries.current = entries.current.slice(0, historySize.current);
       }
       await showPopup(entry);
+    }
+  } else {
+    const builtin = BUILTIN_ACTIONS.find((a) => a.value === action);
+    if (builtin) {
+      console.debug('开始执行内置动作:', action);
+      const result = builtin.process(selection);
+      console.debug('内置动作执行成功:', result);
+      await writeText(result);
+      await invoke('send_paste_key');
     }
   }
 }
