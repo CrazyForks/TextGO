@@ -4297,7 +4297,7 @@ dependencies = [
 
 [[package]]
 name = "text-go"
-version = "1.0.3"
+version = "1.0.4"
 dependencies = [
  "enigo",
  "serde",
