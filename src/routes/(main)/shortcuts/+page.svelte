@@ -10,6 +10,8 @@
   import {
     ArrowFatLineRight,
     ArrowFatUp,
+    Browser,
+    CaretDoubleRight,
     Command,
     Control,
     FingerprintSimple,
@@ -192,6 +194,7 @@
           {@const { label: actionLabel, icon: actionIcon } = ruleManager?.getActionOption(item.action) ?? {}}
           <div class="ml-4 flex w-60 items-center gap-1.5 truncate" title={caseLabel}>
             {#if item.case === ''}
+              <CaretDoubleRight class="size-5 shrink-0 opacity-30" />
               <span class="truncate opacity-30">{caseLabel}</span>
             {:else if caseLabel}
               {#if item.case.startsWith(MODEL_MARK)}
@@ -213,6 +216,7 @@
           <ArrowFatLineRight class="size-5 shrink-0 opacity-15" />
           <div class="list-col-grow ml-4 flex items-center gap-1.5 truncate" title={actionLabel}>
             {#if item.action === ''}
+              <Browser class="size-5 shrink-0 opacity-30" />
               <span class="truncate opacity-30">{actionLabel}</span>
             {:else if actionLabel}
               {#if item.action.startsWith(SCRIPT_MARK)}

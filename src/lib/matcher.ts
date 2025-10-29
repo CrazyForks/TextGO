@@ -54,9 +54,9 @@ const INITIAL_THRESHOLD = 0.5;
 const RELATIVE_THRESHOLD = 0.15;
 
 /**
- * 内置正则识别选项
+ * 常规识别选项
  */
-export const BUILTIN_CASES: Option[] = [
+export const GENERAL_CASES: Option[] = [
   {
     value: 'uuid',
     label: m.uuid(),
@@ -115,7 +115,13 @@ export const BUILTIN_CASES: Option[] = [
     icon: Clock,
     // 2001 ~ 2286 年间10位秒级或13位毫秒级的 Unix 时间戳
     pattern: /^(?:[1-9]\d{9}|[1-9]\d{12})$/
-  },
+  }
+];
+
+/**
+ * 命名格式识别选项
+ */
+export const TEXT_CASES: Option[] = [
   {
     value: 'camel_case',
     label: m.camel_case(),
@@ -144,13 +150,13 @@ export const BUILTIN_CASES: Option[] = [
     value: 'lower_case',
     label: m.lower_case(),
     icon: TextAa,
-    pattern: /^[a-z]+$/
+    pattern: /^(?=.*[a-z])[a-z0-9]+(?: [a-z0-9]+)*$/
   },
   {
     value: 'upper_case',
     label: m.upper_case(),
     icon: TextAa,
-    pattern: /^[A-Z]+$/
+    pattern: /^(?=.*[A-Z])[A-Z0-9]+(?: [A-Z0-9]+)*$/
   }
 ];
 
@@ -250,7 +256,7 @@ export async function match(text: string, rules: Rule[]): Promise<Rule | null> {
       return rule;
     }
     // 内置正则匹配
-    const builtin = BUILTIN_CASES.find((c) => c.value === _case);
+    const builtin = [...GENERAL_CASES, ...TEXT_CASES].find((c) => c.value === _case);
     if (builtin && builtin.pattern && builtin.pattern.test(text)) {
       console.debug('内置正则表达式匹配成功:', builtin.label);
       rule.caseLabel = builtin.label;

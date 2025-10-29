@@ -4,8 +4,24 @@ import { entries, historySize, nodePath, prompts, pythonPath, scripts } from '$l
 import type { Entry, Option, Prompt, Rule, Script } from '$lib/types';
 import { invoke } from '@tauri-apps/api/core';
 import { readText, writeText } from '@tauri-apps/plugin-clipboard-manager';
-import { camelCase, kebabCase, lowerCase, pascalCase, snakeCase, upperCase } from 'es-toolkit';
-import { TextAa } from 'phosphor-svelte';
+import {
+  camelCase,
+  capitalize,
+  deburr,
+  escape,
+  kebabCase,
+  lowerCase,
+  pascalCase,
+  reverseString,
+  snakeCase,
+  trim,
+  trimEnd,
+  trimStart,
+  unescape,
+  upperCase,
+  words
+} from 'es-toolkit';
+import { Function, TextAa } from 'phosphor-svelte';
 
 /**
  * 数据类型
@@ -27,9 +43,9 @@ type Processor = Option & {
 };
 
 /**
- * 内置动作选项
+ * 格式转换动作选项
  */
-export const BUILTIN_ACTIONS: Processor[] = [
+export const CONVERT_ACTIONS: Processor[] = [
   {
     value: 'camel_case',
     label: m.camel_case(),
@@ -65,6 +81,78 @@ export const BUILTIN_ACTIONS: Processor[] = [
     label: m.upper_case(),
     icon: TextAa,
     process: upperCase
+  }
+];
+
+/**
+ * 文本处理动作选项
+ */
+export const PROCESS_ACTIONS: Processor[] = [
+  {
+    value: 'lowercase',
+    label: m.lowercase(),
+    icon: Function,
+    process: (text: string) => text.toLowerCase()
+  },
+  {
+    value: 'uppercase',
+    label: m.uppercase(),
+    icon: Function,
+    process: (text: string) => text.toUpperCase()
+  },
+  {
+    value: 'capitalize',
+    label: m.capitalize(),
+    icon: Function,
+    process: capitalize
+  },
+  {
+    value: 'trim',
+    label: m.trim(),
+    icon: Function,
+    process: trim
+  },
+  {
+    value: 'ltrim',
+    label: m.ltrim(),
+    icon: Function,
+    process: trimStart
+  },
+  {
+    value: 'rtrim',
+    label: m.rtrim(),
+    icon: Function,
+    process: trimEnd
+  },
+  {
+    value: 'deburr',
+    label: m.deburr(),
+    icon: Function,
+    process: deburr
+  },
+  {
+    value: 'escape',
+    label: m.escape(),
+    icon: Function,
+    process: escape
+  },
+  {
+    value: 'unescape',
+    label: m.unescape(),
+    icon: Function,
+    process: unescape
+  },
+  {
+    value: 'reverse',
+    label: m.reverse(),
+    icon: Function,
+    process: reverseString
+  },
+  {
+    value: 'words',
+    label: m.words(),
+    icon: Function,
+    process: (text: string) => words(text).join(' ')
   }
 ];
 
@@ -142,7 +230,7 @@ export async function execute(rule: Rule, selection: string): Promise<void> {
       await showPopup(entry);
     }
   } else {
-    const builtin = BUILTIN_ACTIONS.find((a) => a.value === action);
+    const builtin = [...CONVERT_ACTIONS, ...PROCESS_ACTIONS].find((a) => a.value === action);
     if (builtin) {
       console.debug('开始执行内置动作:', action);
       const result = builtin.process(selection);

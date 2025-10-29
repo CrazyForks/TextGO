@@ -2,9 +2,9 @@
   import { enhance } from '$app/forms';
   import { alert, Label, Modal, Select } from '$lib/components';
   import { MODEL_MARK, PROMPT_MARK, REGEXP_MARK, SCRIPT_MARK } from '$lib/constants';
+  import { CONVERT_ACTIONS, PROCESS_ACTIONS } from '$lib/executor';
   import { manager } from '$lib/manager';
-  import { BUILTIN_CASES, NATURAL_CASES, PROGRAM_CASES } from '$lib/matcher';
-  import { BUILTIN_ACTIONS } from '$lib/executor';
+  import { GENERAL_CASES, NATURAL_CASES, PROGRAM_CASES, TEXT_CASES } from '$lib/matcher';
   import { m } from '$lib/paraglide/messages';
   import { Loading } from '$lib/states.svelte';
   import { models, prompts, regexps, scripts, shortcuts } from '$lib/stores.svelte';
@@ -48,8 +48,10 @@
       }
     }
     // 内置类型
-    options.push({ value: '--builtin--', label: `-- ${m.general()} --`, disabled: true });
-    options.push(...BUILTIN_CASES);
+    options.push({ value: '--general--', label: `-- ${m.general()} --`, disabled: true });
+    options.push(...GENERAL_CASES);
+    options.push({ value: '--text--', label: `-- ${m.text_case()} --`, disabled: true });
+    options.push(...TEXT_CASES);
     options.push({ value: '--natural--', label: `-- ${m.natural_language()} --`, disabled: true });
     options.push(...NATURAL_CASES.map((c) => ({ ...c, icon: Translate })));
     options.push({ value: '--program--', label: `-- ${m.programming_language()} --`, disabled: true });
@@ -75,8 +77,10 @@
       }
     }
     // 内置动作
-    options.push({ value: '--builtin--', label: `-- ${m.general()} --`, disabled: true });
-    options.push(...BUILTIN_ACTIONS);
+    options.push({ value: '--convert--', label: `-- ${m.text_case_convert()} --`, disabled: true });
+    options.push(...CONVERT_ACTIONS);
+    options.push({ value: '--process--', label: `-- ${m.text_processing()} --`, disabled: true });
+    options.push(...PROCESS_ACTIONS);
     return options;
   });
 
