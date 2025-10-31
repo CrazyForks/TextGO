@@ -88,7 +88,7 @@ pub async fn get_selection(app: tauri::AppHandle) -> Result<String, AppError> {
 
     // 循环等待剪贴板内容变化
     let max_wait_time = Duration::from_millis(500); // 最大等待时间 500ms
-    let check_interval = Duration::from_millis(50); // 每次检查间隔 50ms
+    let check_interval = Duration::from_millis(10); // 每次检查间隔 10ms
     let max_attempts = max_wait_time.as_millis() / check_interval.as_millis();
 
     for _attempt in 0..max_attempts {
@@ -123,5 +123,5 @@ pub async fn get_selection(app: tauri::AppHandle) -> Result<String, AppError> {
         }
     }
 
-    Ok(original_clipboard)
+    Ok(String::new())
 }

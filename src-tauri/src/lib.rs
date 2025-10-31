@@ -38,24 +38,18 @@ fn handle_global_shortcut(
         tauri::async_runtime::spawn(async move {
             match get_selection(app_clone.clone()).await {
                 Ok(selection) => {
-                    let event_data = serde_json::json!({
-                        "key": key_char_clone,
-                        "selection": selection
-                    });
-                    if let Err(e) = app_clone.emit("shortcut-triggered", event_data) {
-                        eprintln!("[ERROR] Failed to emit shortcut event: {}", e);
+                    if !selection.is_empty() {
+                        let event_data = serde_json::json!({
+                            "key": key_char_clone,
+                            "selection": selection
+                        });
+                        if let Err(e) = app_clone.emit("shortcut-triggered", event_data) {
+                            eprintln!("[ERROR] Failed to emit shortcut event: {}", e);
+                        }
                     }
                 }
                 Err(e) => {
                     eprintln!("[ERROR] Failed to get selection: {}", e);
-                    // 即使获取选中文本失败，也发送事件，但选中文本为空
-                    let event_data = serde_json::json!({
-                        "key": key_char_clone,
-                        "selection": ""
-                    });
-                    if let Err(e) = app_clone.emit("shortcut-triggered", event_data) {
-                        eprintln!("[ERROR] Failed to emit shortcut event: {}", e);
-                    }
                 }
             }
         });
