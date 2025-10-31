@@ -18,7 +18,7 @@
   // 初始化托盘菜单语言
   onMount(async () => {
     try {
-      await invoke('update_tray_menu', {
+      await invoke('setup_tray_menu', {
         toggleText: m.tray_toggle(),
         shortcutsText: m.tray_shortcuts(),
         aboutText: m.tray_about(),
