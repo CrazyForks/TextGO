@@ -195,7 +195,7 @@
         {@render panel()}
       </div>
     {/if}
-    <div class="h-[calc(100%-2rem)] w-full overflow-auto" bind:this={scrollElement} onscroll={handleScroll}>
+    <div class="h-[calc(100vh-2rem)] w-full overflow-auto" bind:this={scrollElement} onscroll={handleScroll}>
       {#if promptMode}
         <div class="px-4 pt-2 pb-10">
           {#if streaming && !entry?.response}
@@ -209,8 +209,8 @@
         </div>
       {:else}
         <CodeMirror
-          minHeight="calc(100vh - 2.25rem)"
-          maxHeight="calc(100vh - 2.25rem)"
+          minHeight="calc(100vh - 2rem)"
+          maxHeight="calc(100vh - 2rem)"
           class="rounded-none border-none"
           panelClass="hidden"
           document={entry?.result}

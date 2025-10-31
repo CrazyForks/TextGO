@@ -1,5 +1,3 @@
-// 快捷键管理相关命令
-
 use crate::error::AppError;
 use crate::REGISTERED_SHORTCUTS;
 use tauri_plugin_global_shortcut::{Code, GlobalShortcutExt, Modifiers, Shortcut};

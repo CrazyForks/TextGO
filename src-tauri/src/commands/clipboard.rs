@@ -1,5 +1,3 @@
-// 剪贴板相关命令
-
 use crate::error::AppError;
 use crate::ENIGO;
 use enigo::{Direction, Key, Keyboard};

@@ -1,5 +1,3 @@
-// 托盘菜单相关命令
-
 use crate::error::AppError;
 use tauri::menu::{Menu, MenuItem, PredefinedMenuItem};
 use tauri::tray::TrayIconBuilder;

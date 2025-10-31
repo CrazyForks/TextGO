@@ -1,5 +1,3 @@
-// 自定义错误类型
-
 #[derive(Debug, Clone)]
 pub struct AppError(String);
 

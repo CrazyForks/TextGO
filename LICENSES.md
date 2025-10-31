@@ -1,10 +1,10 @@
 # Third-Party License Notices
 
-> This document was automatically generated on October 31, 2025 at 11:48 AM GMT+8
+> This document was automatically generated on November 1, 2025 at 07:51 AM GMT+8
 
 ## Frontend Dependencies
 
-> **53** packages included
+> **52** packages included
 
 | Package                                                                                    | Version | License           | Description                                                                                                                                       |
 | ------------------------------------------------------------------------------------------ | ------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -20,7 +20,7 @@
 | [@codemirror/theme-one-dark](https://github.com/codemirror/theme-one-dark)                 | 6.1.3   | MIT               | One Dark theme for the CodeMirror code editor                                                                                                     |
 | [@codemirror/view](https://github.com/codemirror/view)                                     | 6.38.6  | MIT               | DOM view component for the CodeMirror code editor                                                                                                 |
 | [@eslint/compat](https://github.com/eslint/rewrite)                                        | 1.4.1   | Apache-2.0        | Compatibility utilities for ESLint                                                                                                                |
-| [@eslint/js](https://github.com/eslint/eslint)                                             | 9.38.0  | MIT               | ESLint JavaScript language implementation                                                                                                         |
+| [@eslint/js](https://github.com/eslint/eslint)                                             | 9.39.0  | MIT               | ESLint JavaScript language implementation                                                                                                         |
 | [@fontsource-variable/noto-sans-sc](https://github.com/fontsource/font-files)              | 5.2.9   | OFL-1.1           | Self-host the Noto Sans SC font in a neatly bundled NPM package.                                                                                  |
 | [@fontsource-variable/noto-sans](https://github.com/fontsource/font-files)                 | 5.2.10  | OFL-1.1           | Self-host the Noto Sans font in a neatly bundled NPM package.                                                                                     |
 | [@inlang/paraglide-js](https://github.com/opral/inlang-paraglide-js)                       | 2.4.0   | MIT               | [![Inlang-ecosystem compatibility badge](https://cdn.jsdelivr.net/gh/opral/monorepo@main/inlang/assets/md-badges/inlang.svg)](https://inlang.com) |
@@ -32,7 +32,6 @@
 | [@tauri-apps/api](https://github.com/tauri-apps/tauri)                                     | 2.9.0   | Apache-2.0 OR MIT | Tauri API definitions                                                                                                                             |
 | [@tauri-apps/cli](https://github.com/tauri-apps/tauri)                                     | 2.9.2   | Apache-2.0 OR MIT | Command line interface for building Tauri apps                                                                                                    |
 | [@tauri-apps/plugin-clipboard-manager](https://github.com/tauri-apps/plugins-workspace)    | 2.3.2   | MIT OR Apache-2.0 | ![plugin-clipboard-manager](https://github.com/tauri-apps/plugins-workspace/raw/v2/plugins/clipboard-manager/banner.png)                          |
-| [@tauri-apps/plugin-dialog](https://github.com/tauri-apps/plugins-workspace)               | 2.4.2   | MIT OR Apache-2.0 | ![plugin-dialog](https://github.com/tauri-apps/plugins-workspace/raw/v2/plugins/dialog/banner.png)                                                |
 | [@tauri-apps/plugin-opener](https://github.com/tauri-apps/plugins-workspace)               | 2.5.2   | MIT OR Apache-2.0 | Open files and URLs using their default application.                                                                                              |
 | [@tauri-apps/plugin-os](https://github.com/tauri-apps/plugins-workspace)                   | 2.3.2   | MIT OR Apache-2.0 | ![plugin-os](https://github.com/tauri-apps/plugins-workspace/raw/v2/plugins/os/banner.png)                                                        |
 | [@tauri-apps/plugin-store](https://github.com/tauri-apps/plugins-workspace)                | 2.4.1   | MIT OR Apache-2.0 | Simple, persistent key-value store.                                                                                                               |
@@ -44,7 +43,7 @@
 | [es-toolkit](https://github.com/toss/es-toolkit)                                           | 1.41.0  | MIT               | A state-of-the-art, high-performance JavaScript utility library with a small bundle size and strong type annotations.                             |
 | [eslint-config-prettier](https://github.com/prettier/eslint-config-prettier)               | 10.1.8  | MIT               | Turns off all rules that are unnecessary or might conflict with Prettier.                                                                         |
 | [eslint-plugin-svelte](https://github.com/sveltejs/eslint-plugin-svelte)                   | 3.13.0  | MIT               | ESLint plugin for Svelte using AST                                                                                                                |
-| [eslint](https://github.com/eslint/eslint)                                                 | 9.38.0  | MIT               | An AST-based pattern checker for JavaScript.                                                                                                      |
+| [eslint](https://github.com/eslint/eslint)                                                 | 9.39.0  | MIT               | An AST-based pattern checker for JavaScript.                                                                                                      |
 | [franc-min](https://github.com/wooorm/franc/tree/main/packages/franc-min)                  | 6.2.0   | MIT               | Detect the language of text                                                                                                                       |
 | [globals](https://github.com/sindresorhus/globals)                                         | 16.4.0  | MIT               | Global identifiers from different JavaScript environments                                                                                         |
 | [marked](https://github.com/markedjs/marked)                                               | 16.4.1  | MIT               | A markdown parser built for speed                                                                                                                 |
@@ -64,10 +63,11 @@
 
 ## Backend Dependencies
 
-> **12** packages included
+> **14** packages included
 
 | Package                                                                           | Version | License           | Description                                                                                              |
 | --------------------------------------------------------------------------------- | ------- | ----------------- | -------------------------------------------------------------------------------------------------------- |
+| [core-foundation](https://github.com/servo/core-foundation-rs)                    | 0.10.1  | Apache-2.0 OR MIT | Bindings to Core Foundation for macOS                                                                    |
 | [enigo](https://github.com/enigo-rs/enigo)                                        | 0.6.1   | MIT               | Cross-platform (Linux, Windows, macOS & BSD) library to simulate keyboard and mouse events               |
 | [serde](https://github.com/serde-rs/serde)                                        | 1.0.228 | Apache-2.0 OR MIT | A generic serialization/deserialization framework                                                        |
 | [serde_json](https://github.com/serde-rs/json)                                    | 1.0.145 | Apache-2.0 OR MIT | A JSON serialization file format                                                                         |
@@ -80,3 +80,4 @@
 | [tauri-plugin-os](https://github.com/tauri-apps/plugins-workspace)                | 2.3.2   | Apache-2.0 OR MIT | Read information about the operating system.                                                             |
 | [tauri-plugin-store](https://github.com/tauri-apps/plugins-workspace)             | 2.4.1   | Apache-2.0 OR MIT | Simple, persistent key-value store.                                                                      |
 | [tokio](https://github.com/tokio-rs/tokio)                                        | 1.48.0  | MIT               | An event-driven, non-blocking I/O platform for writing asynchronous I/O backed applications.             |
+| [windows](https://github.com/microsoft/windows-rs)                                | 0.61.3  | Apache-2.0 OR MIT | Rust for Windows                                                                                         |

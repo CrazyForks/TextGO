@@ -50,7 +50,12 @@
   });
 </script>
 
-<select class="select truncate {value ? '' : 'text-base-content/50'} {_class}" bind:value {disabled} {onchange}>
+<select
+  class="select appearance-none truncate {value ? '' : 'text-base-content/50'} {_class}"
+  bind:value
+  {disabled}
+  {onchange}
+>
   {#if children}
     {@render children()}
   {:else if options}

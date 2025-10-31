@@ -4,7 +4,7 @@ repos:
     rev: v6.0.0
     hooks:
       - id: check-json
-        exclude: ^(.vscode/.*.json|tsconfig.json)
+        exclude: ^(static/model.json|.vscode/.*.json|tsconfig.json)
       - id: check-toml
       - id: check-yaml
       - id: mixed-line-ending

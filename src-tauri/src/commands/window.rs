@@ -1,5 +1,3 @@
-// 窗口管理相关命令
-
 use tauri::{Emitter, Manager};
 
 #[tauri::command]

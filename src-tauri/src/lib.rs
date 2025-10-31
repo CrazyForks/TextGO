@@ -38,14 +38,12 @@ fn handle_global_shortcut(
         tauri::async_runtime::spawn(async move {
             match get_selection(app_clone.clone()).await {
                 Ok(selection) => {
-                    if !selection.is_empty() {
-                        let event_data = serde_json::json!({
-                            "key": key_char_clone,
-                            "selection": selection
-                        });
-                        if let Err(e) = app_clone.emit("shortcut-triggered", event_data) {
-                            eprintln!("[ERROR] Failed to emit shortcut event: {}", e);
-                        }
+                    let event_data = serde_json::json!({
+                        "key": key_char_clone,
+                        "selection": selection
+                    });
+                    if let Err(e) = app_clone.emit("shortcut-triggered", event_data) {
+                        eprintln!("[ERROR] Failed to emit shortcut event: {}", e);
                     }
                 }
                 Err(e) => {
@@ -121,7 +119,7 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
 }
 
 /// 运行时事件处理函数
-fn handle_run_event(app_handle: &tauri::AppHandle, event: RunEvent) {
+fn handle_run_event(_app_handle: &tauri::AppHandle, #[allow(unused_variables)] event: RunEvent) {
     // 处理 Reopen 事件
     #[cfg(target_os = "macos")]
     if let RunEvent::Reopen {
@@ -130,14 +128,14 @@ fn handle_run_event(app_handle: &tauri::AppHandle, event: RunEvent) {
     } = event
     {
         // 没有可见窗口时，显示主窗口
-        if let Some(window) = app_handle.get_webview_window("main") {
+        if let Some(window) = _app_handle.get_webview_window("main") {
             let _ = window.show();
             let _ = window.set_focus();
             let _ = window.unminimize();
             // 显示窗口时，显示 Dock 图标
             #[cfg(target_os = "macos")]
             {
-                let _ = app_handle.set_dock_visibility(true);
+                let _ = _app_handle.set_dock_visibility(true);
             }
         }
     }
@@ -165,6 +163,7 @@ pub fn run() {
             send_copy_key,
             send_paste_key,
             get_selection,
+            cursor_editable,
             show_popup,
             execute_javascript,
             execute_python,
