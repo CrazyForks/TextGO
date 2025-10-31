@@ -23,7 +23,7 @@
   "default_confirm_title": "确认操作",
   "default_confirm_message": "是否确定要继续？",
   "delete_confirm_message": "数据删除后无法恢复，是否继续？",
-  "skip": "跳过",
+  "skip": "跳过识别",
   "general": "常规",
   "conversation": "对话",
   "natural_language": "自然语言",

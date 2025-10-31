@@ -23,7 +23,7 @@
   "default_confirm_title": "Confirm Operation",
   "default_confirm_message": "Are you sure you want to continue?",
   "delete_confirm_message": "Data cannot be recovered after deletion. Continue?",
-  "skip": "Skip",
+  "skip": "Skip Recognition",
   "general": "General",
   "conversation": "Conversation",
   "natural_language": "Natural Language",

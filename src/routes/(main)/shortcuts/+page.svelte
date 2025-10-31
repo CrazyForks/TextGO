@@ -11,7 +11,7 @@
     ArrowFatLineRight,
     ArrowFatUp,
     Browser,
-    CaretDoubleRight,
+    ArrowArcRight,
     Command,
     Control,
     FingerprintSimple,
@@ -194,7 +194,7 @@
           {@const { label: actionLabel, icon: actionIcon } = ruleManager?.getActionOption(item.action) ?? {}}
           <div class="ml-4 flex w-60 items-center gap-1.5 truncate" title={caseLabel}>
             {#if item.case === ''}
-              <CaretDoubleRight class="size-5 shrink-0 opacity-30" />
+              <ArrowArcRight class="size-5 shrink-0 opacity-30" />
               <span class="truncate opacity-30">{caseLabel}</span>
             {:else if caseLabel}
               {#if item.case.startsWith(MODEL_MARK)}
