@@ -26,3 +26,19 @@ repos:
           - prettier-plugin-svelte@3.4.0
           - prettier-plugin-tailwindcss@0.7.1
         args: [--config, ./.prettierrc, --ignore-path, ./.prettierignore, --write, ./src]
+  - repo: local
+    hooks:
+      - id: cargo-fmt
+        name: cargo-fmt
+        types: [rust]
+        language: system
+        entry: cargo fmt
+        args: [--manifest-path, ./src-tauri/Cargo.toml]
+        pass_filenames: false
+      - id: cargo-clippy
+        name: cargo-clippy
+        types: [rust]
+        language: system
+        entry: cargo clippy
+        args: [--manifest-path, ./src-tauri/Cargo.toml, --, -D, warnings]
+        pass_filenames: false
