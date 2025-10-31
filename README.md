@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="app-icon.png" alt="logo" width="64">
+<img src="app-icon.png" alt="logo" width="80">
 
 <h1>TextGO</h1>
 
@@ -33,14 +33,16 @@ Here are the features you can achieve using `TextGO`:
 - **Word Translation**: Call local LLM to achieve AI translation.
 - ...
 
-## ⬇️ Installation
+## ⬇️ Getting Started
 
-Download the installer for your platform from [GitHub Releases](https://github.com/C5H12O5/TextGO/releases) and follow the installation instructions.
+#### Installation
+
+Download the installer for your platform from [**GitHub Releases**](https://github.com/C5H12O5/TextGO/releases) and follow the installation instructions.
 
 #### FAQ
 
 <details>
-<summary>1. macOS shows "App is damaged and can’t be opened." after installation</summary>
+<summary>1. macOS shows "App is damaged and can't be opened."</summary>
 
 <br>
 
@@ -52,21 +54,26 @@ sudo xattr -r -d com.apple.quarantine /Applications/TextGO.app
 
 </details>
 
-## 🛠️ Dependencies
+<details>
+<summary>2. macOS shows "Apple can't check app for malicious software."</summary>
 
-| Name                                           | Description                                                                           |
-| ---------------------------------------------- | ------------------------------------------------------------------------------------- |
-| [Tauri](https://tauri.app/)                    | Rust-based cross-platform desktop application framework providing native performance. |
-| [Enigo](https://github.com/enigo-rs/enigo)     | Rust input simulation library for simulating mouse and keyboard input.                |
-| [Svelte](https://svelte.dev/)                  | Modern frontend framework for building responsive user interfaces.                    |
-| [DaisyUI](https://daisyui.com/)                | Semantic component library based on Tailwind CSS.                                     |
-| [TailwindCSS](https://tailwindcss.com/)        | Utility-first CSS framework for rapidly building beautiful interfaces.                |
-| [CodeMirror](https://codemirror.net/)          | Code editor component with syntax highlighting and auto-completion support.           |
-| [franc](https://github.com/wooorm/franc)       | Natural language detection library for identifying human languages from text.         |
-| [Guesslang](https://github.com/yoeo/guesslang) | Machine learning library for detecting programming languages from code snippets.      |
-| [TensorFlow.js](https://www.tensorflow.org/js) | Browser-side machine learning supporting text classification model training.          |
-| [Ollama](https://ollama.com/)                  | Local LLM runtime providing AI conversation capabilities.                             |
+<br>
+
+_Follow these steps to resolve:_
+
+1. Open "System Settings" > "Privacy & Security"
+2. Find the blocked application in the "Security" section
+3. Click the "Open Anyway" button
+4. Enter your login password and confirm
+
+</details>
+
+## 🎉 Acknowledgments
+
+This project is built upon many excellent open source projects. We would like to express our sincere gratitude to all the developers and contributors of these projects.
+
+For a complete list of third-party dependencies and their licenses, please see [**LICENSES.md**](licenses/LICENSES.md).
 
 ## 📄 License
 
-This project is released under the [MIT](LICENSE) open source license.
+This project is released under the [**MIT**](LICENSE) open source license.

@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="app-icon.png" alt="logo" width="64">
+<img src="app-icon.png" alt="logo" width="80">
 
 <h1>TextGO</h1>
 
@@ -33,14 +33,16 @@
 - **划词翻译**：调用本地 LLM 实现 AI 翻译
 - ...
 
-## ⬇️ 安装方法
+## ⬇️ 使用说明
 
-从 [GitHub Releases](https://github.com/C5H12O5/TextGO/releases) 下载对应平台的安装包，按照安装说明进行安装后即可使用。
+#### 下载安装
+
+从 [**GitHub Releases**](https://github.com/C5H12O5/TextGO/releases) 下载对应平台的安装包，按照安装说明进行安装后即可使用。
 
 #### 常见问题
 
 <details>
-<summary>1. macOS 安装后打开提示“App已损坏，无法打开。”</summary>
+<summary>1. macOS 安装后打开提示"App 已损坏，无法打开。"</summary>
 
 <br>
 
@@ -52,21 +54,26 @@ sudo xattr -r -d com.apple.quarantine /Applications/TextGO.app
 
 </details>
 
-## 🛠️ 依赖项目
+<details>
+<summary>2. macOS 安装后打开提示"Apple 无法检查 App 是否包含恶意软件。"</summary>
 
-| 名称                                           | 说明                                         |
-| ---------------------------------------------- | -------------------------------------------- |
-| [Tauri](https://tauri.app/)                    | 基于 Rust 的跨平台桌面应用框架，提供原生性能 |
-| [Enigo](https://github.com/enigo-rs/enigo)     | Rust 输入模拟库，用于模拟鼠标和键盘输入      |
-| [Svelte](https://svelte.dev/)                  | 现代前端框架，构建响应式用户界面             |
-| [DaisyUI](https://daisyui.com/)                | 基于 Tailwind CSS 的语义化组件库             |
-| [TailwindCSS](https://tailwindcss.com/)        | 实用优先的 CSS 框架，快速构建美观界面        |
-| [CodeMirror](https://codemirror.net/)          | 代码编辑器组件，支持语法高亮和自动完成       |
-| [franc](https://github.com/wooorm/franc)       | 自然语言检测库，用于识别文本的人类语言       |
-| [Guesslang](https://github.com/yoeo/guesslang) | 机器学习库，用于从代码片段检测编程语言       |
-| [TensorFlow.js](https://www.tensorflow.org/js) | 浏览器端机器学习，支持文本分类模型训练       |
-| [Ollama](https://ollama.com/)                  | 本地 LLM 运行时，提供 AI 对话能力            |
+<br>
+
+_可以按照以下步骤解决：_
+
+1. 打开"系统设置" > "隐私与安全性"
+2. 在"安全性"部分找到被阻止的应用
+3. 点击"仍要打开"按钮
+4. 输入你的登录密码后点击确认
+
+</details>
+
+## 🎉 致谢
+
+本项目基于众多优秀的开源项目构建而成，在此向所有这些项目的开发者和贡献者表示衷心的感谢。
+
+完整的第三方依赖列表及其开源协议请查看 [**LICENSES.md**](licenses/LICENSES.md) 文件。
 
 ## 📄 开源协议
 
-本项目基于 [MIT](LICENSE) 开源协议发布
+本项目基于 [**MIT**](LICENSE) 开源协议发布。
