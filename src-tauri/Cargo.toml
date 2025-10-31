@@ -1,7 +1,7 @@
 [package]
 name = "text-go"
 version = "1.0.5"
-description = "Smart shortcuts to boost your productivity"
+description = "Auto-detect text types and trigger custom actions with one hotkey."
 authors = ["Xylitol <jam.xylitol@gmail.com>"]
 license = "MIT"
 edition = "2021"
