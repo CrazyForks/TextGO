@@ -604,7 +604,7 @@ export class Classifier {
   }
 
   // 调试方法: 检查数据和模型状态
-  debugInfo(): void {
+  debugInfo() {
     console.debug('=== 单类别文本分类器调试信息 ===');
     console.debug('模型ID:', this.id);
     console.debug('分词器大小:', this.tokenizer.size);
@@ -703,7 +703,7 @@ export class Classifier {
   }
 
   // 清除保存的模型数据
-  static clearSavedModel(id: string): void {
+  static clearSavedModel(id: string) {
     try {
       // 从缓存中移除并清理资源
       const cached = MODEL_CACHE.get(id);
@@ -737,7 +737,7 @@ export class Classifier {
   }
 
   // 清除当前实例的保存模型数据
-  clearSavedModel(): void {
+  clearSavedModel() {
     Classifier.clearSavedModel(this.id);
   }
 
@@ -809,7 +809,7 @@ export async function predict(modelId: string, text: string): Promise<number | n
  *
  * @param maxAge - 最大存活时间（毫秒），默认1小时
  */
-export function cleanupCache(maxAge: number = 60 * 60 * 1000): void {
+export function cleanupCache(maxAge: number = 60 * 60 * 1000) {
   const now = Date.now();
   const toDelete: string[] = [];
 

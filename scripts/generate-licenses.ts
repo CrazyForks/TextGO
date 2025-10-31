@@ -7,10 +7,9 @@ import { fileURLToPath } from 'url';
 
 const __DIRNAME = dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = join(__DIRNAME, '..');
-const FORMAT_JSON = join(__DIRNAME, 'format.json');
-const FRONTEND_JSON = join(__DIRNAME, 'frontend.json');
-const BACKEND_JSON = join(__DIRNAME, 'backend.json');
-const OUTPUT_PATH = join(__DIRNAME, 'LICENSES.md');
+const BACKEND_JSON = join(__DIRNAME, '.backend.json');
+const FRONTEND_JSON = join(__DIRNAME, '.frontend.json');
+const OUTPUT_PATH = join(PROJECT_ROOT, 'LICENSES.md');
 
 interface Package {
   name: string;
@@ -29,7 +28,7 @@ interface Package {
 function runLicenseChecker() {
   console.log('🔍 Running license-checker for frontend dependencies...');
   try {
-    const command = `pnpm dlx license-checker --direct --json --customPath ${FORMAT_JSON} --out ${FRONTEND_JSON}`;
+    const command = `pnpm dlx license-checker --direct --json --customPath ./scripts/.format.json --out ${FRONTEND_JSON}`;
     execSync(command, {
       cwd: PROJECT_ROOT,
       stdio: 'inherit'
@@ -63,6 +62,8 @@ function runCargoLicense() {
 
 /**
  * 解析前端依赖 JSON 文件
+ *
+ * @returns 依赖数据数组
  */
 function parseFrontendJson(): Package[] {
   console.log('📖 Parsing frontend license data...');
@@ -84,6 +85,8 @@ function parseFrontendJson(): Package[] {
 
 /**
  * 解析后端依赖 JSON 文件
+ *
+ * @returns 依赖数据数组
  */
 function parseBackendJson(): Package[] {
   console.log('📖 Parsing backend license data...');

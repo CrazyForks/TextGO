@@ -1,6 +1,6 @@
 # Third-Party License Notices
 
-> This document was automatically generated on October 30, 2025 at 07:55 PM GMT+8
+> This document was automatically generated on October 31, 2025 at 11:48 AM GMT+8
 
 ## Frontend Dependencies
 
@@ -25,7 +25,7 @@
 | [@fontsource-variable/noto-sans](https://github.com/fontsource/font-files)                 | 5.2.10  | OFL-1.1           | Self-host the Noto Sans font in a neatly bundled NPM package.                                                                                     |
 | [@inlang/paraglide-js](https://github.com/opral/inlang-paraglide-js)                       | 2.4.0   | MIT               | [![Inlang-ecosystem compatibility badge](https://cdn.jsdelivr.net/gh/opral/monorepo@main/inlang/assets/md-badges/inlang.svg)](https://inlang.com) |
 | [@sveltejs/adapter-static](https://github.com/sveltejs/kit)                                | 3.0.10  | MIT               | Adapter for SvelteKit apps that prerenders your entire site as a collection of static files                                                       |
-| [@sveltejs/kit](https://github.com/sveltejs/kit)                                           | 2.48.3  | MIT               | SvelteKit is the fastest way to build Svelte apps                                                                                                 |
+| [@sveltejs/kit](https://github.com/sveltejs/kit)                                           | 2.48.4  | MIT               | SvelteKit is the fastest way to build Svelte apps                                                                                                 |
 | [@sveltejs/vite-plugin-svelte](https://github.com/sveltejs/vite-plugin-svelte)             | 6.2.1   | MIT               | The official [Svelte](https://svelte.dev) plugin for [Vite](https://vitejs.dev).                                                                  |
 | [@tailwindcss/typography](https://github.com/tailwindlabs/tailwindcss-typography)          | 0.5.19  | MIT               | A Tailwind CSS plugin for automatically styling plain HTML content with beautiful typographic defaults.                                           |
 | [@tailwindcss/vite](https://github.com/tailwindlabs/tailwindcss)                           | 4.1.16  | MIT               | A utility-first CSS framework for rapidly building custom user interfaces.                                                                        |
@@ -48,13 +48,13 @@
 | [franc-min](https://github.com/wooorm/franc/tree/main/packages/franc-min)                  | 6.2.0   | MIT               | Detect the language of text                                                                                                                       |
 | [globals](https://github.com/sindresorhus/globals)                                         | 16.4.0  | MIT               | Global identifiers from different JavaScript environments                                                                                         |
 | [marked](https://github.com/markedjs/marked)                                               | 16.4.1  | MIT               | A markdown parser built for speed                                                                                                                 |
-| [ollama](https://github.com/ollama/ollama-js)                                              | 0.6.0   | MIT               | Ollama Javascript library                                                                                                                         |
+| [ollama](https://github.com/ollama/ollama-js)                                              | 0.6.2   | MIT               | Ollama Javascript library                                                                                                                         |
 | [phosphor-svelte](https://github.com/haruaki07/phosphor-svelte)                            | 3.0.1   | MIT               | A clean and friendly icon family for Svelte                                                                                                       |
 | [prettier-plugin-svelte](https://github.com/sveltejs/prettier-plugin-svelte)               | 3.4.0   | MIT               | Svelte plugin for prettier                                                                                                                        |
 | [prettier-plugin-tailwindcss](https://github.com/tailwindlabs/prettier-plugin-tailwindcss) | 0.7.1   | MIT               | A Prettier plugin for sorting Tailwind CSS classes.                                                                                               |
 | [prettier](https://github.com/prettier/prettier)                                           | 3.6.2   | MIT               | Prettier is an opinionated code formatter                                                                                                         |
 | [svelte-check](https://github.com/sveltejs/language-tools)                                 | 4.3.3   | MIT               | Svelte Code Checker Terminal Interface                                                                                                            |
-| [svelte](https://github.com/sveltejs/svelte)                                               | 5.43.0  | MIT               | Cybernetically enhanced web apps                                                                                                                  |
+| [svelte](https://github.com/sveltejs/svelte)                                               | 5.43.2  | MIT               | Cybernetically enhanced web apps                                                                                                                  |
 | [tailwind-scrollbar](https://github.com/adoxography/tailwind-scrollbar)                    | 4.0.2   | MIT               | Tailwind plugin for styling scrollbars                                                                                                            |
 | [tailwindcss](https://github.com/tailwindlabs/tailwindcss)                                 | 4.1.16  | MIT               | A utility-first CSS framework for rapidly building custom user interfaces.                                                                        |
 | [tippy.js](https://github.com/atomiks/tippyjs)                                             | 6.3.7   | MIT               | The complete tooltip, popover, dropdown, and menu solution for the web                                                                            |

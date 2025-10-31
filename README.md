@@ -72,7 +72,7 @@ _Follow these steps to resolve:_
 
 This project is built upon many excellent open source projects. We would like to express our sincere gratitude to all the developers and contributors of these projects.
 
-For a complete list of third-party dependencies and their licenses, please see [**LICENSES.md**](licenses/LICENSES.md).
+For a complete list of third-party dependencies and their licenses, please see [**LICENSES.md**](LICENSES.md).
 
 ## 📄 License
 

@@ -1,4 +1,4 @@
-name: 'release'
+name: release
 
 on:
   push:
@@ -32,6 +32,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref_name }}
+          excludeTypes: 'build,bump,chore,ci,docs,perf,refactor,revert,style,test'
           writeToFile: false
 
       - name: setup node
