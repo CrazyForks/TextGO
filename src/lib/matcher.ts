@@ -4,6 +4,7 @@ import { m } from '$lib/paraglide/messages';
 import { models, regexps } from '$lib/stores.svelte';
 import type { Model, Option, Rule } from '$lib/types';
 import { ModelOperations, type ModelResult } from '@vscode/vscode-languagedetection';
+import { memoize } from 'es-toolkit/function';
 import { franc } from 'franc-min';
 import { CalendarDots, Clock, Folders, Globe, GlobeSimple, Key, Link, Mailbox, TextAa } from 'phosphor-svelte';
 
@@ -179,7 +180,7 @@ export const NATURAL_CASES: Option[] = [
 /**
  * 编程语言识别选项
  */
-export const PROGRAM_CASES: Option[] = [
+export const PROGRAMMING_CASES: Option[] = [
   { value: 'asm', label: 'Assembly' },
   { value: 'bat', label: 'Batchfile' },
   { value: 'c', label: 'C' },
@@ -236,6 +237,14 @@ export const PROGRAM_CASES: Option[] = [
   { value: 'yaml', label: 'YAML' }
 ];
 
+// Memoized 查找函数
+const _findBuiltinCase = (_case: string) => [...GENERAL_CASES, ...TEXT_CASES].find((c) => c.value === _case);
+const findBuiltinCase = memoize(_findBuiltinCase);
+const _findNaturalCase = (_case: string) => NATURAL_CASES.find((c) => c.value === _case);
+const findNaturalCase = memoize(_findNaturalCase);
+const _findProgrammingCase = (_case: string) => PROGRAMMING_CASES.find((c) => c.value === _case);
+const findProgrammingCase = memoize(_findProgrammingCase);
+
 /**
  * 根据文本类型匹配要执行的快捷键动作
  *
@@ -255,15 +264,20 @@ export async function match(text: string, rules: Rule[]): Promise<Rule | null> {
       console.debug('%c跳过文本识别', 'color: rgba(0,0,0,0.5)');
       return rule;
     }
+    if (!text) {
+      continue;
+    }
+
     // 内置正则匹配
-    const builtin = [...GENERAL_CASES, ...TEXT_CASES].find((c) => c.value === _case);
+    const builtin = findBuiltinCase(_case);
     if (builtin && builtin.pattern && builtin.pattern.test(text)) {
       console.debug('内置正则表达式匹配成功:', builtin.label);
       rule.caseLabel = builtin.label;
       return rule;
     }
+
     // 自然语言识别
-    const natural = NATURAL_CASES.find((c) => c.value === _case);
+    const natural = findNaturalCase(_case);
     if (natural) {
       try {
         if (franc(text, { minLength: 2 }) === _case) {
@@ -275,24 +289,26 @@ export async function match(text: string, rules: Rule[]): Promise<Rule | null> {
         console.error('自然语言识别失败:', error);
       }
     }
+
     // 编程语言识别
-    const program = PROGRAM_CASES.find((c) => c.value === _case);
-    if (program) {
+    const programming = findProgrammingCase(_case);
+    if (programming) {
       try {
         if (!langDetected) {
           langDetectedResult = await modelOperations.runModel(text);
           langDetected = true;
           console.debug('编程语言识别结果:', langDetectedResult);
         }
-        if (matchProgramCase(_case, langDetectedResult)) {
-          console.debug('编程语言识别成功:', program.label);
-          rule.caseLabel = program.label;
+        if (matchProgrammingCase(_case, langDetectedResult)) {
+          console.debug('编程语言识别成功:', programming.label);
+          rule.caseLabel = programming.label;
           return rule;
         }
       } catch (error) {
         console.error('编程语言识别失败:', error);
       }
     }
+
     // 自定义正则匹配
     if (_case.startsWith(REGEXP_MARK)) {
       const regexpId = _case.substring(REGEXP_MARK.length);
@@ -310,6 +326,7 @@ export async function match(text: string, rules: Rule[]): Promise<Rule | null> {
         }
       }
     }
+
     // 自定义模型识别
     if (_case.startsWith(MODEL_MARK)) {
       const modelId = _case.substring(MODEL_MARK.length);
@@ -339,7 +356,7 @@ export async function match(text: string, rules: Rule[]): Promise<Rule | null> {
  * @param results - 模型识别结果
  * @returns 是否匹配目标语言
  */
-function matchProgramCase(targetId: string, results: ModelResult[]): boolean {
+function matchProgrammingCase(targetId: string, results: ModelResult[]): boolean {
   if (!results || results.length === 0) {
     return false;
   }

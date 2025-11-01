@@ -21,6 +21,7 @@ import {
   upperCase,
   words
 } from 'es-toolkit';
+import { memoize } from 'es-toolkit/function';
 import { Function, TextAa } from 'phosphor-svelte';
 
 /**
@@ -156,6 +157,10 @@ export const PROCESS_ACTIONS: Processor[] = [
   }
 ];
 
+// Memoized 查找函数
+const _findBuiltinAction = (action: string) => [...CONVERT_ACTIONS, ...PROCESS_ACTIONS].find((a) => a.value === action);
+const findBuiltinAction = memoize(_findBuiltinAction);
+
 /**
  * 执行动作
  *
@@ -230,7 +235,7 @@ export async function execute(rule: Rule, selection: string): Promise<void> {
       await showPopup(entry);
     }
   } else {
-    const builtin = [...CONVERT_ACTIONS, ...PROCESS_ACTIONS].find((a) => a.value === action);
+    const builtin = findBuiltinAction(action);
     if (builtin) {
       console.debug('开始执行内置动作:', action);
       const result = builtin.process(selection);

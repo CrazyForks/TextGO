@@ -4,7 +4,7 @@
   import { MODEL_MARK, PROMPT_MARK, REGEXP_MARK, SCRIPT_MARK } from '$lib/constants';
   import { CONVERT_ACTIONS, PROCESS_ACTIONS } from '$lib/executor';
   import { manager } from '$lib/manager';
-  import { GENERAL_CASES, NATURAL_CASES, PROGRAM_CASES, TEXT_CASES } from '$lib/matcher';
+  import { GENERAL_CASES, NATURAL_CASES, PROGRAMMING_CASES, TEXT_CASES } from '$lib/matcher';
   import { m } from '$lib/paraglide/messages';
   import { Loading } from '$lib/states.svelte';
   import { models, prompts, regexps, scripts, shortcuts } from '$lib/stores.svelte';
@@ -54,8 +54,8 @@
     options.push(...TEXT_CASES);
     options.push({ value: '--natural--', label: `-- ${m.natural_language()} --`, disabled: true });
     options.push(...NATURAL_CASES.map((c) => ({ ...c, icon: Translate })));
-    options.push({ value: '--program--', label: `-- ${m.programming_language()} --`, disabled: true });
-    options.push(...PROGRAM_CASES.map((c) => ({ ...c, icon: Code })));
+    options.push({ value: '--programming--', label: `-- ${m.programming_language()} --`, disabled: true });
+    options.push(...PROGRAMMING_CASES.map((c) => ({ ...c, icon: Code })));
     return options;
   });
 
