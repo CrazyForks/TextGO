@@ -1,6 +1,6 @@
 # Third-Party License Notices
 
-> This document was automatically generated on November 1, 2025 at 07:51 AM GMT+8
+> This document was automatically generated on November 2, 2025 at 08:26 PM GMT+8
 
 ## Frontend Dependencies
 
@@ -39,13 +39,13 @@
 | [@types/node](https://github.com/DefinitelyTyped/DefinitelyTyped)                          | 24.9.2  | MIT               | TypeScript definitions for node                                                                                                                   |
 | [@vscode/vscode-languagedetection](https://github.com/microsoft/vscode-languagedetection)  | 1.0.22  | MIT               | An npm package that uses guesslang's ML model to detect source code languages                                                                     |
 | [codemirror](https://github.com/codemirror/basic-setup)                                    | 6.0.2   | MIT               | Basic configuration for the CodeMirror code editor                                                                                                |
-| [daisyui](https://github.com/saadeghi/daisyui)                                             | 5.3.10  | MIT               | daisyUI 5 - The Tailwind CSS Component Library                                                                                                    |
+| [daisyui](https://github.com/saadeghi/daisyui)                                             | 5.4.2   | MIT               | daisyUI 5 - The Tailwind CSS Component Library                                                                                                    |
 | [es-toolkit](https://github.com/toss/es-toolkit)                                           | 1.41.0  | MIT               | A state-of-the-art, high-performance JavaScript utility library with a small bundle size and strong type annotations.                             |
 | [eslint-config-prettier](https://github.com/prettier/eslint-config-prettier)               | 10.1.8  | MIT               | Turns off all rules that are unnecessary or might conflict with Prettier.                                                                         |
 | [eslint-plugin-svelte](https://github.com/sveltejs/eslint-plugin-svelte)                   | 3.13.0  | MIT               | ESLint plugin for Svelte using AST                                                                                                                |
 | [eslint](https://github.com/eslint/eslint)                                                 | 9.39.0  | MIT               | An AST-based pattern checker for JavaScript.                                                                                                      |
 | [franc-min](https://github.com/wooorm/franc/tree/main/packages/franc-min)                  | 6.2.0   | MIT               | Detect the language of text                                                                                                                       |
-| [globals](https://github.com/sindresorhus/globals)                                         | 16.4.0  | MIT               | Global identifiers from different JavaScript environments                                                                                         |
+| [globals](https://github.com/sindresorhus/globals)                                         | 16.5.0  | MIT               | Global identifiers from different JavaScript environments                                                                                         |
 | [marked](https://github.com/markedjs/marked)                                               | 16.4.1  | MIT               | A markdown parser built for speed                                                                                                                 |
 | [ollama](https://github.com/ollama/ollama-js)                                              | 0.6.2   | MIT               | Ollama Javascript library                                                                                                                         |
 | [phosphor-svelte](https://github.com/haruaki07/phosphor-svelte)                            | 3.0.1   | MIT               | A clean and friendly icon family for Svelte                                                                                                       |
