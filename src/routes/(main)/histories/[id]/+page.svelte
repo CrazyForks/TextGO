@@ -1,10 +1,10 @@
 <script lang="ts">
   import { page } from '$app/state';
   import { CodeMirror } from '$lib/components';
+  import { formatISO8601 } from '$lib/helpers';
   import { m } from '$lib/paraglide/messages';
   import { entries } from '$lib/stores.svelte';
   import type { Entry } from '$lib/types';
-  import { formatISO8601 } from '$lib/utils';
   import { markdown } from '@codemirror/lang-markdown';
   import {
     CaretDown,

@@ -28,7 +28,7 @@
 
 <script lang="ts">
   import { Alert } from '$lib/components';
-  import { freeze, unfreeze } from '$lib/utils';
+  import { freeze, unfreeze } from '$lib/helpers';
   import { tick } from 'svelte';
   import { fade } from 'svelte/transition';
 

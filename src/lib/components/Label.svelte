@@ -20,7 +20,7 @@
 </script>
 
 <script lang="ts">
-  import { tooltip } from '$lib/utils';
+  import { tooltip } from '$lib/helpers';
   import { Question } from 'phosphor-svelte';
 
   let { children, icon, tip, tipPlacement = 'left', required = false, class: _class }: LabelProps = $props();

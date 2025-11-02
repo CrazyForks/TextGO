@@ -1,6 +1,7 @@
 <script lang="ts" module>
+  import { freeze, unfreeze } from '$lib/helpers';
   import { m } from '$lib/paraglide/messages';
-  import { escapeHTML, freeze, unfreeze } from '$lib/utils';
+  import { escape } from 'es-toolkit/string';
   import { Warning, type IconComponentProps } from 'phosphor-svelte';
   import { tick, type Component } from 'svelte';
   import { SvelteMap } from 'svelte/reactivity';
@@ -70,7 +71,7 @@
    * @return 转换后的HTML字符串
    */
   function pretty(title: string): string {
-    title = escapeHTML(title);
+    title = escape(title);
     return title.replace(/\[([^\]]+)\]/g, '<span class="truncate font-normal opacity-60">$1</span>');
   }
 </script>

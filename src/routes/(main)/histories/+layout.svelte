@@ -3,10 +3,10 @@
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
   import { Button } from '$lib/components';
+  import { formatISO8601 } from '$lib/helpers';
   import { m } from '$lib/paraglide/messages';
   import { deLocalizeHref } from '$lib/paraglide/runtime';
   import { entries } from '$lib/stores.svelte';
-  import { formatISO8601 } from '$lib/utils';
   import { Trash } from 'phosphor-svelte';
   import { type Snippet } from 'svelte';
   import { flip } from 'svelte/animate';
@@ -14,7 +14,7 @@
   let { children }: { children: Snippet } = $props();
 
   // 侧边栏宽度
-  const SIDEBAR_WIDTH = '12rem';
+  const SIDEBAR_WIDTH = '13.5rem';
 </script>
 
 <div class="relative h-(--app-h) rounded-container p-0">

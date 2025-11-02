@@ -52,7 +52,7 @@
 </script>
 
 <script lang="ts">
-  import { tooltip } from '$lib/utils';
+  import { tooltip } from '$lib/helpers';
 
   let {
     children,

@@ -17,7 +17,7 @@
 </script>
 
 <script lang="ts">
-  import { tooltip } from '$lib/utils';
+  import { tooltip } from '$lib/helpers';
   import { Question } from 'phosphor-svelte';
 
   let { children, icon, title, tip, class: _class }: SettingProps = $props();

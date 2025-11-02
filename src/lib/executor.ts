@@ -4,6 +4,7 @@ import { entries, historySize, nodePath, prompts, pythonPath, scripts } from '$l
 import type { Entry, Option, Prompt, Rule, Script } from '$lib/types';
 import { invoke } from '@tauri-apps/api/core';
 import { readText, writeText } from '@tauri-apps/plugin-clipboard-manager';
+import { memoize } from 'es-toolkit/function';
 import {
   camelCase,
   capitalize,
@@ -20,8 +21,7 @@ import {
   unescape,
   upperCase,
   words
-} from 'es-toolkit';
-import { memoize } from 'es-toolkit/function';
+} from 'es-toolkit/string';
 import { Function, TextAa } from 'phosphor-svelte';
 
 /**
@@ -158,8 +158,9 @@ export const PROCESS_ACTIONS: Processor[] = [
 ];
 
 // Memoized 查找函数
-const _findBuiltinAction = (action: string) => [...CONVERT_ACTIONS, ...PROCESS_ACTIONS].find((a) => a.value === action);
-const findBuiltinAction = memoize(_findBuiltinAction);
+const findBuiltinAction = memoize((action: string) =>
+  [...CONVERT_ACTIONS, ...PROCESS_ACTIONS].find((a) => a.value === action)
+);
 
 /**
  * 执行动作

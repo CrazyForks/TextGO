@@ -238,12 +238,9 @@ export const PROGRAMMING_CASES: Option[] = [
 ];
 
 // Memoized 查找函数
-const _findBuiltinCase = (_case: string) => [...GENERAL_CASES, ...TEXT_CASES].find((c) => c.value === _case);
-const findBuiltinCase = memoize(_findBuiltinCase);
-const _findNaturalCase = (_case: string) => NATURAL_CASES.find((c) => c.value === _case);
-const findNaturalCase = memoize(_findNaturalCase);
-const _findProgrammingCase = (_case: string) => PROGRAMMING_CASES.find((c) => c.value === _case);
-const findProgrammingCase = memoize(_findProgrammingCase);
+const findBuiltinCase = memoize((_case: string) => [...GENERAL_CASES, ...TEXT_CASES].find((c) => c.value === _case));
+const findNaturalCase = memoize((_case: string) => NATURAL_CASES.find((c) => c.value === _case));
+const findProgrammingCase = memoize((_case: string) => PROGRAMMING_CASES.find((c) => c.value === _case));
 
 /**
  * 根据文本类型匹配要执行的快捷键动作
