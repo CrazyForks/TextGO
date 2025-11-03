@@ -6,7 +6,7 @@ use tauri::tray::TrayIconBuilder;
 #[tauri::command]
 pub fn setup_tray(
     app: tauri::AppHandle,
-    window_text: String,
+    main_window_text: String,
     shortcuts_text: String,
     about_text: String,
     quit_text: String,
@@ -15,7 +15,7 @@ pub fn setup_tray(
     let menu = Menu::with_items(
         &app,
         &[
-            &MenuItem::with_id(&app, "window", window_text, true, None::<&str>)?,
+            &MenuItem::with_id(&app, "main_window", main_window_text, true, None::<&str>)?,
             &MenuItem::with_id(&app, "shortcuts", shortcuts_text, true, Some("CmdOrCtrl+,"))?,
             &PredefinedMenuItem::separator(&app)?,
             #[cfg(target_os = "macos")]
@@ -27,19 +27,19 @@ pub fn setup_tray(
         ],
     )?;
 
-    // 尝试获取现有托盘图标并更新菜单
+    // 尝试获取现有托盘菜单并更新
     if let Some(tray) = app.tray_by_id("main-tray") {
         tray.set_menu(Some(menu))?;
     } else {
-        // 如果托盘不存在，创建新的托盘图标
+        // 获取失败则创建新的托盘菜单
         let _tray = TrayIconBuilder::with_id("main-tray")
             .menu(&menu)
             .icon(app.default_window_icon().unwrap().clone())
             .icon_as_template(true)
             .show_menu_on_left_click(true)
             .on_menu_event(|app, event| match event.id.as_ref() {
-                "window" => {
-                    crate::commands::toggle_window(app.clone());
+                "main_window" => {
+                    crate::commands::toggle_main_window(app.clone());
                 }
                 "shortcuts" => {
                     crate::commands::goto_shortcuts(app.clone());
@@ -58,12 +58,13 @@ pub fn setup_tray(
     Ok(())
 }
 
+/// 显示关于对话框
 #[tauri::command]
 pub fn show_about(app: tauri::AppHandle) {
     use tauri_plugin_dialog::{DialogExt, MessageDialogKind};
 
+    // 获取应用程序信息
     let package_info = app.package_info();
-
     // 使用 dialog 插件显示消息框
     app.dialog()
         .message(format!("Version {}", package_info.version))

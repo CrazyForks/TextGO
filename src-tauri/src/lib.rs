@@ -116,8 +116,8 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
 }
 
 /// 运行时事件处理函数
-fn handle_run_event(_app_handle: &tauri::AppHandle, #[allow(unused_variables)] event: RunEvent) {
-    // 处理 Reopen 事件
+fn handle_run_event(app: &tauri::AppHandle, #[allow(unused_variables)] event: RunEvent) {
+    // 处理 macOS 下的 Reopen 事件
     #[cfg(target_os = "macos")]
     if let RunEvent::Reopen {
         has_visible_windows: false,
@@ -125,16 +125,9 @@ fn handle_run_event(_app_handle: &tauri::AppHandle, #[allow(unused_variables)] e
     } = event
     {
         // 没有可见窗口时，显示主窗口
-        if let Some(window) = _app_handle.get_webview_window("main") {
-            let _ = window.unminimize();
-            let _ = window.show();
-            let _ = window.set_focus();
-            // 显示窗口时，显示 Dock 图标
-            #[cfg(target_os = "macos")]
-            {
-                let _ = _app_handle.set_dock_visibility(true);
-            }
-        }
+        show_window(app, "main");
+        // 同时显示 Dock 图标
+        let _ = app.set_dock_visibility(true);
     }
 }
 
@@ -153,9 +146,9 @@ pub fn run() {
         )
         .setup(setup_app)
         .invoke_handler(tauri::generate_handler![
-            show_window,
-            hide_window,
-            toggle_window,
+            show_main_window,
+            hide_main_window,
+            toggle_main_window,
             goto_shortcuts,
             send_copy_key,
             send_paste_key,

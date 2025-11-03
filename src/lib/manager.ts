@@ -52,7 +52,7 @@ export class Manager {
       }
       // 执行默认动作
       if (rule.action === '') {
-        await invoke('show_window');
+        await invoke('show_main_window');
         return;
       }
       // 执行动作

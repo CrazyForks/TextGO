@@ -55,7 +55,7 @@
   async function updateTrayMenu() {
     try {
       await invoke('setup_tray', {
-        windowText: m.tray_window(),
+        mainWindowText: m.tray_main_window(),
         shortcutsText: m.tray_shortcuts(),
         aboutText: m.tray_about(),
         quitText: m.tray_quit()
