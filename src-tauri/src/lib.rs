@@ -147,18 +147,18 @@ pub fn run() {
             hide_main_window,
             toggle_main_window,
             goto_shortcuts,
-            send_copy_key,
-            send_paste_key,
-            get_selection,
-            is_editable,
-            show_popup,
-            execute_javascript,
-            execute_python,
             register_shortcut,
             unregister_shortcut,
             is_shortcut_registered,
-            setup_tray,
-            show_about
+            is_editable,
+            get_selection,
+            execute_python,
+            execute_javascript,
+            send_copy_key,
+            send_paste_key,
+            show_popup,
+            show_about,
+            setup_tray
         ])
         .build(tauri::generate_context!())
         .expect("error while running tauri application")

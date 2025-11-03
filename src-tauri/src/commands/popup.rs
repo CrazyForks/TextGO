@@ -11,10 +11,7 @@ const POPUP_WINDOW_HEIGHT: i32 = 300;
 // 弹窗窗口偏移量
 const POPUP_MOUSE_OFFSET: i32 = 10;
 // 底部安全区域高度
-#[cfg(target_os = "macos")]
-const POPUP_SAFE_AREA_BOTTOM: i32 = 64;
-#[cfg(not(target_os = "macos"))]
-const POPUP_SAFE_AREA_BOTTOM: i32 = 40;
+const POPUP_SAFE_AREA_BOTTOM: i32 = 80;
 
 /// 显示弹窗并定位到鼠标附近
 #[tauri::command]

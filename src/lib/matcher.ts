@@ -6,7 +6,20 @@ import type { Model, Option, Rule } from '$lib/types';
 import { ModelOperations, type ModelResult } from '@vscode/vscode-languagedetection';
 import { memoize } from 'es-toolkit/function';
 import { franc } from 'franc-min';
-import { CalendarDots, Clock, Folders, Globe, GlobeSimple, Key, Link, Envelope, TextAa } from 'phosphor-svelte';
+import {
+  CalendarDots,
+  Clock,
+  Envelope,
+  Folders,
+  Globe,
+  GlobeSimple,
+  Key,
+  Link,
+  Magnet,
+  NumberCircleNine,
+  TextAa,
+  TextT
+} from 'phosphor-svelte';
 
 // 创建编程语言识别模型实例
 // 针对 Tauri 环境配置自定义加载函数
@@ -59,6 +72,24 @@ const RELATIVE_THRESHOLD = 0.15;
  */
 export const GENERAL_CASES: Option[] = [
   {
+    value: 'numbers',
+    label: m.numbers(),
+    icon: NumberCircleNine,
+    pattern: /^[0-9]+$/
+  },
+  {
+    value: 'small_letters',
+    label: m.small_letters(),
+    icon: TextT,
+    pattern: /^(?=.*[a-z])[a-z0-9_\W]+$/
+  },
+  {
+    value: 'capital_letters',
+    label: m.capital_letters(),
+    icon: TextT,
+    pattern: /^(?=.*[A-Z])[A-Z0-9_\W]+$/
+  },
+  {
     value: 'uuid',
     label: m.uuid(),
     icon: Key,
@@ -102,6 +133,12 @@ export const GENERAL_CASES: Option[] = [
     icon: Globe,
     pattern:
       /^(?:(?:[0-9a-f]{1,4}:){7}[0-9a-f]{1,4}|(?:[0-9a-f]{1,4}:){1,7}:|(?:[0-9a-f]{1,4}:){1,6}:[0-9a-f]{1,4}|(?:[0-9a-f]{1,4}:){1,5}(?::[0-9a-f]{1,4}){1,2}|(?:[0-9a-f]{1,4}:){1,4}(?::[0-9a-f]{1,4}){1,3}|(?:[0-9a-f]{1,4}:){1,3}(?::[0-9a-f]{1,4}){1,4}|(?:[0-9a-f]{1,4}:){1,2}(?::[0-9a-f]{1,4}){1,5}|[0-9a-f]{1,4}:(?::[0-9a-f]{1,4}){1,6}|:(?:(?::[0-9a-f]{1,4}){1,7}|:)|fe80:(?::[0-9a-f]{0,4}){0,4}%[0-9a-z]+|::(?:ffff(?::0{1,4})?:)?(?:(?:25[0-5]|(?:2[0-4]|1?[0-9])?[0-9])\.){3}(?:25[0-5]|(?:2[0-4]|1?[0-9])?[0-9])|(?:[0-9a-f]{1,4}:){1,4}:(?:(?:25[0-5]|(?:2[0-4]|1?[0-9])?[0-9])\.){3}(?:25[0-5]|(?:2[0-4]|1?[0-9])?[0-9]))$/i
+  },
+  {
+    value: 'info_hash',
+    label: m.info_hash(),
+    icon: Magnet,
+    pattern: /^(?:[0-9a-zA-Z]{32}|[0-9a-fA-F]{40}|1220[0-9a-fA-F]{64})$/
   },
   {
     value: 'iso8601',
