@@ -95,7 +95,7 @@ def process(data):
       scriptName = '';
       scriptLang = 'javascript';
       scriptText = JAVASCRIPT_TEMPLATE;
-      quietMode = false;
+      quietMode = true;
       alert(m.script_added_success());
     }
     scriptModal.close();

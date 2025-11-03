@@ -117,7 +117,7 @@
               // eslint-disable-next-line svelte/no-navigation-without-resolve
               goto(menu.path);
             }}
-          ></Button>
+          />
         {/each}
       </span>
       <!-- 主题切换 -->

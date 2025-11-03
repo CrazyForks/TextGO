@@ -8,10 +8,10 @@
   import { prompts, scripts, shortcuts } from '$lib/stores.svelte';
   import { type } from '@tauri-apps/plugin-os';
   import {
+    ArrowArcRight,
     ArrowFatLineRight,
     ArrowFatUp,
     Browser,
-    ArrowArcRight,
     Command,
     Control,
     FingerprintSimple,
@@ -151,6 +151,7 @@
         <Shortcut {key} />
         <Button
           icon={Trash}
+          class="text-emphasis"
           text={m.delete_shortcut()}
           onclick={() => {
             const clear = () => {
@@ -170,7 +171,7 @@
               clear();
             }
           }}
-        ></Button>
+        />
       </div>
       <List
         name={m.rule()}
@@ -194,21 +195,24 @@
           {@const { label: actionLabel, icon: actionIcon } = ruleManager?.getActionOption(item.action) ?? {}}
           <div class="ml-4 flex w-60 items-center gap-1.5 truncate" title={caseLabel}>
             {#if item.case === ''}
+              <!-- 默认类型 -->
               <ArrowArcRight class="size-5 shrink-0 opacity-30" />
               <span class="truncate opacity-30">{caseLabel}</span>
             {:else if caseLabel}
+              <!-- 类型名称 -->
               {#if item.case.startsWith(MODEL_MARK)}
                 <Tensorflow class="h-5 shrink-0" />
               {:else if item.case.startsWith(REGEXP_MARK)}
                 <Regexp class="h-5 shrink-0" />
               {:else if caseIcon}
                 {@const CaseIcon = caseIcon}
-                <CaseIcon class="size-5 shrink-0 opacity-70" />
+                <CaseIcon class="size-5 shrink-0 text-emphasis/60" />
               {:else}
-                <FingerprintSimple class="size-5 shrink-0 opacity-70" />
+                <FingerprintSimple class="size-5 shrink-0 text-emphasis/60" />
               {/if}
-              <span class="truncate">{caseLabel}</span>
+              <span class="truncate text-base-content/80">{caseLabel}</span>
             {:else}
+              <!-- 失效类型 -->
               <Warning class="size-5 shrink-0 opacity-50" />
               <span class="truncate opacity-50">{m.invalid_type()}</span>
             {/if}
@@ -216,9 +220,11 @@
           <ArrowFatLineRight class="size-5 shrink-0 opacity-15" />
           <div class="list-col-grow ml-4 flex items-center gap-1.5 truncate" title={actionLabel}>
             {#if item.action === ''}
+              <!-- 默认动作 -->
               <Browser class="size-5 shrink-0 opacity-30" />
               <span class="truncate opacity-30">{actionLabel}</span>
             {:else if actionLabel}
+              <!-- 动作名称 -->
               {#if item.action.startsWith(SCRIPT_MARK)}
                 {@const script = getScript(item.action)}
                 {#if script?.lang === 'javascript'}
@@ -235,10 +241,11 @@
                 {/if}
               {:else if actionIcon}
                 {@const ActionIcon = actionIcon}
-                <ActionIcon class="size-5 shrink-0 opacity-70" />
+                <ActionIcon class="size-5 shrink-0 text-emphasis/60" />
               {/if}
-              <span class="truncate">{actionLabel}</span>
+              <span class="truncate text-base-content/80">{actionLabel}</span>
             {:else}
+              <!-- 失效动作 -->
               <Warning class="size-5 shrink-0 opacity-50" />
               <span class="truncate opacity-50">{m.invalid_action()}</span>
             {/if}

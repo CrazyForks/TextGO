@@ -163,7 +163,7 @@ pub fn run() {
             send_copy_key,
             send_paste_key,
             get_selection,
-            cursor_editable,
+            is_editable,
             show_popup,
             execute_javascript,
             execute_python,

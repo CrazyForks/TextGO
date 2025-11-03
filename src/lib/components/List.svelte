@@ -178,10 +178,11 @@
     {/if}
     {#each data as item, index (item.id)}
       {@const itemNum = (index + 1).toString().padStart(2, '0')}
+      {@const evenIdx = index % 2 === 0}
       <!-- svelte-ignore a11y_click_events_have_key_events -->
       <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
       <li
-        class="list-row cursor-pointer items-center rounded-none hover:bg-base-300"
+        class="list-row cursor-pointer items-center rounded-none hover:bg-base-300 {evenIdx ? '' : 'bg-base-150'}"
         onclick={(event) => {
           if (selectedId === item.id) {
             selectedId = '';

@@ -1,16 +1,16 @@
 use crate::error::AppError;
 
-/// 检查当前光标是否处于可输入状态
+/// 检查当前焦点元素是否可编辑
 ///
 /// 在 macOS 上，通过 Accessibility API 检查当前焦点元素的角色
 /// 在 Windows 上，通过 UI Automation 检查当前焦点元素的控件类型或模式
 ///
 /// 获取焦点元素失败或无法准确判断时，默认返回 true
 #[tauri::command]
-pub fn cursor_editable() -> Result<bool, AppError> {
+pub fn is_editable() -> Result<bool, AppError> {
     #[cfg(target_os = "macos")]
     {
-        match std::panic::catch_unwind(cursor_editable_macos) {
+        match std::panic::catch_unwind(is_editable_macos) {
             Ok(result) => result,
             Err(_) => Ok(false),
         }
@@ -18,7 +18,7 @@ pub fn cursor_editable() -> Result<bool, AppError> {
 
     #[cfg(target_os = "windows")]
     {
-        match std::panic::catch_unwind(cursor_editable_windows) {
+        match std::panic::catch_unwind(is_editable_windows) {
             Ok(result) => result,
             Err(_) => Ok(false),
         }
@@ -31,7 +31,7 @@ pub fn cursor_editable() -> Result<bool, AppError> {
 }
 
 #[cfg(target_os = "macos")]
-fn cursor_editable_macos() -> Result<bool, AppError> {
+fn is_editable_macos() -> Result<bool, AppError> {
     use core_foundation::base::TCFType;
     use core_foundation::string::CFString;
     use std::ffi::c_void;
@@ -118,7 +118,7 @@ fn cursor_editable_macos() -> Result<bool, AppError> {
 }
 
 #[cfg(target_os = "windows")]
-fn cursor_editable_windows() -> Result<bool, AppError> {
+fn is_editable_windows() -> Result<bool, AppError> {
     use windows::core::Interface;
     use windows::Win32::System::Com::{
         CoCreateInstance, CoInitializeEx, CoUninitialize, CLSCTX_ALL, COINIT_APARTMENTTHREADED,
