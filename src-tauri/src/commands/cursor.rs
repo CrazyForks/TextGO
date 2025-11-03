@@ -5,7 +5,7 @@ use crate::error::AppError;
 /// 在 macOS 上，通过 Accessibility API 检查当前焦点元素的角色
 /// 在 Windows 上，通过 UI Automation 检查当前焦点元素的控件类型或模式
 ///
-/// 获取焦点元素失败或没有无法准确判断时，默认返回 true
+/// 获取焦点元素失败或无法准确判断时，默认返回 true
 #[tauri::command]
 pub fn cursor_editable() -> Result<bool, AppError> {
     #[cfg(target_os = "macos")]
