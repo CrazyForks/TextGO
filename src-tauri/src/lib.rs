@@ -116,7 +116,8 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
 }
 
 /// 运行时事件处理函数
-fn handle_run_event(app: &tauri::AppHandle, #[allow(unused_variables)] event: RunEvent) {
+#[allow(unused_variables)]
+fn handle_run_event(app: &tauri::AppHandle, event: RunEvent) {
     // 处理 macOS 下的 Reopen 事件
     #[cfg(target_os = "macos")]
     if let RunEvent::Reopen {

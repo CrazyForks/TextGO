@@ -30,16 +30,13 @@ pub fn goto_shortcuts(app: tauri::AppHandle) {
 /// 显示并聚焦窗口
 pub fn show_window(app: &tauri::AppHandle, label: &str) -> Option<WebviewWindow> {
     if let Some(window) = app.get_webview_window(label) {
-        // 显示窗口
-        match window.is_minimized() {
-            Ok(true) => {
-                let _ = window.unminimize();
-            }
-            Ok(false) | Err(_) => {
-                let _ = window.show();
-            }
+        if window.is_minimized().unwrap_or(false) {
+            // 取消最小化
+            let _ = window.unminimize();
+        } else {
+            // 显示窗口
+            let _ = window.show();
         }
-
         // 聚焦窗口
         let _ = window.set_focus();
 
@@ -53,7 +50,6 @@ pub fn show_window(app: &tauri::AppHandle, label: &str) -> Option<WebviewWindow>
 pub fn hide_window(app: &tauri::AppHandle, label: &str) -> Option<WebviewWindow> {
     if let Some(window) = app.get_webview_window(label) {
         let _ = window.hide();
-
         // macOS 下同时隐藏 Dock 图标
         #[cfg(target_os = "macos")]
         {
@@ -69,27 +65,19 @@ pub fn hide_window(app: &tauri::AppHandle, label: &str) -> Option<WebviewWindow>
 /// 切换窗口显示状态
 pub fn toggle_window(app: &tauri::AppHandle, label: &str) -> Option<WebviewWindow> {
     if let Some(window) = app.get_webview_window(label) {
-        // 检查窗口可见性
-        match window.is_visible() {
-            Ok(true) => {
-                match window.is_focused() {
-                    Ok(true) => {
-                        // 窗口可见且聚焦
-                        hide_window(app, label);
-                    }
-                    Ok(false) | Err(_) => {
-                        // 窗口可见但未聚焦
-                        let _ = window.set_focus();
-                    }
-                }
-            }
-            Ok(false) | Err(_) => {
-                // 窗口不可见
-                show_window(app, label);
-            }
+        // 检查窗口是否最小化
+        if window.is_minimized().unwrap_or(false) {
+            let _ = window.unminimize();
+            return Some(window);
         }
 
-        Some(window)
+        // 检查窗口是否不可见
+        if !window.is_visible().unwrap_or(false) {
+            return show_window(app, label);
+        }
+
+        // 窗口可见且非最小化时隐藏
+        hide_window(app, label)
     } else {
         None
     }
