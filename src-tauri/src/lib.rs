@@ -59,7 +59,7 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     let app_handle = app.app_handle().clone();
 
     // 初始化托盘菜单
-    setup_tray_menu(
+    setup_tray(
         app_handle.clone(),
         "Show / Hide".to_string(),
         "Edit Shortcuts...".to_string(),
@@ -126,9 +126,9 @@ fn handle_run_event(_app_handle: &tauri::AppHandle, #[allow(unused_variables)] e
     {
         // 没有可见窗口时，显示主窗口
         if let Some(window) = _app_handle.get_webview_window("main") {
+            let _ = window.unminimize();
             let _ = window.show();
             let _ = window.set_focus();
-            let _ = window.unminimize();
             // 显示窗口时，显示 Dock 图标
             #[cfg(target_os = "macos")]
             {
@@ -167,7 +167,7 @@ pub fn run() {
             register_shortcut,
             unregister_shortcut,
             is_shortcut_registered,
-            setup_tray_menu,
+            setup_tray,
             show_about
         ])
         .build(tauri::generate_context!())

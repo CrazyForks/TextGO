@@ -54,8 +54,8 @@
   // 更新托盘菜单语言
   async function updateTrayMenu() {
     try {
-      await invoke('setup_tray_menu', {
-        toggleText: m.tray_toggle(),
+      await invoke('setup_tray', {
+        windowText: m.tray_window(),
         shortcutsText: m.tray_shortcuts(),
         aboutText: m.tray_about(),
         quitText: m.tray_quit()

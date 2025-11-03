@@ -7,9 +7,7 @@ use tokio::time::sleep;
 
 #[tauri::command]
 pub fn send_copy_key() -> Result<(), AppError> {
-    let mut enigo = ENIGO
-        .lock()
-        .map_err(|e| format!("Failed to lock Enigo: {}", e))?;
+    let mut enigo = ENIGO.lock()?;
 
     #[cfg(target_os = "macos")]
     let modifier = Key::Meta;
@@ -17,29 +15,19 @@ pub fn send_copy_key() -> Result<(), AppError> {
     let modifier = Key::Control;
 
     // 释放 Shift 键
-    enigo
-        .key(Key::Shift, Direction::Release)
-        .map_err(|e| e.to_string())?;
+    enigo.key(Key::Shift, Direction::Release)?;
 
     // 发送 Cmd+C 或 Ctrl+C
-    enigo
-        .key(modifier, Direction::Press)
-        .map_err(|e| e.to_string())?;
-    enigo
-        .key(Key::Unicode('c'), Direction::Click)
-        .map_err(|e| e.to_string())?;
-    enigo
-        .key(modifier, Direction::Release)
-        .map_err(|e| e.to_string())?;
+    enigo.key(modifier, Direction::Press)?;
+    enigo.key(Key::Unicode('c'), Direction::Click)?;
+    enigo.key(modifier, Direction::Release)?;
 
     Ok(())
 }
 
 #[tauri::command]
 pub fn send_paste_key() -> Result<(), AppError> {
-    let mut enigo = ENIGO
-        .lock()
-        .map_err(|e| format!("Failed to lock Enigo: {}", e))?;
+    let mut enigo = ENIGO.lock()?;
 
     #[cfg(target_os = "macos")]
     let modifier = Key::Meta;
@@ -47,20 +35,12 @@ pub fn send_paste_key() -> Result<(), AppError> {
     let modifier = Key::Control;
 
     // 释放 Shift 键
-    enigo
-        .key(Key::Shift, Direction::Release)
-        .map_err(|e| e.to_string())?;
+    enigo.key(Key::Shift, Direction::Release)?;
 
     // 发送 Cmd+V 或 Ctrl+V
-    enigo
-        .key(modifier, Direction::Press)
-        .map_err(|e| e.to_string())?;
-    enigo
-        .key(Key::Unicode('v'), Direction::Click)
-        .map_err(|e| e.to_string())?;
-    enigo
-        .key(modifier, Direction::Release)
-        .map_err(|e| e.to_string())?;
+    enigo.key(modifier, Direction::Press)?;
+    enigo.key(Key::Unicode('v'), Direction::Click)?;
+    enigo.key(modifier, Direction::Release)?;
 
     Ok(())
 }
@@ -74,9 +54,7 @@ pub async fn get_selection(app: tauri::AppHandle) -> Result<String, AppError> {
     let original_clipboard = clipboard.read_text().unwrap_or_else(|_| String::new());
 
     // 清空剪贴板内容
-    if let Err(e) = clipboard.clear() {
-        return Err(format!("Failed to clear clipboard: {}", e).into());
-    }
+    clipboard.clear()?;
 
     // 发送复制快捷键
     // https://github.com/enigo-rs/enigo/issues/153
@@ -98,9 +76,7 @@ pub async fn get_selection(app: tauri::AppHandle) -> Result<String, AppError> {
             if !current_clipboard.is_empty() {
                 // 恢复原来的剪贴板内容（如果有的话）
                 if !original_clipboard.is_empty() {
-                    if let Err(e) = clipboard.write_text(original_clipboard) {
-                        return Err(format!("Failed to restore clipboard content: {}", e).into());
-                    }
+                    clipboard.write_text(original_clipboard)?;
                 }
                 return Ok(current_clipboard);
             }
@@ -116,9 +92,7 @@ pub async fn get_selection(app: tauri::AppHandle) -> Result<String, AppError> {
 
     // 恢复原来的剪贴板内容
     if !original_clipboard.is_empty() {
-        if let Err(e) = clipboard.write_text(original_clipboard.clone()) {
-            return Err(format!("Failed to restore clipboard content: {}", e).into());
-        }
+        clipboard.write_text(original_clipboard.clone())?;
     }
 
     Ok(String::new())

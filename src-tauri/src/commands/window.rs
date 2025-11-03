@@ -3,9 +3,9 @@ use tauri::{Emitter, Manager};
 #[tauri::command]
 pub fn show_window(app: tauri::AppHandle) {
     if let Some(window) = app.get_webview_window("main") {
+        let _ = window.unminimize();
         let _ = window.show();
         let _ = window.set_focus();
-        let _ = window.unminimize();
     }
 }
 
@@ -34,8 +34,8 @@ pub fn toggle_window(app: tauri::AppHandle) {
                     }
                     Ok(false) | Err(_) => {
                         // 窗口可见但未聚焦，把窗口置于前端并聚焦
-                        let _ = window.set_focus();
                         let _ = window.unminimize();
+                        let _ = window.set_focus();
                     }
                 }
             }
@@ -50,9 +50,9 @@ pub fn toggle_window(app: tauri::AppHandle) {
 #[tauri::command]
 pub fn goto_shortcuts(app: tauri::AppHandle) {
     if let Some(window) = app.get_webview_window("main") {
+        let _ = window.unminimize();
         let _ = window.show();
         let _ = window.set_focus();
-        let _ = window.unminimize();
         // 发送页面跳转事件
         let _ = window.emit("goto-shortcuts", ());
     }

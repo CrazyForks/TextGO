@@ -7,21 +7,15 @@ use tauri::{Emitter, Manager};
 pub fn show_popup(app: tauri::AppHandle, payload: String) -> Result<(), AppError> {
     // 获取当前鼠标位置
     let (mouse_x, mouse_y) = {
-        let enigo = ENIGO
-            .lock()
-            .map_err(|e| format!("Failed to lock Enigo: {}", e))?;
-
-        enigo
-            .location()
-            .map_err(|e| format!("Failed to get cursor position: {}", e))?
+        let enigo = ENIGO.lock()?;
+        enigo.location()?
     };
 
     // 检查是否已有结果窗口
     if let Some(window) = app.get_webview_window("popup") {
         // 获取主显示器信息
         let monitor = window
-            .current_monitor()
-            .map_err(|e| format!("Failed to get current monitor: {}", e))?
+            .current_monitor()?
             .ok_or_else(|| AppError::from("No monitor found"))?;
 
         // 获取缩放因子以统一单位
@@ -59,12 +53,10 @@ pub fn show_popup(app: tauri::AppHandle, payload: String) -> Result<(), AppError
         window_y = window_y.clamp(min_y, max_y);
 
         // 设置调整后的窗口位置
-        window
-            .set_position(tauri::Position::Logical(tauri::LogicalPosition {
-                x: window_x as f64,
-                y: window_y as f64,
-            }))
-            .map_err(|e| format!("Failed to set window position: {}", e))?;
+        window.set_position(tauri::Position::Logical(tauri::LogicalPosition {
+            x: window_x as f64,
+            y: window_y as f64,
+        }))?;
 
         // 判断当前窗口未显示时，增加一定的延迟防止闪烁
         if !window.is_visible()? {
@@ -72,18 +64,12 @@ pub fn show_popup(app: tauri::AppHandle, payload: String) -> Result<(), AppError
         }
 
         // 显示窗口
-        window
-            .show()
-            .map_err(|e| format!("Failed to show window: {}", e))?;
-
-        window
-            .set_focus()
-            .map_err(|e| format!("Failed to focus window: {}", e))?;
+        window.unminimize()?;
+        window.show()?;
+        window.set_focus()?;
 
         // 发送数据到前端
-        window
-            .emit("popup", payload)
-            .map_err(|e| format!("Failed to emit payload data: {}", e))?;
+        window.emit("popup", payload)?;
     } else {
         return Err("Popup window not found".into());
     }

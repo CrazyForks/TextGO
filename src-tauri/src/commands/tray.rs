@@ -4,9 +4,9 @@ use tauri::tray::TrayIconBuilder;
 
 /// 初始化或更新托盘菜单
 #[tauri::command]
-pub fn setup_tray_menu(
+pub fn setup_tray(
     app: tauri::AppHandle,
-    toggle_text: String,
+    window_text: String,
     shortcuts_text: String,
     about_text: String,
     quit_text: String,
@@ -15,7 +15,7 @@ pub fn setup_tray_menu(
     let menu = Menu::with_items(
         &app,
         &[
-            &MenuItem::with_id(&app, "toggle", toggle_text, true, None::<&str>)?,
+            &MenuItem::with_id(&app, "window", window_text, true, None::<&str>)?,
             &MenuItem::with_id(&app, "shortcuts", shortcuts_text, true, Some("CmdOrCtrl+,"))?,
             &PredefinedMenuItem::separator(&app)?,
             #[cfg(target_os = "macos")]
@@ -25,13 +25,11 @@ pub fn setup_tray_menu(
             &PredefinedMenuItem::separator(&app)?,
             &MenuItem::with_id(&app, "quit", quit_text, true, Some("CmdOrCtrl+Q"))?,
         ],
-    )
-    .map_err(|e| AppError::from(format!("Failed to create menu: {}", e)))?;
+    )?;
 
     // 尝试获取现有托盘图标并更新菜单
     if let Some(tray) = app.tray_by_id("main-tray") {
-        tray.set_menu(Some(menu))
-            .map_err(|e| AppError::from(format!("Failed to update tray menu: {}", e)))?;
+        tray.set_menu(Some(menu))?;
     } else {
         // 如果托盘不存在，创建新的托盘图标
         let _tray = TrayIconBuilder::with_id("main-tray")
@@ -40,7 +38,7 @@ pub fn setup_tray_menu(
             .icon_as_template(true)
             .show_menu_on_left_click(true)
             .on_menu_event(|app, event| match event.id.as_ref() {
-                "toggle" => {
+                "window" => {
                     crate::commands::toggle_window(app.clone());
                 }
                 "shortcuts" => {
@@ -54,8 +52,7 @@ pub fn setup_tray_menu(
                 }
                 _ => {}
             })
-            .build(&app)
-            .map_err(|e| AppError::from(format!("Failed to build tray icon: {}", e)))?;
+            .build(&app)?;
     }
 
     Ok(())

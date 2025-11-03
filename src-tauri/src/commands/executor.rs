@@ -47,18 +47,12 @@ console.log(typeof result === 'string' ? result : JSON.stringify(result));
                     // 如果使用 stdin，写入代码
                     if use_stdin {
                         if let Some(mut stdin) = child.stdin.take() {
-                            stdin
-                                .write_all(wrapped_code.as_bytes())
-                                .await
-                                .map_err(|e| format!("Failed to write to stdin: {}", e))?;
+                            stdin.write_all(wrapped_code.as_bytes()).await?;
                             drop(stdin); // 关闭 stdin
                         }
                     }
 
-                    let output = child
-                        .wait_with_output()
-                        .await
-                        .map_err(|e| format!("Failed to wait for node process: {}", e))?;
+                    let output = child.wait_with_output().await?;
 
                     if output.status.success() {
                         let stdout = String::from_utf8_lossy(&output.stdout);
@@ -133,10 +127,7 @@ console.log(typeof result === 'string' ? result : JSON.stringify(result));
 
         match command.spawn() {
             Ok(child) => {
-                let output = child
-                    .wait_with_output()
-                    .await
-                    .map_err(|e| format!("Failed to wait for {} process: {}", cmd, e))?;
+                let output = child.wait_with_output().await?;
 
                 if output.status.success() {
                     let stdout = String::from_utf8_lossy(&output.stdout);
@@ -205,18 +196,12 @@ print(result if isinstance(result, str) else json.dumps(result, ensure_ascii=Fal
                     // 如果使用 stdin，写入代码
                     if use_stdin {
                         if let Some(mut stdin) = child.stdin.take() {
-                            stdin
-                                .write_all(wrapped_code.as_bytes())
-                                .await
-                                .map_err(|e| format!("Failed to write to stdin: {}", e))?;
+                            stdin.write_all(wrapped_code.as_bytes()).await?;
                             drop(stdin); // 关闭 stdin
                         }
                     }
 
-                    let output = child
-                        .wait_with_output()
-                        .await
-                        .map_err(|e| format!("Failed to wait for python process: {}", e))?;
+                    let output = child.wait_with_output().await?;
 
                     if output.status.success() {
                         let stdout = String::from_utf8_lossy(&output.stdout);
@@ -304,10 +289,7 @@ print(result if isinstance(result, str) else json.dumps(result, ensure_ascii=Fal
 
         match command.spawn() {
             Ok(child) => {
-                let output = child
-                    .wait_with_output()
-                    .await
-                    .map_err(|e| format!("Failed to wait for python process: {}", e))?;
+                let output = child.wait_with_output().await?;
 
                 if output.status.success() {
                     let stdout = String::from_utf8_lossy(&output.stdout);
