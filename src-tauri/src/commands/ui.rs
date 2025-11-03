@@ -9,25 +9,19 @@ use crate::error::AppError;
 #[tauri::command]
 pub fn is_editable() -> Result<bool, AppError> {
     #[cfg(target_os = "macos")]
-    {
-        match std::panic::catch_unwind(is_editable_macos) {
-            Ok(result) => result,
-            Err(_) => Ok(false),
-        }
+    match std::panic::catch_unwind(is_editable_macos) {
+        Ok(result) => result,
+        Err(_) => Ok(false),
     }
 
     #[cfg(target_os = "windows")]
-    {
-        match std::panic::catch_unwind(is_editable_windows) {
-            Ok(result) => result,
-            Err(_) => Ok(false),
-        }
+    match std::panic::catch_unwind(is_editable_windows) {
+        Ok(result) => result,
+        Err(_) => Ok(false),
     }
 
     #[cfg(not(any(target_os = "macos", target_os = "windows")))]
-    {
-        Err("Unsupported platform".into())
-    }
+    Err("Unsupported platform".into())
 }
 
 #[cfg(target_os = "macos")]

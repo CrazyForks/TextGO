@@ -50,11 +50,10 @@ pub fn show_window(app: &tauri::AppHandle, label: &str) -> Option<WebviewWindow>
 pub fn hide_window(app: &tauri::AppHandle, label: &str) -> Option<WebviewWindow> {
     if let Some(window) = app.get_webview_window(label) {
         let _ = window.hide();
+
         // macOS 下同时隐藏 Dock 图标
         #[cfg(target_os = "macos")]
-        {
-            let _ = app.set_dock_visibility(false);
-        }
+        let _ = app.set_dock_visibility(false);
 
         Some(window)
     } else {
@@ -73,6 +72,12 @@ pub fn toggle_window(app: &tauri::AppHandle, label: &str) -> Option<WebviewWindo
 
         // 检查窗口是否不可见
         if !window.is_visible().unwrap_or(false) {
+            return show_window(app, label);
+        }
+
+        // 检查窗口是否未聚焦
+        #[cfg(target_os = "macos")]
+        if !window.is_focused().unwrap_or(false) {
             return show_window(app, label);
         }
 

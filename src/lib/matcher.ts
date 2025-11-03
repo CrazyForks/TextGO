@@ -6,7 +6,7 @@ import type { Model, Option, Rule } from '$lib/types';
 import { ModelOperations, type ModelResult } from '@vscode/vscode-languagedetection';
 import { memoize } from 'es-toolkit/function';
 import { franc } from 'franc-min';
-import { CalendarDots, Clock, Folders, Globe, GlobeSimple, Key, Link, Mailbox, TextAa } from 'phosphor-svelte';
+import { CalendarDots, Clock, Folders, Globe, GlobeSimple, Key, Link, Envelope, TextAa } from 'phosphor-svelte';
 
 // 创建编程语言识别模型实例
 // 针对 Tauri 环境配置自定义加载函数
@@ -79,7 +79,7 @@ export const GENERAL_CASES: Option[] = [
   {
     value: 'email',
     label: m.email(),
-    icon: Mailbox,
+    icon: Envelope,
     pattern:
       /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i
   },

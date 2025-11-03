@@ -74,9 +74,7 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
 
         // 由于窗口初始时是隐藏的，隐藏 Dock 图标
         #[cfg(target_os = "macos")]
-        {
-            let _ = app_handle.set_dock_visibility(false);
-        }
+        let _ = app_handle.set_dock_visibility(false);
 
         // 设置窗口关闭行为，关闭时隐藏而不是退出
         window.on_window_event(move |event| {
@@ -88,9 +86,7 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
                     let _ = window.hide();
                     // 隐藏窗口时，隐藏 Dock 图标
                     #[cfg(target_os = "macos")]
-                    {
-                        let _ = app_handle.set_dock_visibility(false);
-                    }
+                    let _ = app_handle.set_dock_visibility(false);
                 }
             }
         });
