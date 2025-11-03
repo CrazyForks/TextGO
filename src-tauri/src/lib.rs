@@ -59,17 +59,14 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     let app_handle = app.app_handle().clone();
 
     // 初始化托盘菜单
-    tauri::async_runtime::block_on(async {
-        setup_tray_menu(
-            app_handle.clone(),
-            "Show / Hide".to_string(),
-            "Edit Shortcuts...".to_string(),
-            "About TextGO".to_string(),
-            "Quit".to_string(),
-        )
-        .await
-        .ok();
-    });
+    setup_tray_menu(
+        app_handle.clone(),
+        "Show / Hide".to_string(),
+        "Edit Shortcuts...".to_string(),
+        "About TextGO".to_string(),
+        "Quit".to_string(),
+    )
+    .ok();
 
     // 获取主窗口
     if let Some(window) = app.get_webview_window("main") {

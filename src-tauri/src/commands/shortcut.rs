@@ -3,7 +3,7 @@ use crate::REGISTERED_SHORTCUTS;
 use tauri_plugin_global_shortcut::{Code, GlobalShortcutExt, Modifiers, Shortcut};
 
 #[tauri::command]
-pub async fn register_shortcut(app: tauri::AppHandle, key: String) -> Result<(), AppError> {
+pub fn register_shortcut(app: tauri::AppHandle, key: String) -> Result<(), AppError> {
     // 验证输入参数
     if key.len() != 1 || !key.chars().all(|c| c.is_alphanumeric()) {
         return Err("Shortcut key must be a single letter or digit".into());
@@ -56,7 +56,7 @@ pub async fn register_shortcut(app: tauri::AppHandle, key: String) -> Result<(),
 }
 
 #[tauri::command]
-pub async fn unregister_shortcut(app: tauri::AppHandle, key: String) -> Result<(), AppError> {
+pub fn unregister_shortcut(app: tauri::AppHandle, key: String) -> Result<(), AppError> {
     // 验证输入参数
     if key.len() != 1 || !key.chars().all(|c| c.is_alphanumeric()) {
         return Err("Shortcut key must be a single letter or digit".into());
@@ -109,7 +109,7 @@ pub async fn unregister_shortcut(app: tauri::AppHandle, key: String) -> Result<(
 }
 
 #[tauri::command]
-pub async fn is_shortcut_registered(key: String) -> Result<bool, AppError> {
+pub fn is_shortcut_registered(key: String) -> Result<bool, AppError> {
     // 验证输入参数
     if key.len() != 1 || !key.chars().all(|c| c.is_alphanumeric()) {
         return Err("Shortcut key must be a single letter or digit".into());

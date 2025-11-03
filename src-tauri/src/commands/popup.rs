@@ -4,7 +4,7 @@ use enigo::Mouse;
 use tauri::{Emitter, Manager};
 
 #[tauri::command]
-pub async fn show_popup(app: tauri::AppHandle, payload: String) -> Result<(), AppError> {
+pub fn show_popup(app: tauri::AppHandle, payload: String) -> Result<(), AppError> {
     // 获取当前鼠标位置
     let (mouse_x, mouse_y) = {
         let enigo = ENIGO
@@ -65,6 +65,11 @@ pub async fn show_popup(app: tauri::AppHandle, payload: String) -> Result<(), Ap
                 y: window_y as f64,
             }))
             .map_err(|e| format!("Failed to set window position: {}", e))?;
+
+        // 判断当前窗口未显示时，增加一定的延迟防止闪烁
+        if !window.is_visible()? {
+            std::thread::sleep(std::time::Duration::from_millis(100));
+        }
 
         // 显示窗口
         window

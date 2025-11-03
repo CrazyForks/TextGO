@@ -4,7 +4,7 @@ use tauri::tray::TrayIconBuilder;
 
 /// 初始化或更新托盘菜单
 #[tauri::command]
-pub async fn setup_tray_menu(
+pub fn setup_tray_menu(
     app: tauri::AppHandle,
     toggle_text: String,
     shortcuts_text: String,
