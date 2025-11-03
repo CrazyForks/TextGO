@@ -2,7 +2,7 @@
   import { enhance } from '$app/forms';
   import { alert, Label, Modal, Select } from '$lib/components';
   import { MODEL_MARK, PROMPT_MARK, REGEXP_MARK, SCRIPT_MARK } from '$lib/constants';
-  import { CONVERT_ACTIONS, PROCESS_ACTIONS } from '$lib/executor';
+  import { CONVERT_ACTIONS, GENERAL_ACTIONS, PROCESS_ACTIONS } from '$lib/executor';
   import { manager } from '$lib/manager';
   import { GENERAL_CASES, NATURAL_CASES, PROGRAMMING_CASES, TEXT_CASES } from '$lib/matcher';
   import { m } from '$lib/paraglide/messages';
@@ -77,6 +77,8 @@
       }
     }
     // 内置动作
+    options.push({ value: '--general--', label: `-- ${m.general()} --`, disabled: true });
+    options.push(...GENERAL_ACTIONS);
     options.push({ value: '--convert--', label: `-- ${m.text_case_convert()} --`, disabled: true });
     options.push(...CONVERT_ACTIONS);
     options.push({ value: '--process--', label: `-- ${m.text_processing()} --`, disabled: true });

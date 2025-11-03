@@ -4,6 +4,7 @@ import { entries, historySize, nodePath, prompts, pythonPath, scripts } from '$l
 import type { Entry, Option, Prompt, Rule, Script } from '$lib/types';
 import { invoke } from '@tauri-apps/api/core';
 import { readText, writeText } from '@tauri-apps/plugin-clipboard-manager';
+import { openPath, openUrl } from '@tauri-apps/plugin-opener';
 import { memoize } from 'es-toolkit/function';
 import {
   camelCase,
@@ -22,7 +23,12 @@ import {
   upperCase,
   words
 } from 'es-toolkit/string';
-import { Function, TextAa } from 'phosphor-svelte';
+import { Browsers, FolderOpen, Function, TextAa } from 'phosphor-svelte';
+
+const URL_REGEX =
+  /https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*/gm;
+const PATH_REGEX =
+  /(?:[a-zA-Z]:\\[^<>:"|?*\n\r/]+(?:\\[^<>:"|?*\n\r/]+)*|~?\/[^<>:"|?*\n\r\\]+(?:\/[^<>:"|?*\n\r\\]+)*)/gm;
 
 /**
  * 数据类型
@@ -42,6 +48,44 @@ type Data = {
 type Processor = Option & {
   process: (selection: string) => string;
 };
+
+/**
+ * 常规动作选项
+ */
+export const GENERAL_ACTIONS: Processor[] = [
+  {
+    value: 'open_urls',
+    label: m.open_urls(),
+    icon: Browsers,
+    process: (text: string) => {
+      // 提取文本中的所有 URL
+      const urls = text.match(URL_REGEX) || [];
+      // 打开每个 URL
+      urls.forEach((url) => {
+        openUrl(url).catch((error) => {
+          console.error(`打开 ${url} 失败:`, error);
+        });
+      });
+      return '';
+    }
+  },
+  {
+    value: 'open_files',
+    label: m.open_files(),
+    icon: FolderOpen,
+    process: (text: string) => {
+      // 提取文本中的所有文件路径
+      const paths = text.match(PATH_REGEX) || [];
+      // 打开每个文件路径
+      paths.forEach((path) => {
+        openPath(path).catch((error) => {
+          console.error(`打开 ${path} 失败:`, error);
+        });
+      });
+      return '';
+    }
+  }
+];
 
 /**
  * 格式转换动作选项
@@ -159,7 +203,7 @@ export const PROCESS_ACTIONS: Processor[] = [
 
 // Memoized 查找函数
 const findBuiltinAction = memoize((action: string) =>
-  [...CONVERT_ACTIONS, ...PROCESS_ACTIONS].find((a) => a.value === action)
+  [...GENERAL_ACTIONS, ...CONVERT_ACTIONS, ...PROCESS_ACTIONS].find((a) => a.value === action)
 );
 
 /**

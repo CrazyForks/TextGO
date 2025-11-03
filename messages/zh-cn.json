@@ -140,6 +140,8 @@
   "unescape": "反转义 HTML",
   "reverse": "反转文本",
   "words": "拆分为单词",
+  "open_urls": "打开网址",
+  "open_files": "打开文件",
   "lang_cmn": "中文",
   "lang_eng": "英文",
   "lang_jpn": "日文",

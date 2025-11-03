@@ -14,6 +14,10 @@
     "os:default",
     "store:default",
     "opener:default",
+    {
+      "identifier": "opener:allow-open-path",
+      "allow": [{ "path": "/**" }]
+    },
     "clipboard-manager:allow-clear",
     "clipboard-manager:allow-read-text",
     "clipboard-manager:allow-write-text"

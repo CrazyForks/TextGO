@@ -10,7 +10,7 @@ import {
   CalendarDots,
   Clock,
   Envelope,
-  Folders,
+  Folder,
   Globe,
   GlobeSimple,
   Key,
@@ -117,7 +117,7 @@ export const GENERAL_CASES: Option[] = [
   {
     value: 'path',
     label: m.path(),
-    icon: Folders,
+    icon: Folder,
     pattern: /^(?:[a-zA-Z]:\\[^<>:"|?*\n\r/]+(?:\\[^<>:"|?*\n\r/]+)*|~?\/[^<>:"|?*\n\r\\]+(?:\/[^<>:"|?*\n\r\\]+)*)$/
   },
   {

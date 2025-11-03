@@ -140,6 +140,8 @@
   "unescape": "Unescape HTML",
   "reverse": "Reverse Text",
   "words": "Split into Words",
+  "open_urls": "Open URLs",
+  "open_files": "Open Files",
   "lang_cmn": "Chinese",
   "lang_eng": "English",
   "lang_jpn": "Japanese",
