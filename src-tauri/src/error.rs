@@ -20,17 +20,17 @@ impl serde::Serialize for AppError {
     }
 }
 
-impl From<String> for AppError {
-    fn from(error: String) -> Self {
-        eprintln!("[ERROR] {}", error);
-        AppError(error)
-    }
-}
-
 impl From<&str> for AppError {
     fn from(error: &str) -> Self {
         eprintln!("[ERROR] {}", error);
         AppError(error.to_string())
+    }
+}
+
+impl From<String> for AppError {
+    fn from(error: String) -> Self {
+        eprintln!("[ERROR] {}", error);
+        AppError(error)
     }
 }
 
@@ -72,6 +72,20 @@ impl From<tauri_plugin_global_shortcut::Error> for AppError {
 impl From<enigo::InputError> for AppError {
     fn from(error: enigo::InputError) -> Self {
         eprintln!("[ERROR] Enigo input error: {}", error);
+        AppError(error.to_string())
+    }
+}
+
+impl From<&enigo::NewConError> for AppError {
+    fn from(error: &enigo::NewConError) -> Self {
+        eprintln!("[ERROR] Enigo initialization error: {}", error);
+        AppError(error.to_string())
+    }
+}
+
+impl From<&mut enigo::NewConError> for AppError {
+    fn from(error: &mut enigo::NewConError) -> Self {
+        eprintln!("[ERROR] Enigo initialization error: {}", error);
         AppError(error.to_string())
     }
 }

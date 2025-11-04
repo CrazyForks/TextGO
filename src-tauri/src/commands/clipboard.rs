@@ -7,7 +7,8 @@ use tokio::time::sleep;
 
 #[tauri::command]
 pub fn send_copy_key() -> Result<(), AppError> {
-    let mut enigo = ENIGO.lock()?;
+    let mut enigo_lock = ENIGO.lock()?;
+    let enigo = enigo_lock.as_mut()?;
 
     #[cfg(target_os = "macos")]
     let modifier = Key::Meta;
@@ -27,7 +28,8 @@ pub fn send_copy_key() -> Result<(), AppError> {
 
 #[tauri::command]
 pub fn send_paste_key() -> Result<(), AppError> {
-    let mut enigo = ENIGO.lock()?;
+    let mut enigo_lock = ENIGO.lock()?;
+    let enigo = enigo_lock.as_mut()?;
 
     #[cfg(target_os = "macos")]
     let modifier = Key::Meta;

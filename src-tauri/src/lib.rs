@@ -13,8 +13,8 @@ use commands::*;
 
 // Global, shared Enigo wrapped in a Mutex
 // The Enigo struct should be created once and then reused for efficiency
-pub static ENIGO: LazyLock<Mutex<Enigo>> =
-    LazyLock::new(|| Mutex::new(Enigo::new(&Settings::default()).unwrap()));
+pub static ENIGO: LazyLock<Mutex<Result<Enigo, enigo::NewConError>>> =
+    LazyLock::new(|| Mutex::new(Enigo::new(&Settings::default())));
 
 // Global registered shortcuts mapping
 pub static REGISTERED_SHORTCUTS: LazyLock<Mutex<HashMap<String, String>>> =
