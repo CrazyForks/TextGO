@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 import { readdirSync, readFileSync, writeFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';

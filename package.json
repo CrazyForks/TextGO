@@ -15,7 +15,8 @@
     "format": "prettier --write .",
     "lint": "prettier --check . && eslint .",
     "tauri": "tauri",
-    "readme": "tsx ./scripts/update-readme.ts",
+    "readme": "tsx ./scripts/sync-readme.ts",
+    "version": "tsx ./scripts/sync-version.ts",
     "licenses": "tsx ./scripts/generate-licenses.ts"
   },
   "dependencies": {

@@ -14,9 +14,15 @@ impl std::fmt::Display for AppError {
 impl serde::Serialize for AppError {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
-        S: serde::Serializer,
+        S: serde::ser::Serializer,
     {
         serializer.serialize_str(&self.0)
+    }
+}
+
+impl From<String> for AppError {
+    fn from(error: String) -> Self {
+        AppError::from(error.as_str())
     }
 }
 
@@ -24,13 +30,6 @@ impl From<&str> for AppError {
     fn from(error: &str) -> Self {
         eprintln!("[ERROR] {}", error);
         AppError(error.to_string())
-    }
-}
-
-impl From<String> for AppError {
-    fn from(error: String) -> Self {
-        eprintln!("[ERROR] {}", error);
-        AppError(error)
     }
 }
 
@@ -76,15 +75,14 @@ impl From<enigo::InputError> for AppError {
     }
 }
 
-impl From<&enigo::NewConError> for AppError {
-    fn from(error: &enigo::NewConError) -> Self {
-        eprintln!("[ERROR] Enigo initialization error: {}", error);
-        AppError(error.to_string())
+impl From<&mut enigo::NewConError> for AppError {
+    fn from(error: &mut enigo::NewConError) -> Self {
+        AppError::from(&*error)
     }
 }
 
-impl From<&mut enigo::NewConError> for AppError {
-    fn from(error: &mut enigo::NewConError) -> Self {
+impl From<&enigo::NewConError> for AppError {
+    fn from(error: &enigo::NewConError) -> Self {
         eprintln!("[ERROR] Enigo initialization error: {}", error);
         AppError(error.to_string())
     }
