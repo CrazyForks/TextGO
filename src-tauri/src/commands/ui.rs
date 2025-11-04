@@ -80,16 +80,7 @@ fn is_editable_macos() -> Result<bool, AppError> {
         if ax_role_result == 0 && !ax_role.is_null() {
             // 将 CFString 转换为 Rust String
             let role = ax_role as *const core_foundation::string::__CFString;
-            let role_string = match std::panic::catch_unwind(|| {
-                CFString::wrap_under_get_rule(role).to_string()
-            }) {
-                Ok(s) => s,
-                Err(_) => {
-                    CFRelease(ax_role);
-                    CFRelease(focused_el);
-                    return Ok(editable);
-                }
-            };
+            let role_string = CFString::wrap_under_get_rule(role).to_string();
 
             // 检查是否为可编辑的角色
             let editable_roles = vec![
