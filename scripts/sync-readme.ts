@@ -41,14 +41,14 @@ function getTauriVersion(): string {
  */
 function updateReadme() {
   const svelteVersion = getSvelteVersion();
-  console.log(`Svelte version: ${svelteVersion}`);
+  console.log(`📋 Svelte version: ${svelteVersion}`);
 
   const tauriVersion = getTauriVersion();
-  console.log(`Tauri version: ${tauriVersion}`);
+  console.log(`📋 Tauri version: ${tauriVersion}`);
 
   const rootFiles = readdirSync(PROJECT_ROOT);
   const readmeFiles = rootFiles.filter((f) => f.startsWith('README') && f.endsWith('.md'));
-  console.log(`Found ${readmeFiles.length} README files:`, readmeFiles);
+  console.log(`📖 Found ${readmeFiles.length} README files:`, readmeFiles);
 
   for (const filename of readmeFiles) {
     const readmeFile = join(PROJECT_ROOT, filename);
@@ -57,9 +57,9 @@ function updateReadme() {
     readme = readme.replace(/Tauri-v[\d.]+/g, `Tauri-v${tauriVersion}`);
     readme = readme.replace(/Svelte-v[\d.]+/g, `Svelte-v${svelteVersion}`);
     writeFileSync(readmeFile, readme, 'utf-8');
-    console.log(`Updated ${filename}`);
+    console.log(`✅ Updated ${filename}`);
   }
-  console.log('All README files updated successfully');
+  console.log('🎉 All README files updated successfully');
 }
 
 updateReadme();
