@@ -1,11 +1,26 @@
 use crate::commands::send_copy_key;
 use crate::error::AppError;
+use crate::platform;
 use std::time::Duration;
 use tauri_plugin_clipboard_manager::ClipboardExt;
 use tokio::time::sleep;
 
 #[tauri::command]
 pub async fn get_selection(app: tauri::AppHandle) -> Result<String, AppError> {
+    // 优先尝试使用平台原生 API 获取选中文本
+    if let Ok(text) = platform::get_selected_text() {
+        if !text.is_empty() {
+            return Ok(text);
+        }
+    }
+
+    // 原生 API 不可用，降级使用剪贴板方案
+    eprintln!("[INFO] Native API unavailable, fallback to clipboard method");
+    get_selection_by_clipboard(app).await
+}
+
+/// 通过剪贴板获取选中文本（降级方案）
+async fn get_selection_by_clipboard(app: tauri::AppHandle) -> Result<String, AppError> {
     // 获取剪贴板管理器
     let clipboard = app.clipboard();
 

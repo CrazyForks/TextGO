@@ -1,5 +1,6 @@
 mod commands;
 mod error;
+mod platform;
 
 use commands::*;
 use enigo::{Enigo, Settings};
