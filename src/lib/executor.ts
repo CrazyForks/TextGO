@@ -3,7 +3,7 @@ import { m } from '$lib/paraglide/messages';
 import { entries, historySize, nodePath, prompts, pythonPath, scripts } from '$lib/stores.svelte';
 import type { Entry, Option, Prompt, Rule, Script } from '$lib/types';
 import { invoke } from '@tauri-apps/api/core';
-import { readText, writeText } from '@tauri-apps/plugin-clipboard-manager';
+import { readText } from '@tauri-apps/plugin-clipboard-manager';
 import { openPath, openUrl } from '@tauri-apps/plugin-opener';
 import { memoize } from 'es-toolkit/function';
 import {
@@ -252,8 +252,7 @@ export async function execute(rule: Rule, selection: string): Promise<void> {
       }
       if (script.quietMode) {
         // 静默模式下不显示窗口
-        await writeText(result);
-        await invoke('send_paste_key');
+        await invoke('send_paste_key', { text: result });
       } else {
         await showPopup(entry);
       }
@@ -285,8 +284,7 @@ export async function execute(rule: Rule, selection: string): Promise<void> {
       console.debug('开始执行内置动作:', action);
       const result = builtin.process(selection);
       console.debug('内置动作执行成功:', result);
-      await writeText(result);
-      await invoke('send_paste_key');
+      await invoke('send_paste_key', { text: result });
     }
   }
 }

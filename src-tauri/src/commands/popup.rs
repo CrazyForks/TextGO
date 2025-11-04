@@ -18,8 +18,8 @@ const POPUP_SAFE_AREA_BOTTOM: i32 = 80;
 pub fn show_popup(app: tauri::AppHandle, payload: String) -> Result<(), AppError> {
     // 获取当前鼠标位置
     let (mouse_x, mouse_y) = {
-        let enigo_lock = ENIGO.lock()?;
-        let enigo = enigo_lock.as_ref()?;
+        let enigo_guard = ENIGO.lock()?;
+        let enigo = enigo_guard.as_ref()?;
         enigo.location()?
     };
 

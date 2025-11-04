@@ -1,51 +1,8 @@
+use crate::commands::send_copy_key;
 use crate::error::AppError;
-use crate::ENIGO;
-use enigo::{Direction, Key, Keyboard};
 use std::time::Duration;
 use tauri_plugin_clipboard_manager::ClipboardExt;
 use tokio::time::sleep;
-
-#[tauri::command]
-pub fn send_copy_key() -> Result<(), AppError> {
-    let mut enigo_lock = ENIGO.lock()?;
-    let enigo = enigo_lock.as_mut()?;
-
-    #[cfg(target_os = "macos")]
-    let modifier = Key::Meta;
-    #[cfg(not(target_os = "macos"))]
-    let modifier = Key::Control;
-
-    // 释放 Shift 键
-    enigo.key(Key::Shift, Direction::Release)?;
-
-    // 发送 Cmd+C 或 Ctrl+C
-    enigo.key(modifier, Direction::Press)?;
-    enigo.key(Key::Unicode('c'), Direction::Click)?;
-    enigo.key(modifier, Direction::Release)?;
-
-    Ok(())
-}
-
-#[tauri::command]
-pub fn send_paste_key() -> Result<(), AppError> {
-    let mut enigo_lock = ENIGO.lock()?;
-    let enigo = enigo_lock.as_mut()?;
-
-    #[cfg(target_os = "macos")]
-    let modifier = Key::Meta;
-    #[cfg(not(target_os = "macos"))]
-    let modifier = Key::Control;
-
-    // 释放 Shift 键
-    enigo.key(Key::Shift, Direction::Release)?;
-
-    // 发送 Cmd+V 或 Ctrl+V
-    enigo.key(modifier, Direction::Press)?;
-    enigo.key(Key::Unicode('v'), Direction::Click)?;
-    enigo.key(modifier, Direction::Release)?;
-
-    Ok(())
-}
 
 #[tauri::command]
 pub async fn get_selection(app: tauri::AppHandle) -> Result<String, AppError> {

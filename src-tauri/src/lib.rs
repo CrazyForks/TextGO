@@ -1,15 +1,13 @@
+mod commands;
+mod error;
+
+use commands::*;
 use enigo::{Enigo, Settings};
 use std::{
     collections::HashMap,
     sync::{LazyLock, Mutex},
 };
 use tauri::{Emitter, Manager, RunEvent, WindowEvent};
-
-// 模块导入
-mod commands;
-mod error;
-
-use commands::*;
 
 // Global, shared Enigo wrapped in a Mutex
 // The Enigo struct should be created once and then reused for efficiency
