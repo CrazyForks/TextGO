@@ -11,43 +11,43 @@
   import type { Option, Rule } from '$lib/types';
   import { ArrowFatLineRight, Code, FingerprintSimple, Sparkle, Translate } from 'phosphor-svelte';
 
-  // 加载状态
+  // loading status
   const loading = new Loading();
 
-  // 要绑定的键位
+  // key to bind
   let lastKey: string = $state('');
 
-  // 文本类型
+  // text type
   let textCase: string = $state('');
 
-  // 动作标识
+  // action identifier
   let actionId: string = $state('');
 
-  // 规则模态框
+  // rule modal
   let ruleModal: Modal;
   export const showModal = (key: string) => {
     lastKey = key.toUpperCase();
     ruleModal.show();
   };
 
-  // 文本类型选项
+  // text type options
   const textCases: Option[] = $derived.by(() => {
     const options: Option[] = [{ value: '', label: m.skip() }];
-    // 分类模型
+    // classification model
     if (models.current && models.current.length > 0) {
       options.push({ value: '--model--', label: `-- ${m.classification_model()} --`, disabled: true });
       for (const model of models.current) {
         options.push({ value: MODEL_MARK + model.id, label: model.id });
       }
     }
-    // 正则表达式
+    // regular expression
     if (regexps.current && regexps.current.length > 0) {
       options.push({ value: '--regexp--', label: `-- ${m.regexp()} --`, disabled: true });
       for (const regexp of regexps.current) {
         options.push({ value: REGEXP_MARK + regexp.id, label: regexp.id });
       }
     }
-    // 内置类型
+    // built-in type
     options.push({ value: '--general--', label: `-- ${m.general()} --`, disabled: true });
     options.push(...GENERAL_CASES);
     options.push({ value: '--text--', label: `-- ${m.text_case()} --`, disabled: true });
@@ -59,24 +59,24 @@
     return options;
   });
 
-  // 动作标识选项
+  // action identifier options
   const actionIds: Option[] = $derived.by(() => {
     const options: Option[] = [{ value: '', label: m.show_main_window() }];
-    // 脚本
+    // script
     if (scripts.current && scripts.current.length > 0) {
       options.push({ value: '--script--', label: `-- ${m.script()} --`, disabled: true });
       for (const script of scripts.current) {
         options.push({ value: SCRIPT_MARK + script.id, label: script.id });
       }
     }
-    // 提示词
+    // prompt
     if (prompts.current && prompts.current.length > 0) {
       options.push({ value: '--prompt--', label: `-- ${m.conversation()} --`, disabled: true });
       for (const prompt of prompts.current) {
         options.push({ value: PROMPT_MARK + prompt.id, label: prompt.id });
       }
     }
-    // 内置动作
+    // built-in action
     options.push({ value: '--general--', label: `-- ${m.general()} --`, disabled: true });
     options.push(...GENERAL_ACTIONS);
     options.push({ value: '--convert--', label: `-- ${m.text_case_convert()} --`, disabled: true });
@@ -87,9 +87,9 @@
   });
 
   /**
-   * 注册并保存规则
+   * Register and save rule
    *
-   * @param form - 表单元素
+   * @param form - form element
    */
   async function register(form: HTMLFormElement) {
     const rules = shortcuts.current[lastKey];
@@ -116,9 +116,9 @@
   }
 
   /**
-   * 注销并删除规则
+   * Unregister and delete rule
    *
-   * @param rule - 规则对象
+   * @param rule - rule object
    */
   export async function unregister(rule: Rule) {
     try {
@@ -129,20 +129,20 @@
   }
 
   /**
-   * 获取文本类型选项
+   * Get text type option
    *
-   * @param value - 文本类型值
-   * @returns 文本类型选项
+   * @param value - text type value
+   * @returns text type option
    */
   export function getCaseOption(value: string): Option | undefined {
     return textCases.find((c) => c.value === value);
   }
 
   /**
-   * 获取动作标识选项
+   * Get action identifier option
    *
-   * @param value - 动作标识值
-   * @returns 动作标识选项
+   * @param value - action identifier value
+   * @returns action identifier option
    */
   export function getActionOption(value: string): Option | undefined {
     return actionIds.find((a) => a.value === value);

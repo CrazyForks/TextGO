@@ -21,15 +21,15 @@ import {
   TextT
 } from 'phosphor-svelte';
 
-// 创建编程语言识别模型实例
-// 针对 Tauri 环境配置自定义加载函数
+// create programming language recognition model instance
+// configure custom loading function for Tauri environment
 const modelOperations = new ModelOperations({
-  // 自定义 JSON 模型加载函数
+  // custom JSON model loader function
   modelJsonLoaderFunc: async () => {
     try {
       const response = await fetch('/model.json');
       if (!response.ok) {
-        throw new Error(`无法加载模型 JSON 文件: ${response.status}`);
+        throw new Error(`Unable to load model JSON file: ${response.status}`);
       }
       return await response.json();
     } catch (error) {
@@ -37,12 +37,12 @@ const modelOperations = new ModelOperations({
       throw error;
     }
   },
-  // 自定义权重文件加载函数
+  // custom weights file loader function
   weightsLoaderFunc: async () => {
     try {
       const response = await fetch('/group1-shard1of1.bin');
       if (!response.ok) {
-        throw new Error(`无法加载模型权重文件: ${response.status}`);
+        throw new Error(`Unable to load model weights file: ${response.status}`);
       }
       return await response.arrayBuffer();
     } catch (error) {
@@ -53,30 +53,24 @@ const modelOperations = new ModelOperations({
 });
 
 /**
- * 最低期望置信度
+ * Minimum expected confidence
  */
 const MIN_CONFIDENCE = 0.2;
 
 /**
- * 初始置信度阈值
+ * Initial confidence threshold
  */
 const INITIAL_THRESHOLD = 0.5;
 
 /**
- * 相对置信度差值阈值
+ * Relative confidence difference threshold
  */
 const RELATIVE_THRESHOLD = 0.15;
 
 /**
- * 常规识别选项
+ * General recognition option
  */
 export const GENERAL_CASES: Option[] = [
-  {
-    value: 'numbers',
-    label: m.numbers(),
-    icon: NumberCircleNine,
-    pattern: /^[0-9]+$/
-  },
   {
     value: 'small_letters',
     label: m.small_letters(),
@@ -100,6 +94,12 @@ export const GENERAL_CASES: Option[] = [
     label: m.guid(),
     icon: Key,
     pattern: /^\{?[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\}?$/i
+  },
+  {
+    value: 'numbers',
+    label: m.numbers(),
+    icon: NumberCircleNine,
+    pattern: /^[0-9]+$/
   },
   {
     value: 'url',
@@ -151,13 +151,13 @@ export const GENERAL_CASES: Option[] = [
     value: 'timestamp',
     label: m.timestamp(),
     icon: Clock,
-    // 2001 ~ 2286 年间10位秒级或13位毫秒级的 Unix 时间戳
+    // 10-digit second-level or 13-digit millisecond-level Unix timestamp between 2001 and 2286
     pattern: /^(?:[1-9]\d{9}|[1-9]\d{12})$/
   }
 ];
 
 /**
- * 命名格式识别选项
+ * Naming format recognition options
  */
 export const TEXT_CASES: Option[] = [
   {
@@ -199,7 +199,7 @@ export const TEXT_CASES: Option[] = [
 ];
 
 /**
- * 自然语言识别选项
+ * Natural language recognition options
  */
 export const NATURAL_CASES: Option[] = [
   { value: 'cmn', label: m.lang_cmn() },
@@ -215,7 +215,7 @@ export const NATURAL_CASES: Option[] = [
 ];
 
 /**
- * 编程语言识别选项
+ * Programming language recognition options
  */
 export const PROGRAMMING_CASES: Option[] = [
   { value: 'asm', label: 'Assembly' },
@@ -274,26 +274,26 @@ export const PROGRAMMING_CASES: Option[] = [
   { value: 'yaml', label: 'YAML' }
 ];
 
-// Memoized 查找函数
+// memoized lookup function
 const findBuiltinCase = memoize((_case: string) => [...GENERAL_CASES, ...TEXT_CASES].find((c) => c.value === _case));
 const findNaturalCase = memoize((_case: string) => NATURAL_CASES.find((c) => c.value === _case));
 const findProgrammingCase = memoize((_case: string) => PROGRAMMING_CASES.find((c) => c.value === _case));
 
 /**
- * 根据文本类型匹配要执行的快捷键动作
+ * Match the shortcut key action to be executed based on the text type
  *
- * @param text - 待匹配的文本
- * @param rules - 指定的规则列表
- * @returns 匹配到的规则对象，未匹配到则返回`null`
+ * @param text - text to match
+ * @param rules - list of specified rules
+ * @returns The matched rule object, returns `null` if no match is found
  */
 export async function match(text: string, rules: Rule[]): Promise<Rule | null> {
   console.debug(`Matching patterns: ${rules.map((r) => r.case || 'skip').join(', ')}`);
   let langDetected = false;
   let langDetectedResult: ModelResult[] = [];
-  // 循环所有绑定的规则，找到第一个匹配的文本类型
+  // iterate through all bound rules to find the first matching text type
   for (const rule of rules) {
     const _case = rule.case;
-    // 空字符串表示不进行任何识别
+    // empty string means no recognition
     if (_case === '') {
       console.debug('Skipping text recognition');
       return rule;
@@ -302,7 +302,7 @@ export async function match(text: string, rules: Rule[]): Promise<Rule | null> {
       continue;
     }
 
-    // 内置正则匹配
+    // builtin regular expression matching
     const builtin = findBuiltinCase(_case);
     if (builtin && builtin.pattern && builtin.pattern.test(text)) {
       console.debug(`Builtin regex matched: ${builtin.label}`);
@@ -310,7 +310,7 @@ export async function match(text: string, rules: Rule[]): Promise<Rule | null> {
       return rule;
     }
 
-    // 自然语言识别
+    // natural language detection
     const natural = findNaturalCase(_case);
     if (natural) {
       try {
@@ -324,7 +324,7 @@ export async function match(text: string, rules: Rule[]): Promise<Rule | null> {
       }
     }
 
-    // 编程语言识别
+    // programming language detection
     const programming = findProgrammingCase(_case);
     if (programming) {
       try {
@@ -343,7 +343,7 @@ export async function match(text: string, rules: Rule[]): Promise<Rule | null> {
       }
     }
 
-    // 自定义正则匹配
+    // custom regular expression matching
     if (_case.startsWith(REGEXP_MARK)) {
       const regexpId = _case.substring(REGEXP_MARK.length);
       const regexp = regexps.current.find((r) => r.id === regexpId);
@@ -361,7 +361,7 @@ export async function match(text: string, rules: Rule[]): Promise<Rule | null> {
       }
     }
 
-    // 自定义模型识别
+    // custom model detection
     if (_case.startsWith(MODEL_MARK)) {
       const modelId = _case.substring(MODEL_MARK.length);
       const model = models.current.find((m) => m.id === modelId);
@@ -382,35 +382,35 @@ export async function match(text: string, rules: Rule[]): Promise<Rule | null> {
 }
 
 /**
- * 判断编程语言识别结果是否匹配目标语言
- * 参考了 VS Code 的识别策略，使用了动态阈值和相邻位置的置信度差值来判断
+ * Determine if the programming language detection result matches the target language
+ * Referenced VS Code's recognition strategy, using dynamic threshold and confidence difference from adjacent positions to judge
  * https://github.com/microsoft/vscode/blob/main/src/vs/workbench/services/languageDetection/browser/languageDetectionWebWorker.ts
  *
- * @param targetId - 目标语言ID
- * @param results - 模型识别结果
- * @returns 是否匹配目标语言
+ * @param targetId - target language ID
+ * @param results - model recognition results
+ * @returns whether it matches the target language
  */
 function matchProgrammingCase(targetId: string, results: ModelResult[]): boolean {
   if (!results || results.length === 0) {
     return false;
   }
-  // 获取目标语言在模型识别结果中的位置和置信度
+  // get the position and confidence of target language in model recognition results
   const targetIndex = results.findIndex((result) => result.languageId === targetId);
   if (targetIndex === -1) {
-    // 目标语言不在结果中
+    // target language is not in the results
     return false;
   }
   const targetConfidence = results[targetIndex].confidence;
 
-  // 策略1: 判断目标语言置信度是否达标
+  // strategy 1: judge if the confidence of target language meets the threshold
   const threshold = INITIAL_THRESHOLD + 0.1 * targetIndex;
   if (targetConfidence > threshold) {
     return true;
   }
 
-  // 策略2: 判断相邻置信度差值是否达标
+  // strategy 2: judge if the confidence difference from adjacent positions meets the threshold
   if (targetConfidence <= MIN_CONFIDENCE || targetIndex >= 3) {
-    // 置信度过低或排名过后
+    // confidence is too low or ranking is too low
     return false;
   }
   const nextConfidence = results[targetIndex + 1]?.confidence ?? 0;
@@ -418,17 +418,17 @@ function matchProgrammingCase(targetId: string, results: ModelResult[]): boolean
 }
 
 /**
- * 判断选中文本是否匹配自定义模型
+ * Determine if the selected text matches the custom model
  *
- * @param model - 自定义模型
- * @param text - 待匹配文本
+ * @param model - custom model
+ * @param text - text to match
  * @returns
  */
 async function matchModelCase(model: Model, text: string): Promise<boolean> {
   if (!model || !model.modelTrained) {
     return false;
   }
-  // 加载训练好的模型进行匹配
+  // load trained model for matching
   const confidence = await predict(model.id, text);
   return confidence !== null && confidence >= model.threshold;
 }

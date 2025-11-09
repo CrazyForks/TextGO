@@ -1,13 +1,13 @@
 /**
- * 表示加载状态的响应式类
+ * Reactive class representing loading state
  */
 export class Loading {
   private loading = $state<boolean | null>(null);
 
   /**
-   * 将加载状态设置为`false`，然后在指定的延迟后将其设置为`true`
+   * Set the loading state to `false`, then set it to `true` after the specified delay
    *
-   * @param delay - 在将加载状态设置为`true`之前等待的毫秒数
+   * @param delay - milliseconds to wait before setting the loading state to `true`
    */
   start(delay: number = 500) {
     this.loading = false;
@@ -21,28 +21,28 @@ export class Loading {
   }
 
   /**
-   * 将加载状态设置为`null`，表示加载结束
+   * Set the loading state to `null`, indicating loading is complete
    */
   end() {
     this.loading = null;
   }
 
   /**
-   * 获取当前加载状态
+   * Get current loading state
    */
   get current() {
     return this.loading;
   }
 
   /**
-   * 是否已经开始加载
+   * Whether loading has already started
    */
   get started() {
     return this.loading !== null;
   }
 
   /**
-   * 是否已经达到延迟时间
+   * Whether the delay time has been reached
    */
   get delayed() {
     return this.loading === true;

@@ -13,7 +13,7 @@
 
   let { children }: { children: Snippet } = $props();
 
-  // 侧边栏宽度
+  // sidebar width
   const SIDEBAR_WIDTH = '13.5rem';
 </script>
 
@@ -37,12 +37,12 @@
                 onclick={(event) => {
                   event.stopPropagation();
                   event.preventDefault();
-                  // 不是当前页面，直接删除
+                  // not current page, delete directly
                   if (deLocalizeHref(page.url.pathname) !== href) {
                     entries.current.splice(index, 1);
                     return;
                   }
-                  // 删除后跳转到上一个日志
+                  // redirect to previous log after deletion
                   entries.current.splice(index, 1);
                   if (index > 0) {
                     goto(resolve(`/histories/${entries.current[index - 1].id}`));

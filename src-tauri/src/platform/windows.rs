@@ -10,24 +10,24 @@ use windows::Win32::UI::Accessibility::{
     UIA_EditControlTypeId, UIA_LegacyIAccessiblePatternId, UIA_TextPatternId, UIA_ValuePatternId,
 };
 
-/// COM 资源守护
+/// COM resource guard
 struct ComGuard {
     initialized: bool,
 }
 
 impl ComGuard {
-    /// 初始化 COM 环境
+    /// initialize COM environment
     fn new() -> Result<Self, AppError> {
         unsafe {
             let result = CoInitializeEx(None, COINIT_APARTMENTTHREADED);
             if result.is_ok() {
-                // 成功初始化，需要在 drop 时释放
+                // successfully initialized, need to release on drop
                 Ok(ComGuard { initialized: true })
             } else if result == windows::Win32::Foundation::RPC_E_CHANGED_MODE {
-                // COM 已被其他代码初始化，不需要释放
+                // COM already initialized by other code, no need to release
                 Ok(ComGuard { initialized: false })
             } else {
-                // 其他错误
+                // other errors
                 Err("Failed to initialize COM".into())
             }
         }
@@ -35,7 +35,7 @@ impl ComGuard {
 }
 
 impl Drop for ComGuard {
-    /// 释放 COM 资源
+    /// release COM resources
     fn drop(&mut self) {
         if self.initialized {
             unsafe {
@@ -45,32 +45,32 @@ impl Drop for ComGuard {
     }
 }
 
-/// 获取当前焦点元素
+/// get focused element
 fn get_focused_element() -> Result<IUIAutomationElement, AppError> {
     unsafe {
-        // 创建 UI Automation 实例
+        // create UI Automation instance
         let automation: IUIAutomation = CoCreateInstance(&CUIAutomation, None, CLSCTX_ALL)
             .map_err(|e| format!("Failed to create UI Automation instance: {}", e))?;
 
-        // 获取当前焦点元素
+        // get focused element
         automation
             .GetFocusedElement()
             .map_err(|e| format!("Failed to get focused element: {}", e).into())
     }
 }
 
-/// 从焦点元素获取选中的文本范围
+/// get text selection range from focused element
 fn get_text_selection(
     focused_element: &IUIAutomationElement,
 ) -> Result<IUIAutomationTextRangeArray, AppError> {
     unsafe {
-        // 获取焦点元素的 TextPattern
+        // get text pattern from focused element
         let text_pattern: IUIAutomationTextPattern = focused_element
             .GetCurrentPattern(UIA_TextPatternId)
             .and_then(|p| p.cast())
             .map_err(|_| "Failed to get text pattern")?;
 
-        // 获取当前选中的文本范围
+        // get current selected text range
         let selection = text_pattern
             .GetSelection()
             .map_err(|_| "Failed to get text selection")?;
@@ -83,19 +83,19 @@ fn get_text_selection(
     }
 }
 
-/// 获取当前焦点元素中用户选中的文本
+/// get selected text by user in current focused element
 pub fn get_selection() -> Result<String, AppError> {
     unsafe {
-        // 初始化 COM
+        // initialize COM
         let _com = ComGuard::new()?;
 
-        // 获取当前焦点元素
+        // get focused element
         let focused_element = get_focused_element()?;
 
-        // 获取当前选中的文本范围
+        // get current selected text range
         let selection = get_text_selection(&focused_element)?;
 
-        // 获取第一个选中范围并提取文本
+        // get first selection range and extract text
         let text = selection
             .GetElement(0)
             .and_then(|e| e.GetText(-1))
@@ -105,16 +105,16 @@ pub fn get_selection() -> Result<String, AppError> {
     }
 }
 
-/// 检查当前焦点元素是否可编辑
+/// check if current focused element is editable
 pub fn is_cursor_editable() -> Result<bool, AppError> {
     unsafe {
-        // 初始化 COM
+        // initialize COM
         let _com = ComGuard::new()?;
 
-        // 获取当前焦点元素
+        // get focused element
         let focused_element = get_focused_element()?;
 
-        // 1. 检查控件类型是否为可编辑
+        // 1. check if control type is editable
         if let Ok(control_type) = focused_element.CurrentControlType() {
             let is_edit_control = control_type.0 == UIA_EditControlTypeId.0;
             let is_document_control = control_type.0 == UIA_DocumentControlTypeId.0;
@@ -123,7 +123,7 @@ pub fn is_cursor_editable() -> Result<bool, AppError> {
             }
         }
 
-        // 2. 检查模式是否不为只读
+        // 2. check if pattern is not readonly
         if let Ok(is_readonly) = focused_element
             .GetCurrentPattern(UIA_ValuePatternId)
             .and_then(|p| p.cast::<IUIAutomationValuePattern>())
@@ -134,14 +134,14 @@ pub fn is_cursor_editable() -> Result<bool, AppError> {
             }
         }
 
-        // 3. 检查老式控件的角色
+        // 3. check legacy control role
         if let Ok(role) = focused_element
             .GetCurrentPattern(UIA_LegacyIAccessiblePatternId)
             .and_then(|p| p.cast::<IUIAutomationLegacyIAccessiblePattern>())
             .and_then(|lp| lp.CurrentRole())
         {
-            // ROLE_SYSTEM_TEXT (42) 表示可编辑文本
-            // ROLE_SYSTEM_COMBOBOX (46) 表示组合框
+            // ROLE_SYSTEM_TEXT (42) means editable text
+            // ROLE_SYSTEM_COMBOBOX (46) means combo box
             if role == 42 || role == 46 {
                 return Ok(true);
             }
@@ -151,24 +151,24 @@ pub fn is_cursor_editable() -> Result<bool, AppError> {
     }
 }
 
-/// 从当前光标位置开始向左选中指定数量的字符
+/// select specified number of characters from current cursor position backward
 pub fn select_backward_chars(chars: usize) -> Result<(), AppError> {
     unsafe {
-        // 初始化 COM
+        // initialize COM
         let _com = ComGuard::new()?;
 
-        // 获取当前焦点元素
+        // get focused element
         let focused_element = get_focused_element()?;
 
-        // 获取当前选中的文本范围
+        // get current selected text range
         let selection = get_text_selection(&focused_element)?;
 
-        // 获取第一个选中范围
+        // get first selection range
         let text_range = selection
             .GetElement(0)
             .map_err(|_| "Failed to get selection range")?;
 
-        // 向左移动起始点
+        // move start point backward
         text_range
             .MoveEndpointByUnit(
                 TextPatternRangeEndpoint_Start,
@@ -177,7 +177,7 @@ pub fn select_backward_chars(chars: usize) -> Result<(), AppError> {
             )
             .map_err(|_| "Failed to move endpoint backward")?;
 
-        // 选中新范围
+        // select new range
         text_range
             .Select()
             .map_err(|_| "Failed to select new range")?;

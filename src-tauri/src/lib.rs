@@ -11,6 +11,7 @@ use std::{
     sync::{LazyLock, Mutex},
 };
 use tauri::{Emitter, Manager, RunEvent, WindowEvent};
+use tauri_plugin_global_shortcut::{Shortcut, ShortcutEvent, ShortcutState};
 use tauri_plugin_log::{Target, TargetKind};
 
 // Global, shared Enigo wrapped in a Mutex
@@ -22,21 +23,91 @@ pub static ENIGO: LazyLock<Mutex<Result<Enigo, enigo::NewConError>>> =
 pub static REGISTERED_SHORTCUTS: LazyLock<Mutex<HashMap<String, String>>> =
     LazyLock::new(|| Mutex::new(HashMap::new()));
 
-/// 全局快捷键处理函数
-fn handle_global_shortcut(
-    app: &tauri::AppHandle,
-    shortcut: &tauri_plugin_global_shortcut::Shortcut,
-    event: tauri_plugin_global_shortcut::ShortcutEvent,
-) {
-    if event.state() == tauri_plugin_global_shortcut::ShortcutState::Pressed {
-        // 从 shortcut.key 格式化字符串中提取最后一个字符
+/// Application setup function
+fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
+    let app_handle = app.app_handle().clone();
+
+    // initialize tray menu
+    setup_tray(
+        app_handle.clone(),
+        "Show / Hide".to_string(),
+        "Edit Shortcuts...".to_string(),
+        "About TextGO".to_string(),
+        "Quit".to_string(),
+    )
+    .ok();
+
+    // get main window
+    if let Some(window) = app.get_webview_window("main") {
+        let app_handle = window.app_handle().clone();
+
+        // since window is initially hidden, hide dock icon
+        #[cfg(target_os = "macos")]
+        let _ = app_handle.set_dock_visibility(false);
+
+        // set window close behavior, hide instead of quit on close
+        window.on_window_event(move |event| {
+            if let WindowEvent::CloseRequested { api, .. } = event {
+                // prevent default close behavior
+                api.prevent_close();
+                // hide window to system tray
+                if let Some(window) = app_handle.get_webview_window("main") {
+                    let _ = window.hide();
+                    // when hiding window, also hide dock icon
+                    #[cfg(target_os = "macos")]
+                    let _ = app_handle.set_dock_visibility(false);
+                }
+            }
+        });
+    }
+
+    // get popup window and set close behavior
+    if let Some(window) = app.get_webview_window("popup") {
+        let app_handle = window.app_handle().clone();
+        // set popup window close behavior, hide instead of destroy on close
+        window.on_window_event(move |event| {
+            if let WindowEvent::CloseRequested { api, .. } = event {
+                // prevent default close behavior
+                api.prevent_close();
+                // hide window instead of destroy
+                if let Some(popup) = app_handle.get_webview_window("popup") {
+                    let _ = popup.hide();
+                }
+            }
+        });
+    }
+
+    Ok(())
+}
+
+/// Runtime event handler function
+#[allow(unused_variables)]
+fn handle_run_event(app: &tauri::AppHandle, event: RunEvent) {
+    // handle Reopen event on macOS
+    #[cfg(target_os = "macos")]
+    if let RunEvent::Reopen {
+        has_visible_windows: false,
+        ..
+    } = event
+    {
+        // show main window when no visible windows
+        show_window(app, "main");
+        // also show dock icon
+        let _ = app.set_dock_visibility(true);
+    }
+}
+
+/// Global shortcut handler function
+fn handle_shortcut_event(app: &tauri::AppHandle, shortcut: &Shortcut, event: ShortcutEvent) {
+    if event.state() == ShortcutState::Pressed {
+        // extract last character from shortcut.key formatted string
         let key_str = format!("{}", shortcut.key);
         let key_char = key_str.chars().last().unwrap_or('?').to_string();
 
         let app_clone = app.clone();
         let key_char_clone = key_char.clone();
 
-        // 异步获取选中文本并发送事件到前端
+        // asynchronously get selected text and emit event to frontend
         tauri::async_runtime::spawn(async move {
             if let Ok(selection) = get_selection(app_clone.clone()).await {
                 let event_data = serde_json::json!({
@@ -49,80 +120,6 @@ fn handle_global_shortcut(
     }
 }
 
-/// 应用设置函数
-fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
-    let app_handle = app.app_handle().clone();
-
-    // 初始化托盘菜单
-    setup_tray(
-        app_handle.clone(),
-        "Show / Hide".to_string(),
-        "Edit Shortcuts...".to_string(),
-        "About TextGO".to_string(),
-        "Quit".to_string(),
-    )
-    .ok();
-
-    // 获取主窗口
-    if let Some(window) = app.get_webview_window("main") {
-        let app_handle = window.app_handle().clone();
-
-        // 由于窗口初始时是隐藏的，隐藏 Dock 图标
-        #[cfg(target_os = "macos")]
-        let _ = app_handle.set_dock_visibility(false);
-
-        // 设置窗口关闭行为，关闭时隐藏而不是退出
-        window.on_window_event(move |event| {
-            if let WindowEvent::CloseRequested { api, .. } = event {
-                // 阻止默认关闭行为
-                api.prevent_close();
-                // 隐藏窗口到系统托盘
-                if let Some(window) = app_handle.get_webview_window("main") {
-                    let _ = window.hide();
-                    // 隐藏窗口时，隐藏 Dock 图标
-                    #[cfg(target_os = "macos")]
-                    let _ = app_handle.set_dock_visibility(false);
-                }
-            }
-        });
-    }
-
-    // 获取 popup 窗口并设置关闭行为
-    if let Some(window) = app.get_webview_window("popup") {
-        let app_handle = window.app_handle().clone();
-        // 设置 popup 窗口关闭行为，关闭时隐藏而不是销毁
-        window.on_window_event(move |event| {
-            if let WindowEvent::CloseRequested { api, .. } = event {
-                // 阻止默认关闭行为
-                api.prevent_close();
-                // 隐藏窗口而不是销毁
-                if let Some(popup) = app_handle.get_webview_window("popup") {
-                    let _ = popup.hide();
-                }
-            }
-        });
-    }
-
-    Ok(())
-}
-
-/// 运行时事件处理函数
-#[allow(unused_variables)]
-fn handle_run_event(app: &tauri::AppHandle, event: RunEvent) {
-    // 处理 macOS 下的 Reopen 事件
-    #[cfg(target_os = "macos")]
-    if let RunEvent::Reopen {
-        has_visible_windows: false,
-        ..
-    } = event
-    {
-        // 没有可见窗口时，显示主窗口
-        show_window(app, "main");
-        // 同时显示 Dock 图标
-        let _ = app.set_dock_visibility(true);
-    }
-}
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -132,7 +129,7 @@ pub fn run() {
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(
             tauri_plugin_global_shortcut::Builder::new()
-                .with_handler(handle_global_shortcut)
+                .with_handler(handle_shortcut_event)
                 .build(),
         )
         .plugin(

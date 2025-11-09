@@ -10,7 +10,7 @@ import type { LayoutLoad } from './$types';
 export const ssr = false;
 
 export const load: LayoutLoad = async () => {
-  // 设置 Tippy.js 全局默认属性
+  // set default properties for Tippy.js globally
   // https://atomiks.github.io/tippyjs/v6/methods/#setdefaultprops
   tippy.setDefaultProps({
     zIndex: 100,
@@ -23,22 +23,22 @@ export const load: LayoutLoad = async () => {
     plugins: [followCursor]
   });
 
-  // 转发 console 日志到 Tauri 日志插件
+  // forward console logs to Tauri logger plugin
   forwardConsole('log', trace);
   forwardConsole('debug', debug);
   forwardConsole('info', info);
   forwardConsole('warn', warn);
   forwardConsole('error', error);
 
-  // 导入时立即初始化所有 stores
+  // initialize all stores immediately on import
   return { stores };
 };
 
 /**
- * 转发 console 方法到指定的日志记录器
+ * Forward console method to specified logger
  *
- * @param fnName - console 方法名称
- * @param logger - 日志记录器函数
+ * @param fnName - console method name
+ * @param logger - logger function
  */
 function forwardConsole(
   fnName: 'log' | 'debug' | 'info' | 'warn' | 'error',

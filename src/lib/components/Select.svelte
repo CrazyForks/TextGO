@@ -4,19 +4,33 @@
   import type { ChangeEventHandler } from 'svelte/elements';
 
   export type SelectProps = Partial<{
-    /** 选项内容片段 */
+    /**
+     * Option content snippet
+     */
     children: Snippet;
-    /** 选项列表 */
+    /**
+     * Option list
+     */
     options: Option[];
-    /** 选中的值 */
+    /**
+     * Selected value
+     */
     value: OptionValue;
-    /** 占位符文本 */
+    /**
+     * Placeholder text
+     */
     placeholder: string;
-    /** 是否禁用选择框 */
+    /**
+     * Whether to disable select box
+     */
     disabled: boolean;
-    /** 自定义样式类名 */
+    /**
+     * Custom style class name
+     */
     class: string;
-    /** 选中值变化时的回调函数 */
+    /**
+     * Callback function when selected value changes
+     */
     onchange: ChangeEventHandler<HTMLSelectElement>;
   }>;
 </script>
@@ -32,7 +46,7 @@
     onchange
   }: SelectProps = $props();
 
-  // 要渲染的选项
+  // options to render
   let options = $derived.by(() => {
     if (placeholder) {
       return [{ value: null, label: placeholder, disabled: true }, ...(_options || [])];
@@ -41,8 +55,8 @@
     }
   });
 
-  // null 值用于表示占位符
-  // 空字符串用于表示所有选项
+  // null value is used for placeholder
+  // empty string is used for all options
   $effect(() => {
     if (placeholder && value === '') {
       value = null;

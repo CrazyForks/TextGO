@@ -4,32 +4,32 @@ import { getCurrentWindow } from '@tauri-apps/api/window';
 import { LazyStore } from '@tauri-apps/plugin-store';
 import { untrack } from 'svelte';
 
-// 创建一个全局的 LazyStore 实例
+// create a global LazyStore instance
 const store = new LazyStore('.settings.dat');
 
 /**
- * 创建持久化状态的选项
+ * Options for creating persisted state
  */
 type Options<T> = {
-  /** 加载完成时的回调函数 */
+  /** Callback function when loading is complete */
   onload?: (value: T) => void;
-  /** 存储值变化时的回调函数 */
+  /** Callback function when the stored value changes */
   onchange?: (value: T | $state.Snapshot<T>) => void;
 };
 
 /**
- * 创建一个持久化的响应式状态
+ * Create a persisted reactive state
  *
- * @param key - 本地存储的键
- * @param initial - 初始值
- * @param options - 持久化选项
- * @returns 持久化状态对象
+ * @param key - key for local storage
+ * @param initial - initial value
+ * @param options - persistence options
+ * @returns persisted state object
  */
 function persisted<T>(key: string, initial: T, options?: Options<T>) {
   let state = $state(initial);
   let initialized = $state(false);
 
-  // 从本地存储加载数据
+  // load data from local storage
   store
     .get<T>(key)
     .then((item) => {
@@ -47,18 +47,18 @@ function persisted<T>(key: string, initial: T, options?: Options<T>) {
       initialized = true;
     });
 
-  // 保存数据到本地存储
+  // save data to local storage
   $effect.root(() => {
     $effect(() => {
       if (!initialized) {
         return;
       }
-      // 获取当前状态的快照
+      // get snapshot of current state
       const snapshot = $state.snapshot(state);
       store
         .set(key, snapshot)
         .then(() => {
-          // 保存到本地文件
+          // save to local file
           store.save();
         })
         .then(() => {
@@ -68,18 +68,18 @@ function persisted<T>(key: string, initial: T, options?: Options<T>) {
           console.error(`Failed to save persisted data: ${error}`);
         });
 
-      // 同步到 localStorage
+      // sync to localStorage
       if (snapshot) {
         localStorage.setItem(key, JSON.stringify(snapshot));
       } else {
         localStorage.removeItem(key);
       }
     });
-    // 确保不被清理
+    // ensure it won't be cleaned up
     return () => {};
   });
 
-  // 监听 localStorage 变化以实现跨窗口同步
+  // listen for localStorage changes to implement cross-window sync
   window.addEventListener('storage', (event) => {
     if (event.key === key) {
       if (event.newValue) {
@@ -100,36 +100,36 @@ function persisted<T>(key: string, initial: T, options?: Options<T>) {
   };
 }
 
-// 主题
+// theme
 export const theme = persisted<string>('theme', 'light', {
   onchange: (theme) => {
-    // 设置根元素的 data-theme 属性以切换主题
+    // set data-theme attribute on root element to switch theme
     const root = document.documentElement;
     root.setAttribute('data-theme', theme);
-    // 此处设置的主题是应用范围的，而不是特定于当前窗口
+    // the theme set here is application-wide, not specific to the current window
     getCurrentWindow().setTheme(theme === 'light' ? 'light' : 'dark');
   }
 });
 
-// Node.js 路径
+// Node.js path
 export const nodePath = persisted<string>('nodePath', '');
 
-// Python 路径
+// Python path
 export const pythonPath = persisted<string>('pythonPath', '');
 
-// Ollama 服务地址
+// Ollama service address
 export const ollamaHost = persisted<string>('ollamaHost', '');
 
-// 历史记录保留条数
+// number of history records to retain
 export const historySize = persisted<number>('historySize', 5);
 
-// 快捷键组
+// shortcut group
 export const shortcuts = persisted<Record<string, Rule[]>>(
   'shortcuts',
   {},
   {
     onload: async (shortcuts) => {
-      // 主窗口初始化时注册所有快捷键组
+      // register all shortcut groups when main window initializes
       if (getCurrentWindow().label === 'main') {
         for (const rule of Object.values(shortcuts).flat()) {
           await manager.register(rule);
@@ -139,17 +139,17 @@ export const shortcuts = persisted<Record<string, Rule[]>>(
   }
 );
 
-// 分类模型
+// classification model
 export const models = persisted<Model[]>('models', []);
 
-// 正则表达式
+// regular expression
 export const regexps = persisted<Regexp[]>('regexps', []);
 
-// 脚本
+// script
 export const scripts = persisted<Script[]>('scripts', []);
 
-// 提示词
+// prompt
 export const prompts = persisted<Prompt[]>('prompts', []);
 
-// 触发记录
+// trigger record
 export const entries = persisted<Entry[]>('entries', []);

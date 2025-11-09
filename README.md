@@ -6,9 +6,9 @@
 
 [![GitHub Release](https://img.shields.io/github/v/release/C5H12O5/TextGO?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij4KCTxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2Utd2lkdGg9IjIiIGQ9Ik00IDhWNmEyIDIgMCAwIDEgMi0yaDJNNCAxNnYyYTIgMiAwIDAgMCAyIDJoMm04LTE2aDJhMiAyIDAgMCAxIDIgMnYybS00IDEyaDJhMiAyIDAgMCAwIDItMnYtMk04IDEyaDhNOCA5aDZtLTYgNmg0IiAvPgo8L3N2Zz4=&label=Release&style=flat&color=blue)](https://github.com/C5H12O5/TextGO/releases)
 [![GitHub Stars](https://img.shields.io/github/stars/C5H12O5/TextGO?logo=github&label=Stars&style=flat&color=yellow)](https://github.com/C5H12O5/TextGO/stargazers)
-[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![GPLv3 License](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 [![Tauri Version](https://img.shields.io/badge/Tauri-v2.9.2-24C8D8.svg?logo=tauri)](https://tauri.app/)
-[![Svelte Version](https://img.shields.io/badge/Svelte-v5.43.4-FF3E00.svg?logo=svelte)](https://svelte.dev/)
+[![Svelte Version](https://img.shields.io/badge/Svelte-v5.43.5-FF3E00.svg?logo=svelte)](https://svelte.dev/)
 ![macOS](https://img.shields.io/badge/macOS-333333.svg?logo=apple)
 ![Windows](https://img.shields.io/badge/Windows-0078D4.svg?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+Cgk8cGF0aCBmaWxsPSIjZmZmIiBkPSJNMTA0IDE0NHY1MS42NGE4IDggMCAwIDEtOCA4YTguNSA4LjUgMCAwIDEtMS40My0uMTNsLTY0LTExLjY0QTggOCAwIDAgMSAyNCAxODR2LTQwYTggOCAwIDAgMSA4LThoNjRhOCA4IDAgMCAxIDggOG0tMi44Ny04OS43OGE4IDggMCAwIDAtNi41Ni0xLjczbC02NCAxMS42NEE4IDggMCAwIDAgMjQgNzJ2NDBhOCA4IDAgMCAwIDggOGg2NGE4IDggMCAwIDAgOC04VjYwLjM2YTggOCAwIDAgMC0yLjg3LTYuMTRNMjA4IDEzNmgtODBhOCA4IDAgMCAwLTggOHY1Ny40NWE4IDggMCAwIDAgNi41NyA3Ljg4bDgwIDE0LjU0YTcuNiA3LjYgMCAwIDAgMS40My4xM2E4IDggMCAwIDAgOC04di03MmE4IDggMCAwIDAtOC04bTUuMTMtMTAyLjE0YTggOCAwIDAgMC02LjU2LTEuNzNsLTgwIDE0LjU1YTggOCAwIDAgMC02LjU3IDcuODdWMTEyYTggOCAwIDAgMCA4IDhoODBhOCA4IDAgMCAwIDgtOFY0MGE4IDggMCAwIDAtMi44Ny02LjE0IiBzdHJva2Utd2lkdGg9IjYuNSIgc3Ryb2tlPSIjZmZmIiAvPgo8L3N2Zz4=)
 
@@ -78,4 +78,4 @@ For a complete list of third-party dependencies and their licenses, please see [
 
 ## 📄 License
 
-This project is released under the [**MIT**](LICENSE) open source license.
+This project is released under the [**GPLv3**](LICENSE) open source license.

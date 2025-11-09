@@ -5,7 +5,7 @@
   import { entries } from '$lib/stores.svelte';
 
   if (entries.current.length > 0) {
-    // 有日志则跳转到第一个日志详情页
+    // if history exists, redirect to first history detail page
     goto(resolve(`/histories/${entries.current[0].id}`), { replaceState: true });
   }
 </script>

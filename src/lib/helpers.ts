@@ -7,26 +7,26 @@ import type { Instance, Props } from 'tippy.js';
 import tippy from 'tippy.js';
 
 /**
- * 使用 Tippy.js 创建工具提示
+ * Create tooltip using Tippy.js
  *
- * @param target - 目标元素
- * @param props - 提示属性
- * @returns svelte action 返回值
+ * @param target - target element
+ * @param props - tooltip properties
+ * @returns svelte action return value
  */
 export function tooltip(target: HTMLElement, props: Partial<Props>): ActionReturn<Partial<Props>> {
   let instance: Instance | null = null;
   if (props && props.content) {
-    // 检查目标元素是否在 dialog 元素内
+    // check if target element is inside dialog element
     let el: HTMLElement | null = target;
     while (el && el.nodeName !== 'DIALOG') {
       el = el.parentElement;
     }
     const dialog = el as HTMLDialogElement | null;
     if (dialog) {
-      // 将 appendTo 属性设置为 dialog 元素
+      // set appendTo property to dialog element
       props.appendTo = dialog;
     }
-    // 创建工具提示实例
+    // create tooltip instance
     instance = tippy(target, props);
   }
   return {
@@ -51,10 +51,10 @@ export function tooltip(target: HTMLElement, props: Partial<Props>): ActionRetur
 }
 
 /**
- * 格式化 ISO8601 日期时间字符串
+ * Format ISO8601 datetime string
  *
- * @param str - ISO8601 格式日期时间字符串
- * @returns 格式化后的日期时间字符串
+ * @param str - ISO8601 format datetime string
+ * @returns formatted datetime string
  */
 export function formatISO8601(str: string | null | undefined): string {
   if (!str) {
@@ -68,7 +68,7 @@ export function formatISO8601(str: string | null | undefined): string {
 }
 
 /**
- * 冻结当前窗口大小，防止快速调整窗口大小时边缘出现空白
+ * Freeze current window size to prevent blank edges when rapidly resizing window
  * https://github.com/tauri-apps/tauri/issues/6322
  */
 export function freeze(): Promise<void> {
@@ -76,7 +76,7 @@ export function freeze(): Promise<void> {
 }
 
 /**
- * 当前没有消息框和模态框时解冻窗口大小
+ * Unfreeze window size when there are no message boxes and modal dialogs
  */
 export function unfreeze(): Promise<void> {
   if (messages.size === 0 && modals.size === 0) {

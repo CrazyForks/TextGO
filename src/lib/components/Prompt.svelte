@@ -3,7 +3,7 @@
   import type { Prompt } from '$lib/types';
 
   /**
-   * 提示词模板变量说明
+   * Prompt template variable explanation
    */
   const PROMPT_PLACEHOLDER = `
 ${m.prompt_variables_tip()}
@@ -53,9 +53,9 @@ ${m.prompt_variables_tip()}
   };
 
   /**
-   * 保存提示词到本地存储
+   * Save prompt to local storage
    *
-   * @param form - 表单元素
+   * @param form - form element
    */
   function save(form: HTMLFormElement) {
     promptName = promptName.trim();
@@ -72,14 +72,14 @@ ${m.prompt_variables_tip()}
     }
     loading.start();
     if (prompt) {
-      // 更新提示词
+      // update prompt
       prompt.prompt = promptText;
       prompt.systemPrompt = systemPromptText;
       prompt.provider = modelProvider;
       prompt.model = modelName;
       alert(m.prompt_updated_success());
     } else {
-      // 新增提示词
+      // add new prompt
       prompts.push({
         id: promptName,
         prompt: promptText,
@@ -87,7 +87,7 @@ ${m.prompt_variables_tip()}
         provider: modelProvider,
         model: modelName
       });
-      // 重置表单
+      // reset form
       promptName = '';
       promptText = '';
       systemPromptText = '';

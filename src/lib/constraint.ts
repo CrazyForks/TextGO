@@ -2,7 +2,7 @@ import { alert } from '$lib/components';
 import type { EventHandler } from 'svelte/elements';
 
 /**
- * 可应用于表单输入的约束类型
+ * Constraint types applicable to form input
  */
 export type Constraint = Partial<{
   value: any; // eslint-disable-line
@@ -20,7 +20,7 @@ export type Constraint = Partial<{
 }>;
 
 /**
- * 约束构建器的类型
+ * Type of constraint builder
  */
 export type ConstraintBuilder =
   | StringConstraintBuilder
@@ -29,7 +29,7 @@ export type ConstraintBuilder =
   | DatetimeConstraintBuilder;
 
 /**
- * 约束构建器的抽象类
+ * Abstract class of constraint builder
  */
 abstract class AbstractConstraintBuilder<T> {
   protected constraint: Constraint = {
@@ -67,7 +67,7 @@ abstract class AbstractConstraintBuilder<T> {
 }
 
 /**
- * 字符串约束的构建器
+ * Builder for string constraint
  */
 class StringConstraintBuilder extends AbstractConstraintBuilder<string> {
   minlength(minlength: number): this {
@@ -82,7 +82,7 @@ class StringConstraintBuilder extends AbstractConstraintBuilder<string> {
 }
 
 /**
- * 带有正则表达式模式的字符串约束构建器
+ * String constraint builder with regular expression pattern
  */
 class PatternConstraintBuilder extends StringConstraintBuilder {
   constructor(type: string) {
@@ -97,7 +97,7 @@ class PatternConstraintBuilder extends StringConstraintBuilder {
 }
 
 /**
- * 数字约束的构建器
+ * Builder for number constraint
  */
 class NumberConstraintBuilder extends AbstractConstraintBuilder<number> {
   constructor(type: string) {
@@ -122,7 +122,7 @@ class NumberConstraintBuilder extends AbstractConstraintBuilder<number> {
 }
 
 /**
- * 日期时间约束的构建器
+ * Builder for datetime constraint
  */
 class DatetimeConstraintBuilder extends AbstractConstraintBuilder<string> {
   constructor(type: string) {
@@ -147,20 +147,20 @@ class DatetimeConstraintBuilder extends AbstractConstraintBuilder<string> {
 }
 
 /**
- * 约束构建器工厂的映射
+ * Mapping of constraint builder factories
  */
 const constraintBuilderFactories = {
-  // textarea 元素
+  // textarea element
   textarea: () => new StringConstraintBuilder(),
-  // 类型为 text、url、email、password 的 input 元素
+  // input element with type text, url, email, password
   text: () => new PatternConstraintBuilder('text'),
   url: () => new PatternConstraintBuilder('url'),
   email: () => new PatternConstraintBuilder('email'),
   password: () => new PatternConstraintBuilder('password'),
-  // 类型为 number、range 的 input 元素
+  // input element with type number, range
   number: () => new NumberConstraintBuilder('number'),
   range: () => new NumberConstraintBuilder('range'),
-  // 类型为 datetime-local、date、time、week、month 的 input 元素
+  // input element with type datetime-local, date, time, week, month
   datetime: () => new DatetimeConstraintBuilder('datetime-local'),
   date: () => new DatetimeConstraintBuilder('date'),
   time: () => new DatetimeConstraintBuilder('time'),
@@ -169,10 +169,10 @@ const constraintBuilderFactories = {
 };
 
 /**
- * 为表单输入创建约束模式
+ * Create a form schema with constraints
  *
- * @param use - 从约束构建器工厂中选择并配置约束构建器的函数
- * @returns 创建好的约束模式
+ * @param use - Function to select and configure constraint builders from the factory
+ * @returns The created form schema
  */
 export function buildFormSchema<T extends Record<string, ConstraintBuilder>>(
   use: (arg: typeof constraintBuilderFactories) => T

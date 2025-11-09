@@ -2,7 +2,7 @@ use crate::error::AppError;
 use tauri::menu::{Menu, MenuItem, PredefinedMenuItem};
 use tauri::tray::TrayIconBuilder;
 
-/// 初始化或更新托盘菜单
+/// Initialize or update tray menu
 #[tauri::command]
 pub fn setup_tray(
     app: tauri::AppHandle,
@@ -11,7 +11,7 @@ pub fn setup_tray(
     about_text: String,
     quit_text: String,
 ) -> Result<(), AppError> {
-    // 创建新的菜单
+    // create new menu
     let menu = Menu::with_items(
         &app,
         &[
@@ -27,11 +27,11 @@ pub fn setup_tray(
         ],
     )?;
 
-    // 尝试获取现有托盘菜单并更新
+    // try to get existing tray menu and update it
     if let Some(tray) = app.tray_by_id("main-tray") {
         tray.set_menu(Some(menu))?;
     } else {
-        // 获取失败则创建新的托盘菜单
+        // create new tray menu if getting fails
         let _tray = TrayIconBuilder::with_id("main-tray")
             .menu(&menu)
             .icon(app.default_window_icon().unwrap().clone())
@@ -58,14 +58,14 @@ pub fn setup_tray(
     Ok(())
 }
 
-/// 显示关于对话框
+/// Show about dialog
 #[tauri::command]
 pub fn show_about(app: tauri::AppHandle) {
     use tauri_plugin_dialog::{DialogExt, MessageDialogKind};
 
-    // 获取应用程序信息
+    // get application information
     let package_info = app.package_info();
-    // 使用 dialog 插件显示消息框
+    // use dialog plugin to show message box
     app.dialog()
         .message(format!("Version {}", package_info.version))
         .title(package_info.name.clone())

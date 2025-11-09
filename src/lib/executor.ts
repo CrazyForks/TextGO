@@ -30,26 +30,26 @@ const PATH_REGEX =
   /(?:[a-zA-Z]:\\[^<>:"|?*\n\r/]+(?:\\[^<>:"|?*\n\r/]+)*|~?\/[^<>:"|?*\n\r\\]+(?:\/[^<>:"|?*\n\r\\]+)*)/gm;
 
 /**
- * 数据类型
+ * Data type
  */
 type Data = {
-  /** 选中的文本 */
+  /** selected text */
   selection: string;
-  /** 剪贴板文本 */
+  /** clipboard text */
   clipboard: string;
-  /** 当前日期时间 */
+  /** current datetime */
   datetime: string;
 };
 
 /**
- * 内置动作类型
+ * Built-in action type
  */
 type Processor = Option & {
   process: (selection: string) => string;
 };
 
 /**
- * 常规动作选项
+ * General action option
  */
 export const GENERAL_ACTIONS: Processor[] = [
   {
@@ -57,9 +57,9 @@ export const GENERAL_ACTIONS: Processor[] = [
     label: m.open_urls(),
     icon: Browsers,
     process: (text: string) => {
-      // 提取文本中的所有 URL
+      // extract all URLs in text
       const urls = text.match(URL_REGEX) || [];
-      // 打开每个 URL
+      // open each URL
       urls.forEach((url) => {
         openUrl(url).catch((error) => {
           console.error(`Failed to open URL ${url}: ${error}`);
@@ -73,9 +73,9 @@ export const GENERAL_ACTIONS: Processor[] = [
     label: m.open_files(),
     icon: FolderOpen,
     process: (text: string) => {
-      // 提取文本中的所有文件路径
+      // extract all file paths in text
       const paths = text.match(PATH_REGEX) || [];
-      // 打开每个文件路径
+      // open each file path
       paths.forEach((path) => {
         openPath(path).catch((error) => {
           console.error(`Failed to open path ${path}: ${error}`);
@@ -87,7 +87,7 @@ export const GENERAL_ACTIONS: Processor[] = [
 ];
 
 /**
- * 格式转换动作选项
+ * Format conversion action option
  */
 export const CONVERT_ACTIONS: Processor[] = [
   {
@@ -129,7 +129,7 @@ export const CONVERT_ACTIONS: Processor[] = [
 ];
 
 /**
- * 文本处理动作选项
+ * Text processing action option
  */
 export const PROCESS_ACTIONS: Processor[] = [
   {
@@ -200,27 +200,27 @@ export const PROCESS_ACTIONS: Processor[] = [
   }
 ];
 
-// Memoized 查找函数
+// memoized lookup function
 const findBuiltinAction = memoize((action: string) =>
   [...GENERAL_ACTIONS, ...CONVERT_ACTIONS, ...PROCESS_ACTIONS].find((a) => a.value === action)
 );
 
 /**
- * 执行动作
+ * Execute action
  *
- * @param rule - 规则对象
- * @param selection - 选中的文本
+ * @param rule - rule object
+ * @param selection - selected text
  */
 export async function execute(rule: Rule, selection: string): Promise<void> {
-  // 动作标识
+  // action identifier
   const action = rule.action;
-  // 组装数据
+  // assemble data
   const data: Data = {
     selection: selection,
     clipboard: await invoke<string>('get_clipboard_text'),
     datetime: new Date().toISOString()
   };
-  // 生成记录
+  // generate record
   const entry: Entry = {
     id: crypto.randomUUID(),
     key: rule.key,
@@ -230,7 +230,7 @@ export async function execute(rule: Rule, selection: string): Promise<void> {
     clipboard: data.clipboard,
     selection: data.selection
   };
-  // 根据动作标识执行对应的操作
+  // execute action based on identifier
   if (action.startsWith(SCRIPT_MARK)) {
     const scriptId = action.substring(SCRIPT_MARK.length);
     const script = scripts.current.find((s) => s.id === scriptId);
@@ -238,19 +238,19 @@ export async function execute(rule: Rule, selection: string): Promise<void> {
       console.debug(`Executing script: ${scriptId}`);
       const result = await executeScript(script, data);
       console.debug(`Script executed successfully: ${result}`);
-      // 保存记录
+      // save record
       entry.actionType = 'script';
       entry.actionLabel = scriptId;
       entry.result = result;
       entry.scriptLang = script.lang;
       entry.quietMode = script.quietMode;
       entries.current.unshift(entry);
-      // 删除多余记录
+      // remove excess records
       if (entries.current.length > historySize.current) {
         entries.current = entries.current.slice(0, historySize.current);
       }
       if (script.quietMode) {
-        // 静默模式下不显示窗口
+        // do not show window in silent mode
         await invoke('enter_text', { text: result });
       } else {
         await showPopup(entry);
@@ -263,7 +263,7 @@ export async function execute(rule: Rule, selection: string): Promise<void> {
       console.debug(`Generating prompt: ${promptId}`);
       const result = await renderPrompt(prompt, data);
       console.debug(`Prompt generated successfully: ${result}`);
-      // 保存记录
+      // save record
       entry.actionType = 'prompt';
       entry.actionLabel = promptId;
       entry.result = result;
@@ -271,7 +271,7 @@ export async function execute(rule: Rule, selection: string): Promise<void> {
       entry.provider = prompt.provider;
       entry.model = prompt.model;
       entries.current.unshift(entry);
-      // 删除多余记录
+      // remove excess records
       if (entries.current.length > historySize.current) {
         entries.current = entries.current.slice(0, historySize.current);
       }
@@ -289,11 +289,11 @@ export async function execute(rule: Rule, selection: string): Promise<void> {
 }
 
 /**
- * 执行输入的脚本并返回结果
+ * Execute input script and return result
  *
- * @param script - 脚本对象
- * @param data - 数据对象
- * @returns 脚本执行结果
+ * @param script - script object
+ * @param data - data object
+ * @returns script execution result
  */
 export async function executeScript(script: Script, data: Data): Promise<string> {
   try {
@@ -312,7 +312,7 @@ export async function executeScript(script: Script, data: Data): Promise<string>
       });
       return result;
     } else {
-      throw new Error(`不支持的脚本语言: ${script.lang}`);
+      throw new Error(`unsupported script language: ${script.lang}`);
     }
   } catch (error) {
     console.error(`Script execution failed: ${error}`);
@@ -321,16 +321,16 @@ export async function executeScript(script: Script, data: Data): Promise<string>
 }
 
 /**
- * 渲染输入的提示词并返回结果
+ * Render the input prompt and return the result
  *
- * @param prompt - 提示词对象
- * @param data - 数据对象
- * @returns 渲染结果
+ * @param prompt - prompt object
+ * @param data - data object
+ * @returns rendering result
  */
 export async function renderPrompt(prompt: Prompt, data: Data): Promise<string> {
   let result = prompt.prompt || '';
 
-  // 使用正则表达式替换模板参数
+  // use regular expression to replace template parameters
   result = result.replace(/\{\{clipboard\}\}/g, data.clipboard);
   result = result.replace(/\{\{selection\}\}/g, data.selection);
   result = result.replace(/\{\{datetime\}\}/g, data.datetime);
@@ -339,9 +339,9 @@ export async function renderPrompt(prompt: Prompt, data: Data): Promise<string> 
 }
 
 /**
- * 显示弹出窗口
+ * Show popup window
  *
- * @param entry - 记录对象
+ * @param entry - record object
  */
 async function showPopup(entry: Entry): Promise<void> {
   try {

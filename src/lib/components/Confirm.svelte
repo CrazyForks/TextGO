@@ -8,49 +8,59 @@
   import { fade } from 'svelte/transition';
 
   export type Message = Partial<{
-    /** 确认消息图标 */
+    /**
+     * Confirm message icon
+     */
     icon: Component<IconComponentProps>;
-    /** 确认消息标题 */
+    /**
+     * Confirm message title
+     */
     title: string;
-    /** 确认消息内容 */
+    /**
+     * Confirm message content
+     */
     message: string;
-    /** 取消时的回调函数 */
+    /**
+     * Callback function when canceling
+     */
     oncancel: () => void;
-    /** 确认时的回调函数 */
+    /**
+     * Callback function when confirming
+     */
     onconfirm: () => void;
   }>;
 
   /**
-   * 确认消息的响应式映射
+   * Reactive mapping of confirm messages
    */
   export const messages = new SvelteMap<string, Message>();
 
   /**
-   * 显示确认消息对话框
+   * Display confirm message dialog
    *
-   * @param msg - 确认消息实例
+   * @param msg - confirm message instance
    */
   export function confirm(msg: Message) {
     const id = `msg-${crypto.randomUUID()}`;
     messages.set(id, msg);
-    // 等待对话框被添加到DOM中
+    // wait for dialog to be added to DOM
     tick().then(() => {
       const dialog = document.getElementById(id) as HTMLDialogElement | null;
       if (!dialog) {
         return;
       }
       dialog.showModal();
-      // 冻结窗口
+      // freeze window
       freeze();
     });
   }
 
   /**
-   * 关闭确认消息对话框
+   * Close confirm message dialog
    *
-   * @param id - 消息对话框的ID
-   * @param callback - 关闭前要调用的回调函数
-   * @param event - 触发关闭操作的鼠标事件
+   * @param id - ID of the message dialog
+   * @param callback - callback function to call before closing
+   * @param event - mouse event that triggered the close operation
    */
   function close(id: string, callback?: () => void, event: MouseEvent | null = null) {
     if (event) {
@@ -65,10 +75,10 @@
   }
 
   /**
-   * 将标题的部分内容转换为特殊格式
+   * Convert part of the title to special format
    *
-   * @param title - 标题字符串
-   * @return 转换后的HTML字符串
+   * @param title - title string
+   * @return formatted HTML string
    */
   function pretty(title: string): string {
     title = escape(title);
@@ -86,17 +96,17 @@
       <form method="dialog" class="modal-corner">
         <button onclick={(event) => close(id, msg.oncancel, event)}>✕</button>
       </form>
-      <!-- 消息标题 -->
+      <!-- message title -->
       <h3 class="modal-title">
         <Icon class="size-6" />
         <!-- eslint-disable-next-line svelte/no-at-html-tags -->
         {@html pretty(msg.title || m.default_confirm_title())}
       </h3>
-      <!-- 消息内容 -->
+      <!-- message content -->
       <p class="opacity-90">
         {msg.message || m.default_confirm_message()}
       </p>
-      <!-- 操作按钮 -->
+      <!-- action buttons -->
       <div class="modal-action">
         <button class="btn" onclick={() => close(id, msg.oncancel)}>{m.cancel()}</button>
         <button class="btn btn-submit" onclick={() => close(id, msg.onconfirm)}>{m.confirm()}</button>

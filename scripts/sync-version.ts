@@ -10,15 +10,15 @@ const CARGO_TOML_PATH = path.join(PROJECT_ROOT, 'src-tauri', 'Cargo.toml');
 const PACKAGE_JSON_PATH = path.join(PROJECT_ROOT, 'package.json');
 
 /**
- * 同步版本号到 package.json 和 Cargo.toml
+ * Sync version to package.json and Cargo.toml
  */
 function syncVersion() {
-  // 读取 tauri.conf.json
+  // read tauri.conf.json
   const tauriConf = JSON.parse(fs.readFileSync(TAURI_CONF_PATH, 'utf-8'));
   const targetVersion = tauriConf.version;
   console.log(`📋 Target version from tauri.conf.json: ${targetVersion}`);
 
-  // 更新 package.json
+  // update package.json
   const packageJson = JSON.parse(fs.readFileSync(PACKAGE_JSON_PATH, 'utf-8'));
   if (packageJson.version !== targetVersion) {
     packageJson.version = targetVersion;
@@ -26,7 +26,7 @@ function syncVersion() {
     console.log(`✅ Updated package.json version to: ${targetVersion}`);
   }
 
-  // 更新 Cargo.toml
+  // update Cargo.toml
   let cargoToml = fs.readFileSync(CARGO_TOML_PATH, 'utf-8');
   const versionRegex = /^version\s*=\s*"[^"]*"/m;
   const match = cargoToml.match(versionRegex);

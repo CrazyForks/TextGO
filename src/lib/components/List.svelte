@@ -14,25 +14,45 @@
   import { flip } from 'svelte/animate';
 
   type ListProps = {
-    /** 列表标题 */
+    /**
+     * List title
+     */
     title?: string | Snippet;
-    /** 标题图标 */
+    /**
+     * Title icon
+     */
     icon?: Component<IconComponentProps>;
-    /** 提示文本 */
+    /**
+     * Tip text
+     */
     hint?: string;
-    /** 数据名称 */
+    /**
+     * Data name
+     */
     name?: string;
-    /** 列表数据 */
+    /**
+     * List data
+     */
     data: T[];
-    /** 数据行片段 */
+    /**
+     * Data row snippet
+     */
     row: Snippet<[T]>;
-    /** 自定义样式类名 */
+    /**
+     * Custom style class name
+     */
     class?: string;
-    /** 点击创建时的回调函数 */
+    /**
+     * Callback function when clicking create
+     */
     oncreate?: () => void;
-    /** 数据删除后的回调函数 */
+    /**
+     * Callback function after data deletion
+     */
     ondelete?: (item: T) => void;
-    /** 点击更多操作时的回调函数 */
+    /**
+     * Callback function when clicking more operations
+     */
     moreOptions?: () => void;
   };
 
@@ -49,21 +69,21 @@
     moreOptions
   }: ListProps = $props();
 
-  // 选中数据ID
+  // selected data ID
   let selectedId: string = $state('');
-  // 选中数据编号
+  // selected data number
   let selectedNum: string = $state('');
-  // 选中数据元素
+  // selected data element
   let selectedElement: HTMLLIElement | null = $state(null);
 
   /**
-   * 把选中的行滚动到可见区域
+   * scroll selected row into view
    */
   function scrollIntoView() {
     if (!selectedElement) {
       return;
     }
-    // 等待FLIP动画完成后执行
+    // execute after FLIP animation completes
     setTimeout(() => {
       selectedElement?.scrollIntoView({
         behavior: 'smooth',
@@ -104,7 +124,7 @@
           if (!selectedId) {
             return;
           }
-          // 确认删除操作
+          // confirm delete operation
           confirm({
             title: `${m.delete()}${name}[${selectedNum}]`,
             message: m.delete_confirm_message(),

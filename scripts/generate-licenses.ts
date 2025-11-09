@@ -20,7 +20,7 @@ interface Package {
 }
 
 /**
- * 执行 license-checker 命令
+ * Execute license-checker command
  *
  * https://github.com/davglass/license-checker
  */
@@ -40,7 +40,7 @@ function runLicenseChecker() {
 }
 
 /**
- * 执行 cargo license 命令
+ * Execute cargo license command
  *
  * https://github.com/onur/cargo-license
  */
@@ -60,9 +60,9 @@ function runCargoLicense() {
 }
 
 /**
- * 解析前端依赖 JSON 文件
+ * Parse frontend dependencies JSON file
  *
- * @returns 依赖数据数组
+ * @returns Array of dependency data
  */
 function parseFrontendJson(): Package[] {
   console.log('📖 Parsing frontend license data...');
@@ -71,7 +71,7 @@ function parseFrontendJson(): Package[] {
     const data: { [key: string]: Package } = JSON.parse(jsonContent);
     const packages = new Map<string, Package>();
     for (const pkg of Object.values(data)) {
-      // 把 licenses 字段映射到 license
+      // map licenses field to license
       packages.set(pkg.name, { ...pkg, license: pkg.licenses });
     }
     console.log(`✅ Found ${packages.size} frontend packages`);
@@ -83,9 +83,9 @@ function parseFrontendJson(): Package[] {
 }
 
 /**
- * 解析后端依赖 JSON 文件
+ * Parse backend dependencies JSON file
  *
- * @returns 依赖数据数组
+ * @returns Array of dependency data
  */
 function parseBackendJson(): Package[] {
   console.log('📖 Parsing backend license data...');
@@ -105,27 +105,28 @@ function parseBackendJson(): Package[] {
 }
 
 /**
- * 生成依赖数据 Markdown 表格
+ * Generate Markdown table for dependency data
  *
- * @param packages - 依赖数据
- * @param title - 表格标题
- * @returns 表格行数组
+ * @param packages - Dependency data
+ * @param title - Table title
+ * @returns Array of table rows
  */
 function generateTable(packages: Package[], title: string): string[] {
   const table: string[] = [];
-  // 过滤掉项目本身
+  // filter out the project itself
   const pkgs = packages.filter((pkg) => pkg.name !== 'text-go');
-  // 添加标题
+  // add title
   table.push(`## ${title}\n`);
   table.push(`> **${pkgs.length}** packages included\n`);
-  // 添加表格头
+  // add table header
   table.push('| Package | Version | License | Description |');
   table.push('|---------|---------|---------|-------------|');
-  // 添加表格内容
+  // add table content
   for (const pkg of pkgs) {
     const name = pkg.repository ? `[${pkg.name}](${pkg.repository})` : pkg.name;
     const version = pkg.version || '-';
     const license = pkg.license || 'Unknown';
+    // escape pipes in description to avoid breaking table structure
     const description = (pkg.description || '-').replace(/\|/g, '\\|');
 
     table.push(`| ${name} | ${version} | ${license} | ${description} |`);
@@ -135,14 +136,14 @@ function generateTable(packages: Package[], title: string): string[] {
 }
 
 /**
- * 生成完整的 Markdown 文档
+ * Generate complete Markdown document
  *
- * @param frontendData - 前端依赖数据
- * @param backendData - 后端依赖数据
+ * @param frontendData - Frontend dependency data
+ * @param backendData - Backend dependency data
  */
 function generateMarkdown(frontendData: Package[], backendData: Package[]) {
   const markdown: string[] = [];
-  // 添加文档标题
+  // add document title
   markdown.push('# Third-Party License Notices\n');
   markdown.push(
     `> This document was automatically generated on ${new Date().toLocaleString('en-US', {
@@ -154,9 +155,9 @@ function generateMarkdown(frontendData: Package[], backendData: Package[]) {
       timeZoneName: 'short'
     })}\n`
   );
-  // 添加前端依赖表格
+  // add frontend dependencies table
   markdown.push(...generateTable(frontendData, 'Frontend Dependencies'));
-  // 添加后端依赖表格
+  // add backend dependencies table
   markdown.push(...generateTable(backendData, 'Backend Dependencies'));
 
   console.log('📝 Writing markdown file...');
@@ -169,9 +170,9 @@ function generateMarkdown(frontendData: Package[], backendData: Package[]) {
   }
 }
 
-// 1. 运行 license-checker
+// 1. Run license-checker
 runLicenseChecker();
-// 2. 运行 cargo license
+// 2. Run cargo license
 runCargoLicense();
-// 3. 解析并生成 Markdown 文件
+// 3. Parse and generate Markdown file
 generateMarkdown(parseFrontendJson(), parseBackendJson());

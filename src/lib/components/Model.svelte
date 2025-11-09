@@ -39,9 +39,9 @@
   };
 
   /**
-   * 保存模型信息到本地存储
+   * Save model information to local storage
    *
-   * @param form - 表单元素
+   * @param form - form element
    */
   function save(form: HTMLFormElement) {
     modelName = modelName.trim();
@@ -58,19 +58,19 @@
     }
     loading.start();
     if (model) {
-      // 更新模型信息
+      // update model information
       model.threshold = modelThreshold;
       alert(m.model_info_updated());
       loading.end();
     } else {
-      // 训练分类模型
+      // train classification model
       const id = modelName;
       models.push({
         id: id,
         sample: modelSample,
         threshold: modelThreshold
       });
-      // 训练模型
+      // train model
       const classifier = new Classifier(modelName);
       classifier
         .trainModel(modelSample)
@@ -81,7 +81,7 @@
           }
           loading.end();
           alert(m.model_training_success());
-          // 重置表单
+          // reset form
           modelName = '';
           modelSample = '';
           modelThreshold = 0.5;

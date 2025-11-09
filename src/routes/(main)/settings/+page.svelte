@@ -48,10 +48,10 @@
     Warning
   } from 'phosphor-svelte';
 
-  // 当前语言
+  // current language
   let locale: Locale = $state(getLocale());
 
-  // 更新托盘菜单语言
+  // update tray menu language
   async function updateTrayMenu() {
     try {
       await invoke('setup_tray', {
@@ -65,27 +65,27 @@
     }
   }
 
-  // 表单约束
+  // form constraints
   const schema = buildFormSchema(({ text }) => ({
     nodePath: text().maxlength(256),
     pythonPath: text().maxlength(256),
     ollamaHost: text().maxlength(256)
   }));
 
-  // 分类模型
+  // classification model
   let modelCreator: Model;
   let modelUpdater: Model;
 
-  // 正则表达式
+  // regular expression
   let regexpCreator: Regexp;
   let regexpUpdater: Regexp;
 
-  // 脚本
+  // script
   let scriptCreator: ScriptModal;
   let scriptUpdater: ScriptModal;
   let scriptOptions: Modal;
 
-  // 提示词
+  // prompt
   let promptCreator: Prompt;
   let promptUpdater: Prompt;
   let promptOptions: Modal;

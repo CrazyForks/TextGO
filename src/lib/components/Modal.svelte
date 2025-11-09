@@ -4,24 +4,36 @@
   import { SvelteMap } from 'svelte/reactivity';
 
   export type ModalProps = Partial<{
-    /** 标题前显示的图标 */
+    /**
+     * Icon displayed before title
+     */
     icon: Component<IconComponentProps>;
-    /** 模态对话框的标题 */
+    /**
+     * Title of modal dialog
+     */
     title: string;
-    /** 模态对话框的内容 */
+    /**
+     * Content of modal dialog
+     */
     children: Snippet;
-    /** 模态对话框的最大宽度 */
+    /**
+     * Maximum width of modal dialog
+     */
     maxWidth: string;
-    /** 模态对话框的类名 */
+    /**
+     * Class name of modal dialog
+     */
     class: string;
     boxClass: string;
     cornerClass: string;
-    /** 对话框关闭时的回调函数 */
+    /**
+     * Callback function when dialog closes
+     */
     onclose: () => void;
   }>;
 
   /**
-   * 模态对话框的响应式映射
+   * Reactive map of modal dialogs
    */
   export const modals = new SvelteMap<string, ModalProps>();
 </script>
@@ -37,7 +49,7 @@
   const id: string = `modal-${crypto.randomUUID()}`;
 
   /**
-   * 显示模态对话框
+   * Show modal dialog
    */
   export function show() {
     modals.set(id, { onclose });
@@ -46,20 +58,20 @@
         return;
       }
       dialog.showModal();
-      // 设置焦点
+      // set focus
       const autofocus = dialog?.querySelector('.autofocus') as HTMLElement | null;
       if (autofocus) {
         setTimeout(() => autofocus.focus(), 0);
       }
-      // 冻结窗口
+      // freeze window
       freeze();
     });
   }
 
   /**
-   * 关闭模态对话框
+   * Close modal dialog
    *
-   * @param event - 触发关闭操作的鼠标事件
+   * @param event - Mouse event that triggered close action
    */
   export function close(event: MouseEvent | null = null) {
     if (event) {
@@ -74,9 +86,9 @@
   }
 
   /**
-   * 检查模态对话框当前是否打开
+   * Check if modal dialog is currently open
    *
-   * @return 如果模态对话框打开则返回 true，否则返回 false
+   * @return true if modal dialog is open, otherwise false
    */
   export function isOpen(): boolean {
     return modals.has(id);

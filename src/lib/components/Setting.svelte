@@ -3,15 +3,25 @@
   import type { Component, Snippet } from 'svelte';
 
   export type SettingProps = {
-    /** 设置内容片段 */
+    /**
+     * Setting content snippet
+     */
     children: Snippet;
-    /** 设置图标 */
+    /**
+     * Setting icon
+     */
     icon?: Component<IconComponentProps>;
-    /** 设置标题 */
+    /**
+     * Setting title
+     */
     title: string;
-    /** 提示文本 */
+    /**
+     * Tip text
+     */
     tip?: string;
-    /** 自定义样式类名 */
+    /**
+     * Custom style class name
+     */
     class?: string;
   };
 </script>

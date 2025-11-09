@@ -7,40 +7,41 @@ use log::warn;
 use std::time::Duration;
 use tokio::time::sleep;
 
+/// Get selected text
 #[tauri::command]
 pub async fn get_selection(app: tauri::AppHandle) -> Result<String, AppError> {
-    // 优先尝试使用平台原生 API 获取选中文本
+    // try using platform native API to get selected text first
     if let Ok(text) = platform::get_selection() {
         if !text.is_empty() {
             return Ok(text);
         }
     }
 
-    // 原生 API 获取失败，降级使用剪贴板方案
+    // if native API fails, fall back to clipboard method
     warn!("Failed to get selection natively, fallback to clipboard method");
     get_selection_fallback(app).await
 }
 
-/// 通过剪贴板获取选中文本
+/// Get selected text through clipboard
 async fn get_selection_fallback(app: tauri::AppHandle) -> Result<String, AppError> {
-    // 创建剪贴板上下文
+    // create clipboard context
     let clipboard = ClipboardContext::new()
         .map_err(|e| format!("Failed to create clipboard context: {}", e))?;
 
-    // 使用备份-操作-恢复模式
+    // use backup-operation-restore mode
     let selected_text = with_clipboard_backup(&clipboard, || async {
-        // 清空剪贴板
+        // clear clipboard
         let _ = clipboard.clear();
 
-        // 发送复制快捷键
+        // send copy shortcut
         // https://github.com/enigo-rs/enigo/issues/153
         let _ = app.run_on_main_thread(move || {
             let _ = send_copy_keys();
         });
 
-        // 循环等待剪贴板内容变化
-        let max_wait_time = Duration::from_millis(200); // 最大等待时间 200ms
-        let check_interval = Duration::from_millis(5); // 每次检查间隔 5ms
+        // wait for clipboard content to change in a loop
+        let max_wait_time = Duration::from_millis(200); // max wait time 200ms
+        let check_interval = Duration::from_millis(5); // check interval 5ms
         let max_attempts = max_wait_time.as_millis() / check_interval.as_millis();
 
         let mut selected_text = String::new();
@@ -48,9 +49,9 @@ async fn get_selection_fallback(app: tauri::AppHandle) -> Result<String, AppErro
         for _attempt in 0..max_attempts {
             sleep(check_interval).await;
 
-            // 读取当前剪贴板文本内容
+            // read current clipboard text
             if let Ok(current_text) = clipboard.get_text() {
-                // 如果剪贴板内容发生了变化，说明复制操作完成
+                // if clipboard content changed, copy operation completed
                 if !current_text.is_empty() {
                     selected_text = current_text;
                     break;
@@ -72,6 +73,7 @@ async fn get_selection_fallback(app: tauri::AppHandle) -> Result<String, AppErro
     Ok(selected_text)
 }
 
+/// send copy shortcut key
 fn send_copy_keys() -> Result<(), AppError> {
     let mut enigo_guard = ENIGO.lock()?;
     let enigo = enigo_guard.as_mut()?;
@@ -81,10 +83,10 @@ fn send_copy_keys() -> Result<(), AppError> {
     #[cfg(not(target_os = "macos"))]
     let modifier = Key::Control;
 
-    // 释放 Shift 键
+    // release shift key
     enigo.key(Key::Shift, Direction::Release)?;
 
-    // 发送 Cmd+C 或 Ctrl+C
+    // send Cmd+C or Ctrl+C
     enigo.key(modifier, Direction::Press)?;
     enigo.key(Key::Unicode('c'), Direction::Click)?;
     enigo.key(modifier, Direction::Release)?;
@@ -92,7 +94,7 @@ fn send_copy_keys() -> Result<(), AppError> {
     Ok(())
 }
 
-/// 备份剪贴板内容，执行操作，然后恢复剪贴板内容
+/// backup clipboard contents, execute operation, then restore clipboard contents
 async fn with_clipboard_backup<F, Fut, T>(clipboard: &ClipboardContext, operation: F) -> T
 where
     F: FnOnce() -> Fut,
@@ -100,7 +102,7 @@ where
 {
     use clipboard_rs::ContentFormat;
 
-    // 备份所有格式内容
+    // backup all format contents
     let formats = [
         ContentFormat::Text,
         ContentFormat::Rtf,
@@ -110,10 +112,10 @@ where
     ];
     let contents = clipboard.get(&formats).unwrap_or_default();
 
-    // 执行操作
+    // execute operation
     let result = operation().await;
 
-    // 恢复原来的剪贴板内容
+    // restore original clipboard contents
     if !contents.is_empty() {
         if let Err(e) = clipboard.set(contents) {
             warn!("Failed to restore clipboard contents: {}", e);

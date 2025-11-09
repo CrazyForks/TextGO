@@ -5,17 +5,17 @@
   import { invoke } from '@tauri-apps/api/core';
   import type { Snippet } from 'svelte';
   import { onMount } from 'svelte';
-  // 导入字体
+  // import fonts
   import '@fontsource-variable/noto-sans';
   import '@fontsource-variable/noto-sans-sc';
-  // 导入样式
+  // import styles
   import 'tippy.js/animations/scale.css';
   import 'tippy.js/dist/tippy.css';
   import '../app.css';
 
   let { children }: { children: Snippet } = $props();
 
-  // 初始化托盘菜单语言
+  // initialize tray menu language
   onMount(async () => {
     try {
       await invoke('setup_tray', {
@@ -29,7 +29,7 @@
     }
   });
 
-  // 禁用右键菜单
+  // disable right-click menu
   if (!dev) {
     onMount(() => {
       const disableContextMenu = (event: MouseEvent) => {
@@ -46,8 +46,8 @@
 
 {@render children()}
 
-<!-- 全局提示组件 -->
+<!-- global alert component -->
 <Alert />
 
-<!-- 全局确认组件 -->
+<!-- global confirm component -->
 <Confirm />

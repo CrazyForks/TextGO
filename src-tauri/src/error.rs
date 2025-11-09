@@ -5,14 +5,14 @@ pub struct AppError(String);
 
 impl std::error::Error for AppError {}
 
-// 实现 Display，使错误信息可以直接打印
+// implement Display, so error messages can be printed directly
 impl std::fmt::Display for AppError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.0)
     }
 }
 
-// 实现 Serialize，使其可以作为 Tauri 命令的返回类型
+// implement Serialize, so it can be used as a Tauri command return type
 impl serde::Serialize for AppError {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where

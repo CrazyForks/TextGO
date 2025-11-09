@@ -16,11 +16,11 @@
 
   let { children }: { children: Snippet } = $props();
 
-  // 操作系统类型
+  // operating system type
   const osType = type();
 
   /**
-   * 导航栏菜单项
+   * navigation menu item
    */
   const menus = [
     { text: m.histories(), icon: ClockCounterClockwise, path: resolve('/histories') },
@@ -29,7 +29,7 @@
   ];
 
   /**
-   * 标题栏底部边框显示状态
+   * title bar bottom border display status
    */
   let titleBorder = $state(false);
   let sentinelElement: HTMLElement;
@@ -38,11 +38,11 @@
     const observer = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
-        // 当 sentinel 元素不可见时，显示标题栏底部边框
+        // show title bar bottom border when sentinel element is invisible
         titleBorder = !entry.isIntersecting;
       },
       {
-        // 44px 是 Title 组件的高度
+        // 44px is the height of the Title component
         rootMargin: '-44px 0px 0px 0px'
       }
     );
@@ -55,18 +55,18 @@
   onMount(() => {
     const oninvalid = (event: Event) => {
       if (event.target instanceof HTMLInputElement) {
-        // 阻止默认验证气泡显示
+        // prevent default validation bubble display
         event.preventDefault();
-        // 聚焦到验证失败的输入框
+        // focus on the input box that failed validation
         if (document.activeElement !== event.target) {
           event.target.focus();
         }
       }
     };
-    // 监听所有验证失败事件
+    // listen to all validation failure events
     document.addEventListener('invalid', oninvalid, true);
     return () => {
-      // 清理事件监听器
+      // clean up event listeners
       document.removeEventListener('invalid', oninvalid, true);
     };
   });
@@ -74,7 +74,7 @@
   onMount(() => {
     const unlisten = getCurrentWindow().onFocusChanged(({ payload: focused }) => {
       if (focused) {
-        // 某些情况下，隐藏窗口显示后页面内会有元素意外获得焦点，这里将其取消掉
+        // in some cases, after hiding and showing the window, an element in the page may unexpectedly get focus, which is canceled here
         const activeElement = document.activeElement as HTMLElement;
         if (activeElement && activeElement !== document.body) {
           activeElement.blur();
@@ -87,7 +87,7 @@
   });
 
   onMount(() => {
-    // 监听跳转快捷键注册页面事件
+    // listen to shortcut key registration page events
     const unlisten = listen('goto-shortcuts', async () => {
       goto(resolve('/shortcuts'));
     });
@@ -100,7 +100,7 @@
 <main class="h-screen w-screen overflow-auto overscroll-none bg-base-300">
   <Title class="sticky top-0 z-101 bg-base-300/80 backdrop-blur-sm {titleBorder ? 'border-b' : ''}">
     {#snippet fallback()}
-      <!-- 导航菜单 -->
+      <!-- navigation menu -->
       <span class="flex gap-2 {osType === 'macos' ? 'mx-auto pl-16' : 'mr-auto pl-2'}">
         {#each menus as menu (menu.path)}
           {@const active = deLocalizeHref(page.url.pathname).startsWith(menu.path)}
@@ -120,7 +120,7 @@
           />
         {/each}
       </span>
-      <!-- 主题切换 -->
+      <!-- theme toggle -->
       <label class="swap mr-2 swap-rotate opacity-50 transition-opacity hover:opacity-100">
         <input
           type="checkbox"
@@ -134,7 +134,7 @@
         <Moon class="swap-off size-5" />
         <Sun class="swap-on size-5" />
       </label>
-      <!-- GitHub 链接 -->
+      <!-- gitHub link -->
       <button
         class="mr-4 cursor-pointer opacity-50 transition-opacity hover:opacity-100"
         onclick={() => openUrl('https://github.com/C5H12O5/TextGO')}

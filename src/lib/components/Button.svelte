@@ -4,38 +4,64 @@
   import type { MouseEventHandler } from 'svelte/elements';
 
   export type ButtonProps = Partial<{
-    /** 按钮内容片段 */
+    /**
+     * Button content snippet
+     */
     children: Snippet;
-    /** 按钮图标 */
+    /**
+     * Button icon
+     */
     icon: Component<IconComponentProps>;
-    /** 图标粗细 */
+    /**
+     * Icon weight
+     */
     weight: 'thin' | 'light' | 'regular' | 'bold' | 'fill' | 'duotone';
-    /** 按钮文本 */
+    /**
+     * Button text
+     */
     text: string;
-    /** 按钮尺寸 */
+    /**
+     * Button size
+     */
     size: keyof typeof PRESETS;
-    /** 是否使用轻按钮样式 */
+    /**
+     * Whether to use subtle button style
+     */
     subtle: boolean;
-    /** 是否使按钮为正方形 */
+    /**
+     * Whether to make the button square
+     */
     square: boolean;
-    /** 是否为按钮添加边框 */
+    /**
+     * Whether to add border to button
+     */
     border: boolean;
-    /** 是否为按钮添加阴影 */
+    /**
+     * Whether to add shadow to button
+     */
     shadow: boolean;
-    /** 是否显示加载动画 */
+    /**
+     * Whether to show loading animation
+     */
     loading: boolean | null;
-    /** 是否禁用按钮 */
+    /**
+     * Whether to disable button
+     */
     disabled: boolean;
-    /** 自定义样式类名 */
+    /**
+     * Custom style class name
+     */
     class: string;
     iconClass: string;
     textClass: string;
-    /** 按钮点击事件回调 */
+    /**
+     * Button click event callback
+     */
     onclick: MouseEventHandler<HTMLButtonElement>;
   }>;
 
   /**
-   * 按钮的预设尺寸
+   * Button preset sizes
    */
   const PRESETS = {
     xs: {

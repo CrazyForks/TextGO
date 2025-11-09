@@ -32,9 +32,9 @@
   };
 
   /**
-   * 保存正则表达式到本地存储
+   * Save regular expression to local storage
    *
-   * @param form - 表单元素
+   * @param form - form element
    */
   function save(form: HTMLFormElement) {
     regexpName = regexpName.trim();
@@ -47,17 +47,17 @@
     }
     loading.start();
     if (regexp) {
-      // 更新正则表达式
+      // update regular expression
       regexp.pattern = regexpPattern;
       alert(m.regexp_updated_success());
       loading.end();
     } else {
-      // 新增正则表达式
+      // add new regular expression
       regexps.push({
         id: regexpName,
         pattern: regexpPattern
       });
-      // 重置表单
+      // reset form
       regexpName = '';
       regexpPattern = '';
       alert(m.regexp_added_success());

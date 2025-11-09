@@ -2,142 +2,142 @@ import type { IconComponentProps } from 'phosphor-svelte';
 import type { Component } from 'svelte';
 
 /**
- * 将类型 T 中的所有属性转换为可为空
+ * Convert all properties in type T to nullable
  */
 export type Optional<T> = {
   [P in keyof T]?: T[P] | null;
 };
 
 /**
- * 将类型 T 自身转换为可为空
+ * Convert type T itself to nullable
  */
 type Nullable<T> = T | null | undefined;
 
 /**
- * 选项值
+ * Option value
  */
 export type OptionValue = string | number | boolean | null | undefined;
 
 /**
- * 选项
+ * Option
  */
 export type Option = {
-  /** 选项值 */
+  /** option value */
   value: OptionValue;
-  /** 选项标签 */
+  /** option label */
   label: string;
-  /** 是否禁用 */
+  /** whether disabled */
   disabled?: boolean;
-  /** 正则表达式 */
+  /** regular expression */
   pattern?: RegExp;
-  /** 选项图标 */
+  /** option icon */
   icon?: Component<IconComponentProps>;
 };
 
 /**
- * 触发记录
+ * Trigger record
  */
 export type Entry = {
-  /** 记录标识 */
+  /** record ID */
   id: string;
-  /** 触发键位 */
+  /** triggered key */
   key: string;
-  /** 触发时间 */
+  /** trigger time */
   datetime: string;
-  /** 剪贴板文本 */
+  /** clipboard text */
   clipboard: string;
-  /** 选中的文本 */
+  /** selected text */
   selection: string;
-  /** 文本类型 */
+  /** text type */
   caseLabel?: string;
-  /** 触发动作 */
+  /** triggered action */
   actionLabel?: string;
-  /** 动作类型 */
+  /** action type */
   actionType?: 'script' | 'prompt';
-  /** 执行结果 (脚本返回值/提示词) */
+  /** execution result (script return value/prompt) */
   result?: string;
-  /** 脚本语言 */
+  /** script language */
   scriptLang?: 'javascript' | 'python';
-  /** 静默执行 */
+  /** silent mode */
   quietMode?: boolean;
-  /** 模型供应 */
+  /** model provider */
   provider?: 'ollama' | 'lmstudio';
-  /** 模型名称 */
+  /** model name */
   model?: string;
-  /** 系统提示词 */
+  /** system prompt */
   systemPrompt?: string;
-  /** 响应内容 */
+  /** response content */
   response?: string;
 };
 
 /**
- * 规则
+ * Rule
  */
 export type Rule = {
-  /** 规则标识 */
+  /** rule ID */
   id: string;
-  /** 绑定的快捷键 */
+  /** bound shortcut key */
   key: string;
-  /** 绑定的文本类型 */
+  /** bound text type */
   case: string;
   caseLabel?: string;
-  /** 要执行动作的标识 */
+  /** ID of the action to execute */
   action: string;
   actionLabel?: string;
 };
 
 /**
- * 脚本
+ * Script
  */
 export type Script = {
-  /** 脚本标识 */
+  /** script ID */
   id: string;
-  /** 脚本语言 */
+  /** script language */
   lang: 'javascript' | 'python';
-  /** 脚本内容 */
+  /** script content */
   script: string;
-  /** 静默执行 */
+  /** silent mode */
   quietMode?: boolean;
 };
 
 /**
- * 提示词
+ * Prompt
  */
 export type Prompt = {
-  /** 提示词标识 */
+  /** prompt ID */
   id: string;
-  /** 模型供应 */
+  /** model provider */
   provider: 'ollama' | 'lmstudio';
-  /** 模型名称 */
+  /** model name */
   model: string;
-  /** 提示词内容 */
+  /** prompt content */
   prompt: string;
-  /** 系统提示词 */
+  /** system prompt */
   systemPrompt?: string;
 };
 
 /**
- * 分类模型
+ * Classification model
  */
 export type Model = {
-  /** 分类模型标识 */
+  /** classification model ID */
   id: string;
-  /** 训练样本 */
+  /** training sample */
   sample: string;
-  /** 置信度阈值 */
+  /** confidence threshold */
   threshold: number;
-  /** 模型是否已训练 */
+  /** whether model is trained */
   modelTrained?: boolean;
 };
 
 /**
- * 正则表达式
+ * Regular expression
  */
 export type Regexp = {
-  /** 正则标识 */
+  /** regex ID */
   id: string;
-  /** 正则模式 */
+  /** regex pattern */
   pattern: string;
-  /** 正则修饰符 */
+  /** regex flags */
   flags?: string;
 };

@@ -1,6 +1,6 @@
 {
   "name": "text-go",
-  "version": "1.0.7",
+  "version": "0.1.7",
   "description": "",
   "author": "Xylitol <jam.xylitol@gmail.com>",
   "license": "MIT",
@@ -67,7 +67,7 @@
     "prettier": "^3.6.2",
     "prettier-plugin-svelte": "^3.4.0",
     "prettier-plugin-tailwindcss": "^0.7.1",
-    "svelte": "^5.43.4",
+    "svelte": "^5.43.5",
     "svelte-check": "^4.3.3",
     "tailwind-scrollbar": "^4.0.2",
     "tailwindcss": "^4.1.17",

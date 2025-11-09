@@ -12,64 +12,104 @@
   import * as prettier from 'prettier/standalone';
 
   export type CodeMirrorProps = Partial<{
-    /** 文档语言 */
+    /**
+     * Document language
+     */
     language: LanguageSupport | Language | null;
-    /** 文档内容 */
+    /**
+     * Document content
+     */
     document: string;
-    /** 占位符文本 */
+    /**
+     * Placeholder text
+     */
     placeholder: string;
-    /** 制表符空格数 */
+    /**
+     * Tab size in spaces
+     */
     tabSize: number;
-    /** 行的最大长度 */
+    /**
+     * Maximum line length
+     */
     lineLength: number;
-    /** 编辑器是否为只读 */
+    /**
+     * Whether the editor is read-only
+     */
     readOnly: boolean;
-    /** 是否使用深色主题 */
+    /**
+     * Whether to use dark theme
+     */
     darkMode: boolean | 'auto';
 
-    /** 容器的类名 */
+    /**
+     * Container class name
+     */
     class: string;
-    /** 面板的类名 */
+    /**
+     * Panel class name
+     */
     panelClass: string;
-    /** 编辑器的类名 */
+    /**
+     * Editor class name
+     */
     editorClass: string;
-    /** 编辑器的最小高度 */
+    /**
+     * Minimum height of editor
+     */
     minHeight: string | null;
-    /** 编辑器的最大高度 */
+    /**
+     * Maximum height of editor
+     */
     maxHeight: string | null;
-    /** 编辑器的最小宽度 */
+    /**
+     * Minimum width of editor
+     */
     minWidth: string | null;
-    /** 编辑器的最大宽度 */
+    /**
+     * Maximum width of editor
+     */
     maxWidth: string | null;
 
-    /** 大视图的标题 */
+    /**
+     * Title of enlarged view
+     */
     title: string;
-    /** 是否启用大视图功能 */
+    /**
+     * Whether to enable enlarged view feature
+     */
     enlarger: boolean;
-    /** 是否在面板中显示复制按钮 */
+    /**
+     * Whether to show copy button in panel
+     */
     copier: boolean;
-    /** 是否在面板中显示重置按钮 */
+    /**
+     * Whether to show reset button in panel
+     */
     resetter: boolean;
-    /** 是否在面板中显示格式化按钮 */
+    /**
+     * Whether to show format button in panel
+     */
     formatter: boolean;
-    /** 文档更改时的回调函数 */
+    /**
+     * Callback function when document changes
+     */
     onchange: (doc: string) => void;
   }>;
 
   /**
-   * 从语言支持对象中获取语言名称
+   * Get language name from language support object
    *
-   * @param language - 语言支持对象
+   * @param language - Language support object
    */
   function getLanguageName(language: LanguageSupport | Language | null | undefined): string {
     let name = null;
     if (language) {
       name = 'name' in language ? language.name : language.language.name;
     } else {
-      // 默认为纯文本
+      // default to plain text
       name = 'text';
     }
-    // 非首字母大写的语言名称映射
+    // mapping of language names not capitalized
     const mappings: Record<string, string> = {
       javascript: 'JavaScript',
       json: 'JSON',
@@ -77,15 +117,15 @@
       html: 'HTML',
       yaml: 'YAML'
     };
-    // 返回映射名称或首字母大写名称
+    // return mapped name or capitalized name
     return mappings[name] || name.charAt(0).toUpperCase() + name.slice(1);
   }
 
   /**
-   * 替换编辑器视图中的文档
+   * Replace document in editor view
    *
-   * @param view - 编辑器视图
-   * @param newDoc - 新文档
+   * @param view - Editor view
+   * @param newDoc - New document
    */
   function replaceDocument(view: EditorView, newDoc: string | undefined) {
     // https://codemirror.net/examples/change/
@@ -95,12 +135,12 @@
   }
 
   /**
-   * 根据语言类型格式化文档
+   * Format document based on language type
    *
-   * @param view - 编辑器视图
-   * @param language - 文档语言
-   * @param tabSize - 制表符空格数
-   * @param lineLength - 行的最大长度
+   * @param view - Editor view
+   * @param language - Document language
+   * @param tabSize - Tab size in spaces
+   * @param lineLength - Maximum line length
    */
   async function formatDocument(view: EditorView, language: string, tabSize: number, lineLength: number) {
     const formatOptions: Record<string, Options> = {
@@ -129,10 +169,10 @@
   }
 
   /**
-   * 编辑器中短语的翻译
+   * Translation of phrases in editor
    */
   const phrases: Record<string, string> = {
-    // 搜索相关翻译
+    // search related translations
     Find: m.cm_find(),
     Replace: m.cm_replace(),
     next: m.cm_next(),
@@ -148,7 +188,7 @@
     'on line': m.cm_on_line(),
     'replaced match on line $': m.cm_replaced_match_on_line(),
     'replaced $ matches': m.cm_replaced_matches(),
-    // 跳转相关翻译
+    // jump related translations
     'Go to line': m.cm_go_to_line(),
     go: m.cm_go()
   };
@@ -221,28 +261,28 @@
   const languageName = getLanguageName(language);
 
   /**
-   * 重置文档内容
+   * Reset document content
    */
   export function reset() {
     replaceDocument(editorView, originalDoc);
   }
 
   /**
-   * 格式化文档内容
+   * Format document content
    */
   export function format() {
     formatDocument(editorView, languageName, tabSize, lineLength);
   }
 
   /**
-   * 复制文档内容到剪贴板
+   * Copy document content to clipboard
    */
   export function copy() {
     document && navigator.clipboard && navigator.clipboard.writeText(document);
   }
 
   /**
-   * 编辑器的基本扩展集合
+   * Basic extension set for editor
    *
    * https://github.com/codemirror/basic-setup
    */
@@ -277,7 +317,7 @@
   ];
 
   /**
-   * 为编辑器添加样式的扩展
+   * Extension for styling editor
    *
    * https://codemirror.net/examples/styling/
    */
@@ -314,12 +354,12 @@
   ];
 
   /**
-   * 支持指定语言的扩展
+   * Extension for specified language support
    */
   const languageSupport: Extension = language ? language : [];
 
   /**
-   * 监听文档更改的扩展
+   * Extension for listening to document changes
    */
   const updateListener: Extension = EditorView.updateListener.of((update) => {
     if (update.docChanged) {
@@ -329,14 +369,14 @@
   });
 
   /**
-   * 处理制表符键的扩展
+   * Extension for handling tab key
    *
    * https://codemirror.net/examples/tab/
    */
   const tabKeyHandler: Extension = [keymap.of([indentWithTab]), indentUnit.of(' '.repeat(tabSize))];
 
   /**
-   * 编辑器主题的扩展
+   * Extension for editor theme
    */
   const getTheme = () => (darkMode === true || (darkMode === 'auto' && theme.current !== 'light') ? oneDark : []);
   const editorTheme = new Compartment();
@@ -350,26 +390,26 @@
   });
 
   /**
-   * 使编辑器只读的扩展
+   * Extension for making editor read-only
    */
   const readOnlyHandler: Extension = (() => {
     if (readOnly) {
       return [EditorState.readOnly.of(true), EditorView.editable.of(false)];
     }
-    // 只有当编辑器可编辑时才高亮活动行
+    // only highlight active line when editor is editable
     return [foldGutter(), highlightActiveLine(), highlightActiveLineGutter(), highlightSelectionMatches()];
   })();
 
   /**
-   * 启用占位符文本的扩展
+   * Extension for enabling placeholder text
    */
   const placeholderHandler: Extension = _placeholder ? placeholder(_placeholder) : [];
 
   onMount(() => {
-    // 创建编辑器视图
+    // create editor view
     editorView = new EditorView({
       parent: editor,
-      // 创建编辑器状态
+      // create editor state
       state: EditorState.create({
         doc: document,
         extensions: [
@@ -385,7 +425,7 @@
       })
     });
     return () => {
-      // 销毁编辑器视图
+      // destroy editor view
       editorView.destroy();
     };
   });

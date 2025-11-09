@@ -3,7 +3,7 @@
   import type { Script } from '$lib/types';
 
   /**
-   * JavaScript 代码模板
+   * JavaScript code template
    */
   const JAVASCRIPT_TEMPLATE = `
 function process(data) {
@@ -14,7 +14,7 @@ function process(data) {
 `.trimStart();
 
   /**
-   * Python 代码模板
+   * Python code template
    */
   const PYTHON_TEMPLATE = `
 def process(data):
@@ -59,9 +59,9 @@ def process(data):
   };
 
   /**
-   * 保存脚本到本地存储
+   * Save script to local storage
    *
-   * @param form - 表单元素
+   * @param form - form element
    */
   function save(form: HTMLFormElement) {
     scriptName = scriptName.trim();
@@ -78,20 +78,20 @@ def process(data):
     }
     loading.start();
     if (script) {
-      // 更新脚本
+      // update script
       script.lang = scriptLang;
       script.script = scriptText;
       script.quietMode = quietMode;
       alert(m.script_updated_success());
     } else {
-      // 新增脚本
+      // add new script
       scripts.push({
         id: scriptName,
         lang: scriptLang,
         script: scriptText,
         quietMode: quietMode
       });
-      // 重置表单
+      // reset form
       scriptName = '';
       scriptLang = 'javascript';
       scriptText = JAVASCRIPT_TEMPLATE;
@@ -132,12 +132,12 @@ def process(data):
             scriptLang = target.value as 'javascript' | 'python';
             scriptText = scriptLang === 'python' ? PYTHON_TEMPLATE : JAVASCRIPT_TEMPLATE;
           };
-          // 判断当前代码是否为模板代码
+          // determine if current code is template code
           if (scriptText === (scriptLang === 'python' ? PYTHON_TEMPLATE : JAVASCRIPT_TEMPLATE)) {
-            // 直接改变类型
+            // change type directly
             onconfirm();
           } else {
-            // 确认改变类型
+            // confirm to change type
             confirm({
               message: m.change_script_message(),
               oncancel: () => (target.value = scriptLang),

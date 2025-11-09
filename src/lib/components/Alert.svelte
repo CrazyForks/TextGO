@@ -3,39 +3,53 @@
   import type { Component } from 'svelte';
 
   export type Message = {
-    /** 提示消息级别 */
+    /**
+     * Alert message level
+     */
     level?: 'info' | 'success' | 'warning' | 'error';
-    /** 提示消息内容 */
+    /**
+     * Alert message content
+     */
     message: string;
-    /** 提示显示时间（毫秒） */
+    /**
+     * Alert display time (milliseconds)
+     */
     timeout?: number;
-    /** 提示消息是否唯一 */
+    /**
+     * Whether alert message is unique
+     */
     unique?: boolean;
   };
 
   export type AlertProps = {
-    /** 是否在对话框中显示 */
+    /**
+     * Whether to display in dialog
+     */
     dialog?: boolean;
-    /** 显示提示的最大数量 */
+    /**
+     * Maximum number of alerts to display
+     */
     maxSize?: number;
-    /** 提示的默认显示时间（毫秒） */
+    /**
+     * Default alert display time (milliseconds)
+     */
     timeout?: number;
   };
 
   /**
-   * 当前对话框标识
+   * Current dialog identifier
    */
   let _dialogId: string = $state('');
 
   /**
-   * 当前消息的响应式存储
+   * Reactive storage for current message
    */
   let message: Message | null = $state(null);
 
   /**
-   * 显示提示消息
+   * Display alert message
    *
-   * @param msg - 提示消息实例
+   * @param msg - alert message instance
    */
   export function alert(msg: Message | string | null) {
     if (typeof msg === 'string') {
@@ -45,7 +59,7 @@
   }
 
   /**
-   * 提示级别到颜色和图标的映射
+   * Alert level to color and icon mapping
    */
   const mappings: Record<string, { color: string; icon: Component<IconComponentProps> }> = {
     info: { color: 'var(--color-info)', icon: Info },
@@ -63,10 +77,10 @@
   const { dialog = false, maxSize = 1, timeout = 2000 }: AlertProps = $props();
   const dialogId = dialog ? crypto.randomUUID() : '';
 
-  // 提示消息的响应式映射
+  // reactive mapping of alert messages
   const alerts = new SvelteMap<string, Message>();
 
-  // 判断是否在当前组件中显示
+  // determine whether to display in current component
   let instance = $derived(dialogId === _dialogId ? message : null);
   $effect(() => {
     if (instance) {
@@ -83,7 +97,7 @@
     };
   });
 
-  // 更新当前对话框标识
+  // update current dialog identifier
   onMount(() => {
     const temp = _dialogId;
     _dialogId = dialogId;

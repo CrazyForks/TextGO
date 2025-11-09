@@ -9,9 +9,9 @@ const PACKAGE_JSON = join(PROJECT_ROOT, 'package.json');
 const CARGO_TOML = join(PROJECT_ROOT, 'src-tauri', 'Cargo.toml');
 
 /**
- * 获取 Svelte 版本号
+ * Get Svelte version number
  *
- * @return 版本号字符串
+ * @return Version string
  */
 function getSvelteVersion(): string {
   const packageJson = JSON.parse(readFileSync(PACKAGE_JSON, 'utf-8'));
@@ -23,9 +23,9 @@ function getSvelteVersion(): string {
 }
 
 /**
- * 获取 Tauri 版本号
+ * Get Tauri version number
  *
- * @return 版本号字符串
+ * @return Version string
  */
 function getTauriVersion(): string {
   const cargoToml = readFileSync(CARGO_TOML, 'utf-8');
@@ -37,7 +37,7 @@ function getTauriVersion(): string {
 }
 
 /**
- * 更新项目根目录下所有 README 文件
+ * Update all README files in project root directory
  */
 function updateReadme() {
   const svelteVersion = getSvelteVersion();
@@ -53,7 +53,7 @@ function updateReadme() {
   for (const filename of readmeFiles) {
     const readmeFile = join(PROJECT_ROOT, filename);
     let readme = readFileSync(readmeFile, 'utf-8');
-    // 使用正则替换版本号
+    // use regex to replace version numbers
     readme = readme.replace(/Tauri-v[\d.]+/g, `Tauri-v${tauriVersion}`);
     readme = readme.replace(/Svelte-v[\d.]+/g, `Svelte-v${svelteVersion}`);
     writeFileSync(readmeFile, readme, 'utf-8');

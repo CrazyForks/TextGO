@@ -2,11 +2,17 @@
   import type { Snippet } from 'svelte';
 
   export type TitleProps = {
-    /** 窗口标题片段 */
+    /**
+     * Window title snippet
+     */
     children?: Snippet;
-    /** 默认标题片段 */
+    /**
+     * Default title snippet
+     */
     fallback?: Snippet;
-    /** 自定义样式类名 */
+    /**
+     * Custom style class name
+     */
     class?: string;
   };
 

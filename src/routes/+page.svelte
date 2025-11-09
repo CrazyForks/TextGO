@@ -2,6 +2,6 @@
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
 
-  // 默认跳转至快捷键注册页
+  // default redirect to shortcut key registration page
   goto(resolve('/shortcuts'), { replaceState: true });
 </script>

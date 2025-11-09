@@ -9,38 +9,38 @@
   import { ArrowCounterClockwise, CopySimple, Robot, StopCircle, TextIndent } from 'phosphor-svelte';
   import { onMount } from 'svelte';
 
-  // 操作系统类型
+  // operating system type
   const osType = type();
 
-  // 快捷键触发记录
+  // shortcut key trigger record
   let entry: Entry | null = $state(null);
 
-  // CodeMirror 实例
+  // codeMirror instance
   let codeMirror: CodeMirror | null = $state(null);
 
-  // 是否为提示词模式
+  // whether in prompt mode
   let promptMode: boolean = $derived.by(() => entry?.actionType === 'prompt');
 
-  // 流式传输状态
+  // streaming status
   let streaming: boolean = $state(false);
 
-  // Ollama 实例
+  // ollama instance
   let ollama = new Ollama();
   $effect(() => {
     ollama = new Ollama({ host: ollamaHost.current || undefined });
   });
 
-  // 自动滚动状态
+  // auto scroll status
   let autoScroll = $state(false);
 
-  // 滚动容器元素
+  // scroll container element
   let scrollElement: HTMLElement | null = $state(null);
 
-  // 滚动定时器
+  // scroll timer
   let scrollInterval: ReturnType<typeof setInterval> | null = $state(null);
 
   /**
-   * 开启对话
+   * start conversation
    */
   async function chat() {
     if (streaming || !entry || !entry.result || !entry.model || entry.actionType !== 'prompt') {
@@ -48,13 +48,13 @@
     }
     let aborted = false;
     try {
-      // 开始流式传输
+      // start streaming
       streaming = true;
-      // 开始自动滚动
+      // start auto scroll
       startAutoScroll();
-      // 添加用户提示词
+      // add user prompt
       const messages = [{ role: 'user', content: entry.result }];
-      // 添加系统提示词
+      // add system prompt
       const systemPrompt = entry.systemPrompt?.trim();
       if (systemPrompt) {
         messages.unshift({ role: 'system', content: systemPrompt });
@@ -64,11 +64,11 @@
         messages: messages,
         stream: true
       });
-      // 保存回复内容
+      // save reply content
       entry.response = '';
       for await (const part of response) {
         if (!streaming) {
-          // 中止流式传输
+          // abort streaming
           break;
         }
         entry.response += part.message.content;
@@ -78,21 +78,21 @@
         if (error.name === 'AbortError') {
           aborted = true;
         } else {
-          entry.response = error.message || '发生未知错误';
+          entry.response = error.message || 'An unknown error occurred';
         }
       }
     } finally {
       if (!aborted) {
-        // 停止自动滚动
+        // stop auto scroll
         stopAutoScroll();
-        // 结束流式传输
+        // end streaming
         streaming = false;
       }
     }
   }
 
   /**
-   * 中止对话
+   * abort conversation
    */
   function abort() {
     autoScroll && stopAutoScroll();
@@ -101,7 +101,7 @@
   }
 
   /**
-   * 开始自动滚动
+   * start auto scroll
    */
   function startAutoScroll() {
     if (scrollInterval) {
@@ -119,7 +119,7 @@
   }
 
   /**
-   * 停止自动滚动
+   * stop auto scroll
    */
   function stopAutoScroll() {
     if (scrollInterval) {
@@ -130,21 +130,21 @@
   }
 
   /**
-   * 处理用户滚动事件
+   * Handle user scroll event
    *
-   * @param event - 滚动事件
+   * @param event - scroll event
    */
   function handleScroll(event: Event) {
     if (streaming && entry?.response) {
       const target = event.target as HTMLElement;
       if (autoScroll) {
-        // 如果用户向上滚动，停止自动滚动
+        // if user scrolls up, stop auto scroll
         const isScrollingUp = target.scrollTop + target.clientHeight < target.scrollHeight - 10;
         if (isScrollingUp) {
           stopAutoScroll();
         }
       } else {
-        // 如果用户滚动到底部，恢复自动滚动
+        // if user scrolls to bottom, restore auto scroll
         const isAtBottom = target.scrollTop + target.clientHeight >= target.scrollHeight - 10;
         if (isAtBottom) {
           startAutoScroll();
@@ -158,7 +158,7 @@
       entry = data;
       abort();
     };
-    // 监听主进程发送的事件
+    // listen to events sent by main process
     const unlisten = listen<string>('popup', (event) => {
       setup(JSON.parse(event.payload) as Entry);
       chat();

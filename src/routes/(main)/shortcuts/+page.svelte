@@ -24,22 +24,22 @@
   import { onMount, tick } from 'svelte';
   import { fly } from 'svelte/transition';
 
-  // 操作系统类型
+  // operating system type
   const osType = type();
 
-  // 计算总规则数
+  // calculate total number of rules
   let totalRules = $derived(Object.values(shortcuts.current).reduce((sum, arr) => sum + arr.length, 0));
 
-  // 要注册的键位
+  // key to register
   let key: string = $state('');
 
-  // 注册键位的弹窗
+  // key registration popup
   let keyModal: Modal;
 
-  // 是否处于输入法组合状态
+  // whether in input method composition state
   let compositing: boolean = false;
 
-  // 表单验证规则
+  // form validation rules
   const schema = buildFormSchema(({ text }) => ({
     key: text()
       .maxlength(1)
@@ -51,25 +51,25 @@
       })
   }));
 
-  // 规则管理器
+  // rule manager
   let ruleManager: Rule | null = $state(null);
 
   /**
-   * 输入无效时的处理
+   * Handle invalid input
    *
-   * @param message - 提示信息
+   * @param message - prompt message
    */
   function oninvalid(message: string) {
-    // 清除输入
+    // clear input
     key = '';
-    // 弹出提示
+    // show prompt
     alert({ level: 'error', message: message });
   }
 
   /**
-   * 检查是否重复
+   * Check for duplicates
    *
-   * @param value - 输入值
+   * @param value - input value
    */
   function checkDuplicate(value: string) {
     if (value && shortcuts.current[value.toUpperCase()]) {
@@ -80,10 +80,10 @@
   }
 
   /**
-   * 提交注册
+   * Submit registration
    */
   async function submit() {
-    // 只取第一个字符并转换为大写
+    // take only first character and convert to uppercase
     const newKey = key.charAt(0).toUpperCase();
     if (!checkDuplicate(newKey)) {
       return;
@@ -91,7 +91,7 @@
     shortcuts.current[newKey] = [];
     keyModal.close();
     key = '';
-    // 等待 DOM 更新后滚动到新注册的快捷键组位置
+    // wait for DOM update then scroll to newly registered shortcut position
     await tick();
     const element = document.querySelector(`[data-shortcut-key="${newKey}"]`);
     if (element) {
@@ -100,9 +100,9 @@
   }
 
   /**
-   * 根据动作ID获取脚本
+   * Get script by action ID
    *
-   * @param action - 动作ID
+   * @param action - action ID
    */
   function getScript(action: string) {
     const id = action.substring(SCRIPT_MARK.length);
@@ -110,16 +110,16 @@
   }
 
   /**
-   * 根据动作ID获取提示词
+   * Get prompt by action ID
    *
-   * @param action - 动作ID
+   * @param action - action ID
    */
   function getPrompt(action: string) {
     const id = action.substring(PROMPT_MARK.length);
     return prompts.current.find((item) => item.id === id);
   }
 
-  // 控制无数据时的显示延迟，避免闪烁
+  // control display delay when no data to avoid flickering
   let showNoData = $state(false);
   onMount(() => {
     setTimeout(() => {
@@ -160,7 +160,7 @@
               }
               delete shortcuts.current[key];
             };
-            // 规则为空时直接删除，否则需要确认
+            // delete directly if rule is empty, otherwise need confirmation
             if (shortcuts.current[key].length > 0) {
               confirm({
                 title: m.delete_shortcut_title({ key }),
@@ -195,11 +195,11 @@
           {@const { label: actionLabel, icon: actionIcon } = ruleManager?.getActionOption(item.action) ?? {}}
           <div class="ml-4 flex w-60 items-center gap-1.5 truncate" title={caseLabel}>
             {#if item.case === ''}
-              <!-- 默认类型 -->
+              <!-- default type -->
               <ArrowArcRight class="size-5 shrink-0 opacity-30" />
               <span class="truncate opacity-30">{caseLabel}</span>
             {:else if caseLabel}
-              <!-- 类型名称 -->
+              <!-- type name -->
               {#if item.case.startsWith(MODEL_MARK)}
                 <Tensorflow class="h-5 shrink-0" />
               {:else if item.case.startsWith(REGEXP_MARK)}
@@ -212,7 +212,7 @@
               {/if}
               <span class="truncate text-base-content/80">{caseLabel}</span>
             {:else}
-              <!-- 失效类型 -->
+              <!-- invalid type -->
               <Warning class="size-5 shrink-0 opacity-50" />
               <span class="truncate opacity-50">{m.invalid_type()}</span>
             {/if}
@@ -220,11 +220,11 @@
           <ArrowFatLineRight class="size-5 shrink-0 opacity-15" />
           <div class="list-col-grow ml-4 flex items-center gap-1.5 truncate" title={actionLabel}>
             {#if item.action === ''}
-              <!-- 默认动作 -->
+              <!-- default action -->
               <Browser class="size-5 shrink-0 opacity-30" />
               <span class="truncate opacity-30">{actionLabel}</span>
             {:else if actionLabel}
-              <!-- 动作名称 -->
+              <!-- action name -->
               {#if item.action.startsWith(SCRIPT_MARK)}
                 {@const script = getScript(item.action)}
                 {#if script?.lang === 'javascript'}
@@ -245,7 +245,7 @@
               {/if}
               <span class="truncate text-base-content/80">{actionLabel}</span>
             {:else}
-              <!-- 失效动作 -->
+              <!-- invalid action -->
               <Warning class="size-5 shrink-0 opacity-50" />
               <span class="truncate opacity-50">{m.invalid_action()}</span>
             {/if}

@@ -1,7 +1,7 @@
 import * as tf from '@tensorflow/tfjs';
 
 /**
- * 模型存储键名常量
+ * Model storage key constants
  */
 const STORAGE = {
   CLASSIFIER: 'classifier',
@@ -10,7 +10,7 @@ const STORAGE = {
 } as const;
 
 /**
- * 模型缓存接口
+ * Model cache interface
  */
 interface ModelCache {
   model: tf.LayersModel;
@@ -21,59 +21,59 @@ interface ModelCache {
     modelTrained: boolean;
     tokenizerSize: number;
   };
-  lastUsed: number; // 最后使用时间，用于缓存清理
+  lastUsed: number; // last used time, for cache cleanup
 }
 
 /**
- * 全局模型缓存 Map
- * key: 模型ID, value: 模型缓存对象
+ * Global model cache map
+ * key: model ID, value: model cache object
  */
 const MODEL_CACHE = new Map<string, ModelCache>();
 
 /**
- * 基于合成负样本的文本分类器
+ * Text classifier based on synthetic negative samples
  */
 export class Classifier {
   private model: tf.LayersModel | null = null;
   private tokenizer: Map<string, number> = new Map();
-  private maxSequenceLength = 50; // 缩短序列长度，适合少量样本
-  private embeddingDim = 32; // 嵌入维度
+  private maxSequenceLength = 50; // shorten sequence length, suitable for small samples
+  private embeddingDim = 32; // embedding dimension
   private modelTrained = false;
-  private id: string; // 模型ID
+  private id: string; // model ID
 
-  // 创建一个新的分类器实例
+  // create a new classifier instance
   constructor(id: string) {
     this.id = id;
   }
 
-  // 训练单类别文本分类模型
+  // train single-class text classification model
   async trainModel(positiveTrainingData: string[] | string) {
     console.debug('Preparing training data for single-class model...');
 
-    // 0. 验证和预处理训练数据
+    // 0. validate and preprocess training data
     const processedData = Classifier.validateTrainingData(positiveTrainingData);
     if (!processedData) {
-      throw new Error('训练数据格式无效或没有足够的样本');
+      throw new Error('Training data format invalid or insufficient samples');
     }
 
     try {
-      // 1. 构建词汇表
+      // 1. build vocabulary
       this.buildVocabulary(processedData);
 
-      // 2. 生成负样本并准备训练数据
+      // 2. generate negative samples and prepare training data
       const { inputs, labels } = this.prepareTrainingData(processedData);
 
       console.debug(`Input shape: ${inputs.shape}, dtype: ${inputs.dtype}`);
       console.debug(`Labels shape: ${labels.shape}, dtype: ${labels.dtype}`);
 
-      // 3. 创建模型
+      // 3. create model
       this.model = this.createModel();
 
-      // 4. 训练
+      // 4. train
       console.debug('Starting to train single-class model...');
       const history = await this.model.fit(inputs, labels, {
-        epochs: 50, // 增加训练轮数
-        batchSize: 8, // 小批量训练
+        epochs: 50, // increase training epochs
+        batchSize: 8, // small batch training
         validationSplit: 0.2,
         shuffle: true,
         verbose: 1,
@@ -87,11 +87,11 @@ export class Classifier {
         }
       });
 
-      // 5. 清理张量内存
+      // 5. clean up tensor memory
       inputs.dispose();
       labels.dispose();
 
-      // 6. 保存模型和分词器
+      // 6. save model and tokenizer
       this.modelTrained = true;
       await this.saveModel();
 
@@ -104,27 +104,27 @@ export class Classifier {
     }
   }
 
-  // 创建单类别分类模型
+  // create single-class classification model
   private createModel(): tf.LayersModel {
     console.debug(`Creating single-class model, vocabulary size: ${this.tokenizer.size}`);
 
     const model = tf.sequential({
       layers: [
-        // 嵌入层
+        // embedding layer
         tf.layers.embedding({
           inputDim: this.tokenizer.size + 1,
           outputDim: this.embeddingDim,
           inputLength: this.maxSequenceLength
         }),
 
-        // 全局平均池化
+        // global average pooling
         tf.layers.globalAveragePooling1d(),
 
-        // 隐藏层
+        // hidden layer
         tf.layers.dense({ units: 16, activation: 'relu' }),
         tf.layers.dropout({ rate: 0.3 }),
 
-        // 输出层: 单个神经元，sigmoid激活函数用于二分类
+        // output layer: single neuron, sigmoid activation for binary classification
         tf.layers.dense({
           units: 1,
           activation: 'sigmoid'
@@ -132,7 +132,7 @@ export class Classifier {
       ]
     });
 
-    // 使用二分类损失函数
+    // use binary classification loss function
     model.compile({
       optimizer: tf.train.adam(0.001),
       loss: 'binaryCrossentropy',
@@ -142,18 +142,18 @@ export class Classifier {
     return model;
   }
 
-  // 构建词汇表（只处理正向样本）
+  // build vocabulary (only process positive samples)
   private buildVocabulary(positiveData: string[]) {
     const vocabulary = new Set<string>();
 
-    // 提取特征词汇
+    // extract feature vocabulary
     positiveData.forEach((text) => {
       const tokens = this.tokenizeText(text);
       tokens.forEach((token) => vocabulary.add(token));
     });
 
-    // 构建映射
-    let tokenIndex = 1; // 0 保留给未知词
+    // build mapping
+    let tokenIndex = 1; // 0 reserved for unknown words
     vocabulary.forEach((token) => {
       this.tokenizer.set(token, tokenIndex++);
     });
@@ -161,51 +161,51 @@ export class Classifier {
     console.debug(`Vocabulary size: ${this.tokenizer.size}`);
   }
 
-  // 通用文本标记化（适用于任意类型的文本模式）
+  // universal text tokenization (applicable to any type of text pattern)
   private tokenizeText(text: string): string[] {
-    // 提取模式特征
+    // extract pattern features
     const patternFeatures = this.extractPatternFeatures(text);
 
-    // 多粒度标记化
+    // multi-granular tokenization
     const tokens = new Set<string>();
 
-    // 1. 字符级特征
+    // 1. character-level features
     const charFeatures = this.extractCharacterFeatures(text);
     charFeatures.forEach((feature) => tokens.add(feature));
 
-    // 2. N-gram特征（字符级）
+    // 2. n-gram features (character-level)
     const charNgrams = this.extractCharNgrams(text, 2, 4);
     charNgrams.forEach((ngram) => tokens.add(ngram));
 
-    // 3. 词级特征
+    // 3. word-level features
     const wordTokens = this.extractWordTokens(text);
     wordTokens.forEach((token) => tokens.add(token));
 
-    // 4. 模式特征
+    // 4. pattern features
     patternFeatures.forEach((feature) => tokens.add(feature));
 
-    // 5. 位置特征
+    // 5. position features
     const positionFeatures = this.extractPositionFeatures(text);
     positionFeatures.forEach((feature) => tokens.add(feature));
 
     return Array.from(tokens);
   }
 
-  // 提取通用模式特征（适用于各种文本类型）
+  // extract universal pattern features (applicable to various text types)
   private extractPatternFeatures(text: string): string[] {
     const features: string[] = [];
 
-    // 长度特征
+    // length features
     if (text.length <= 5) features.push('VERY_SHORT');
     else if (text.length <= 10) features.push('SHORT');
     else if (text.length <= 20) features.push('MEDIUM');
     else if (text.length <= 50) features.push('LONG');
     else features.push('VERY_LONG');
 
-    // 数字模式
+    // numeric patterns
     if (/^\d+$/.test(text)) {
       features.push('ALL_DIGITS');
-      // 添加具体长度特征（常见长度范围）
+      // add specific length features (common length ranges)
       const len = text.length;
       if (len >= 4 && len <= 20) {
         features.push(`DIGITS_${len}`);
@@ -214,13 +214,13 @@ export class Classifier {
     if (/^\d{4}-\d{2}-\d{2}$/.test(text)) features.push('DATE_FORMAT');
     if (/^\d{4}\d{2}\d{2}$/.test(text)) features.push('DATE_COMPACT');
 
-    // 字母数字混合模式
+    // alphanumeric pattern
     if (/^[A-Z0-9-]+$/.test(text.toUpperCase())) features.push('ALPHANUMERIC_DASH');
     if (/^[A-Z0-9]+$/.test(text.toUpperCase())) features.push('ALPHANUMERIC');
     if (/^[A-Z]+\d+$/.test(text.toUpperCase())) features.push('LETTERS_THEN_DIGITS');
     if (/^\d+[A-Z]+$/.test(text.toUpperCase())) features.push('DIGITS_THEN_LETTERS');
 
-    // 分隔符模式
+    // delimiter patterns
     if (text.includes('-')) features.push('HAS_DASH');
     if (text.includes('_')) features.push('HAS_UNDERSCORE');
     if (text.includes('.')) features.push('HAS_DOT');
@@ -228,17 +228,17 @@ export class Classifier {
     if (text.includes(':')) features.push('HAS_COLON');
     if (text.includes(' ')) features.push('HAS_SPACE');
 
-    // 大小写模式
+    // case patterns
     if (/^[A-Z]+$/.test(text)) features.push('ALL_UPPERCASE');
     if (/^[a-z]+$/.test(text)) features.push('ALL_LOWERCASE');
     if (/^[A-Z][a-z]+$/.test(text)) features.push('TITLE_CASE');
     if (/[A-Z]/.test(text) && /[a-z]/.test(text)) features.push('MIXED_CASE');
 
-    // 重复字符模式
+    // repeated character patterns
     if (/(.)\1{2,}/.test(text)) features.push('HAS_REPEATED_CHARS');
     if (/^(.+)\1+$/.test(text)) features.push('REPEATING_PATTERN');
 
-    // 特殊字符
+    // special characters
     if (/[!@#$%^&*(),.?":{}|<>]/.test(text)) features.push('HAS_SPECIAL_CHARS');
     if (/^[\u4e00-\u9fa5]+$/.test(text)) features.push('ALL_CHINESE');
     if (/[\u4e00-\u9fa5]/.test(text)) features.push('HAS_CHINESE');
@@ -246,25 +246,25 @@ export class Classifier {
     return features;
   }
 
-  // 提取字符级特征
+  // extract character-level features
   private extractCharacterFeatures(text: string): string[] {
     const features: string[] = [];
     const chars = text.toLowerCase().split('');
 
-    // 字符类型统计
+    // character type statistics
     const digitCount = chars.filter((c) => /\d/.test(c)).length;
     const letterCount = chars.filter((c) => /[a-z]/.test(c)).length;
     const spaceCount = chars.filter((c) => c === ' ').length;
     const specialCount = chars.filter((c) => !/[a-z0-9\s]/.test(c)).length;
 
-    // 比例特征
+    // proportion features
     const total = text.length;
     if (digitCount / total > 0.5) features.push('MOSTLY_DIGITS');
     if (letterCount / total > 0.5) features.push('MOSTLY_LETTERS');
     if (spaceCount / total > 0.1) features.push('MANY_SPACES');
     if (specialCount / total > 0.1) features.push('MANY_SPECIAL');
 
-    // 首尾字符
+    // first and last character
     if (text.length > 0) {
       const first = text[0];
       const last = text[text.length - 1];
@@ -278,7 +278,7 @@ export class Classifier {
     return features;
   }
 
-  // 提取字符N-gram特征
+  // extract character n-gram features
   private extractCharNgrams(text: string, minN: number, maxN: number): string[] {
     const ngrams: string[] = [];
     const normalizedText = text.toLowerCase();
@@ -293,11 +293,11 @@ export class Classifier {
     return ngrams;
   }
 
-  // 提取词级特征
+  // extract word-level features
   private extractWordTokens(text: string): string[] {
     const tokens: string[] = [];
 
-    // 按各种分隔符分割
+    // split by various delimiters
     const words = text
       .toLowerCase()
       .split(/[\s\-_./\\:,;!?]+/)
@@ -305,12 +305,12 @@ export class Classifier {
 
     words.forEach((word) => {
       if (word.length <= 15) {
-        // 限制词长度避免过长token
+        // limit word length to avoid overly long tokens
         tokens.push(`WORD_${word}`);
       }
     });
 
-    // 词数特征
+    // word count features
     if (words.length === 1) tokens.push('SINGLE_WORD');
     else if (words.length <= 3) tokens.push('FEW_WORDS');
     else if (words.length <= 10) tokens.push('MANY_WORDS');
@@ -319,11 +319,11 @@ export class Classifier {
     return tokens;
   }
 
-  // 提取位置特征
+  // extract position features
   private extractPositionFeatures(text: string): string[] {
     const features: string[] = [];
 
-    // 数字位置特征
+    // digit position features
     const digitPositions = [];
     for (let i = 0; i < text.length; i++) {
       if (/\d/.test(text[i])) {
@@ -340,7 +340,7 @@ export class Classifier {
       if (firstDigit > 0 && lastDigit < text.length - 1) features.push('DIGITS_IN_MIDDLE');
     }
 
-    // 连续数字段
+    // continuous digit segments
     const digitSegments = text.match(/\d+/g) || [];
     digitSegments.forEach((segment) => {
       const len = segment.length;
@@ -353,34 +353,34 @@ export class Classifier {
     return features;
   }
 
-  // 准备单类别训练数据
+  // prepare single-class training data
   private prepareTrainingData(positiveData: string[]) {
     const sequences: number[][] = [];
     const labels: number[] = [];
 
-    // 处理正向样本
+    // process positive samples
     positiveData.forEach((text) => {
       const tokens = this.tokenizeText(text);
       const sequence = tokens.map((token) => this.tokenizer.get(token) || 0).slice(0, this.maxSequenceLength);
 
-      // 填充或截断到固定长度
+      // pad or truncate to fixed length
       while (sequence.length < this.maxSequenceLength) {
         sequence.push(0);
       }
 
       sequences.push(sequence);
-      labels.push(1); // 正向样本标记为1
+      labels.push(1); // mark positive samples as 1
     });
 
-    // 生成负向样本（通过随机化和噪声添加）
-    const negativeCount = Math.min(positiveData.length, 20); // 限制负样本数量
+    // generate negative samples (through randomization and noise injection)
+    const negativeCount = Math.min(positiveData.length, 20); // limit negative sample count
     for (let i = 0; i < negativeCount; i++) {
       const negativeSequence = this.generateNegativeSample();
       sequences.push(negativeSequence);
-      labels.push(0); // 负向样本标记为0
+      labels.push(0); // mark negative samples as 0
     }
 
-    // 转换为张量
+    // convert to tensors
     const inputTensor = tf.tensor2d(sequences, [sequences.length, this.maxSequenceLength], 'float32');
     const labelsTensor = tf.tensor1d(labels, 'float32');
 
@@ -394,18 +394,18 @@ export class Classifier {
     };
   }
 
-  // 生成负样本
+  // generate negative sample
   private generateNegativeSample(): number[] {
     const sequence: number[] = [];
     const vocabSize = this.tokenizer.size;
 
-    // 生成随机序列
+    // generate random sequence
     for (let i = 0; i < this.maxSequenceLength; i++) {
       if (Math.random() < 0.3) {
-        // 30% 概率添加随机词汇
+        // 30% probability to add random vocabulary
         sequence.push(Math.floor(Math.random() * vocabSize) + 1);
       } else {
-        // 70% 概率填充为0
+        // 70% probability to pad with 0
         sequence.push(0);
       }
     }
@@ -413,7 +413,7 @@ export class Classifier {
     return sequence;
   }
 
-  // 预测文本是否属于目标类别
+  // predict whether text belongs to target category
   predict(text: string): number {
     if (!this.model || !this.modelTrained) {
       console.warn('Model not loaded or not trained');
@@ -427,12 +427,12 @@ export class Classifier {
     console.debug(`Token sequence (first 10): ${sequence.slice(0, 10).join(', ')}`);
     console.debug(`Non-zero token count: ${sequence.filter((x) => x > 0).length}`);
 
-    // 填充到固定长度
+    // pad to fixed length
     while (sequence.length < this.maxSequenceLength) {
       sequence.push(0);
     }
 
-    // 检查序列是否全为0
+    // check if sequence is all zeros
     const nonZeroCount = sequence.filter((x) => x > 0).length;
     if (nonZeroCount === 0) {
       console.warn(`Input text contains no known tokens: text="${text}"`);
@@ -445,7 +445,7 @@ export class Classifier {
           .join(', ')}`
       );
 
-      // 尝试找到至少一个匹配的token
+      // try to find at least one matching token
       const matchingTokens = tokens.filter((token) => this.tokenizer.has(token));
       console.debug(`Matching tokens found: ${matchingTokens.slice(0, 5).join(', ')}`);
 
@@ -456,14 +456,14 @@ export class Classifier {
     }
 
     try {
-      // 使用 float32 保持与训练时的一致性
+      // use float32 to maintain consistency with training
       const input = tf.tensor2d([sequence], [1, this.maxSequenceLength], 'float32');
       const prediction = this.model.predict(input) as tf.Tensor;
-      const confidence = prediction.dataSync()[0]; // sigmoid输出的概率值
+      const confidence = prediction.dataSync()[0]; // probability value of sigmoid output
 
       console.debug(`Raw prediction confidence: ${confidence}`);
 
-      // 清理内存
+      // clean up memory
       input.dispose();
       prediction.dispose();
 
@@ -474,7 +474,7 @@ export class Classifier {
     }
   }
 
-  // 保存模型
+  // save model
   async saveModel() {
     if (!this.model) {
       console.warn('No model to save');
@@ -485,7 +485,7 @@ export class Classifier {
       const storageKey = `${STORAGE.CLASSIFIER}_${this.id}`;
       await this.model.save(`localstorage://${storageKey}`);
 
-      // 保存分词器和配置
+      // save tokenizer and config
       const tokenizerData = Array.from(this.tokenizer.entries());
 
       localStorage.setItem(`${STORAGE.TOKENIZER}_${this.id}`, JSON.stringify(tokenizerData));
@@ -499,7 +499,7 @@ export class Classifier {
 
       localStorage.setItem(`${STORAGE.CONFIG}_${this.id}`, JSON.stringify(config));
 
-      // 添加到缓存
+      // add to cache
       MODEL_CACHE.set(this.id, {
         model: this.model,
         tokenizer: new Map(this.tokenizer),
@@ -514,12 +514,12 @@ export class Classifier {
     }
   }
 
-  // 加载模型
+  // load model
   async loadModel(): Promise<boolean> {
     try {
       console.debug('Attempting to load model...');
 
-      // 首先检查缓存
+      // first check cache
       const cached = MODEL_CACHE.get(this.id);
       if (cached) {
         console.debug(`Loading model from cache: ${this.id}`);
@@ -529,13 +529,13 @@ export class Classifier {
         this.embeddingDim = cached.config.embeddingDim;
         this.modelTrained = cached.config.modelTrained;
 
-        // 更新最后使用时间
+        // update last used time
         cached.lastUsed = Date.now();
         return true;
       }
 
-      // 缓存中没有，从localStorage加载
-      // 检查本地存储中是否有模型数据
+      // not in cache, load from localStorage
+      // check if model data exists in localStorage
       const tokenizerData = localStorage.getItem(`${STORAGE.TOKENIZER}_${this.id}`);
       const configData = localStorage.getItem(`${STORAGE.CONFIG}_${this.id}`);
 
@@ -544,17 +544,17 @@ export class Classifier {
         return false;
       }
 
-      // 加载TensorFlow模型
+      // load TensorFlow model
       const storageKey = `${STORAGE.CLASSIFIER}_${this.id}`;
       this.model = await tf.loadLayersModel(`localstorage://${storageKey}`);
       console.debug('TensorFlow model loaded successfully');
 
-      // 恢复分词器
+      // restore tokenizer
       const tokenizerEntries = JSON.parse(tokenizerData);
       this.tokenizer = new Map(tokenizerEntries);
       console.debug(`Tokenizer restored, size: ${this.tokenizer.size}`);
 
-      // 恢复配置
+      // restore config
       const config = JSON.parse(configData);
       this.maxSequenceLength = config.maxSequenceLength;
       this.embeddingDim = config.embeddingDim;
@@ -564,12 +564,12 @@ export class Classifier {
       console.debug(`Config restored - Embedding dim: ${this.embeddingDim}`);
       console.debug(`Config restored - Model trained: ${this.modelTrained}`);
 
-      // 验证数据完整性
+      // verify data integrity
       if (config.tokenizerSize && config.tokenizerSize !== this.tokenizer.size) {
         console.warn(`Tokenizer size mismatch: expected=${config.tokenizerSize}, actual=${this.tokenizer.size}`);
       }
 
-      // 添加到缓存
+      // add to cache
       MODEL_CACHE.set(this.id, {
         model: this.model,
         tokenizer: new Map(this.tokenizer),
@@ -582,7 +582,7 @@ export class Classifier {
         lastUsed: Date.now()
       });
 
-      // 测试模型是否正常工作
+      // test if model works correctly
       const testTokens = Array.from(this.tokenizer.keys()).slice(0, 3);
       if (testTokens.length > 0) {
         console.debug(`Loaded tokenizer sample tokens: ${testTokens.join(', ')}`);
@@ -593,7 +593,7 @@ export class Classifier {
     } catch (error) {
       console.error(`Failed to load model: ${error}`);
 
-      // 清理可能部分加载的数据
+      // clean up partially loaded data
       this.model = null;
       this.tokenizer.clear();
       this.modelTrained = false;
@@ -602,7 +602,7 @@ export class Classifier {
     }
   }
 
-  // 调试方法: 检查数据和模型状态
+  // debug method: check data and model status
   debugInfo() {
     console.debug(`=== Classifier Debug Info ===`);
     console.debug(`Model ID: ${this.id}`);
@@ -625,26 +625,26 @@ export class Classifier {
     console.debug(`Memory: ${JSON.stringify(tf.memory())}`);
   }
 
-  // 验证训练数据格式
+  // validate training data format
   static validateTrainingData(data: string[] | string): string[] | null {
     let processedData: string[] = [];
 
-    // 处理输入数据类型
+    // process input data type
     if (typeof data === 'string') {
-      // 如果是字符串，按换行符分割
+      // if string, split by newline
       processedData = data
         .split('\n')
         .map((line) => line.trim())
         .filter((line) => line.length > 0);
     } else if (Array.isArray(data)) {
-      // 如果是数组，直接使用
+      // if array, use directly
       processedData = [...data];
     } else {
       console.error('Training data must be string or string array');
       return null;
     }
 
-    // 过滤无效文本
+    // filter invalid text
     let validData = processedData.filter((item) => {
       if (!item || typeof item !== 'string' || item.trim().length === 0) {
         console.debug(`Filtering invalid text: ${item}`);
@@ -653,10 +653,10 @@ export class Classifier {
       return true;
     });
 
-    // 去除重复数据
+    // remove duplicate data
     validData = Array.from(new Set(validData));
 
-    // 检查最终样本数量
+    // check final sample count
     if (validData.length < 3) {
       console.error(`Training requires at least 3 positive samples, got ${validData.length} valid samples`);
       return null;
@@ -666,7 +666,7 @@ export class Classifier {
     return validData;
   }
 
-  // 获取模型详细信息（包括存储大小和词汇表数量）
+  // get model detailed info (including storage size and vocabulary count)
   static getModelInfo(id: string): {
     sizeKB: number;
     vocabulary: number;
@@ -676,15 +676,15 @@ export class Classifier {
 
     if (typeof window !== 'undefined' && window.localStorage) {
       try {
-        // 获取词汇表大小
+        // get vocabulary size
         const configKey = `${STORAGE.CONFIG}_${id}`;
         const configData = localStorage.getItem(configKey);
         if (configData) {
           const config = JSON.parse(configData);
-          // 词汇表的大小和分词器大小相同
+          // vocabulary size is same as tokenizer size
           vocabulary = config.tokenizerSize || 0;
         }
-        // 计算 TensorFlow.js 模型文件大小
+        // calculate TensorFlow.js model file size
         let totalSize = 0;
         const modelPrefix = `tensorflowjs_models/${STORAGE.CLASSIFIER}_${id}`;
         for (let i = 0; i < localStorage.length; i++) {
@@ -692,7 +692,7 @@ export class Classifier {
           if (key && key.startsWith(modelPrefix)) {
             const value = localStorage.getItem(key);
             if (value) {
-              // 计算 UTF-16 编码的字节大小（JavaScript 字符串是 UTF-16）
+              // calculate UTF-16 encoded byte size (JavaScript strings are UTF-16)
               totalSize += key.length * 2 + value.length * 2;
             }
           }
@@ -706,10 +706,10 @@ export class Classifier {
     return { sizeKB, vocabulary };
   }
 
-  // 清除保存的模型数据
+  // clear saved model data
   static clearSavedModel(id: string) {
     try {
-      // 从缓存中移除并清理资源
+      // remove from cache and clean up resources
       const cached = MODEL_CACHE.get(id);
       if (cached) {
         if (cached.model && typeof cached.model.dispose === 'function') {
@@ -722,7 +722,7 @@ export class Classifier {
       localStorage.removeItem(`${STORAGE.CONFIG}_${id}`);
       localStorage.removeItem(`${STORAGE.TOKENIZER}_${id}`);
 
-      // 清除TensorFlow模型
+      // clear TensorFlow model
       if (typeof window !== 'undefined' && window.localStorage) {
         const keys = [];
         for (let i = 0; i < localStorage.length; i++) {
@@ -740,12 +740,12 @@ export class Classifier {
     }
   }
 
-  // 清除当前实例的保存模型数据
+  // clear saved model data of current instance
   clearSavedModel() {
     Classifier.clearSavedModel(this.id);
   }
 
-  // 静态方法: 从缓存创建分类器实例
+  // static method: create classifier instance from cache
   static fromCache(id: string, cached: ModelCache): Classifier {
     const classifier = new Classifier(id);
     classifier.model = cached.model;
@@ -758,20 +758,20 @@ export class Classifier {
 }
 
 /**
- * 全局预测函数
- * 参数为模型ID和文本，实现直接从缓存Map中获取模型比对，没有的话再尝试从localStorage加载
+ * Global prediction function
+ * Parameters are model ID and text, get model from cache map directly, or try to load from localStorage if not found
  *
- * @param modelId - 模型ID
- * @param text - 要预测的文本
- * @returns 预测结果（正类概率）
+ * @param modelId - model ID
+ * @param text - text to predict
+ * @returns prediction result (positive class probability)
  */
 export async function predict(modelId: string, text: string): Promise<number | null> {
   try {
-    // 首先尝试从缓存获取
+    // first try to get from cache
     let cached = MODEL_CACHE.get(modelId);
 
     if (!cached) {
-      // 缓存中没有，尝试加载
+      // not in cache, try to load
       console.debug(`Model not in cache, attempting to load: ${modelId}`);
       const classifier = new Classifier(modelId);
       const loadSuccess = await classifier.loadModel();
@@ -781,7 +781,7 @@ export async function predict(modelId: string, text: string): Promise<number | n
         return null;
       }
 
-      // 加载成功后再次从缓存获取
+      // after successful loading, get from cache again
       cached = MODEL_CACHE.get(modelId);
       if (!cached) {
         console.error(`Model not found in cache after loading: ${modelId}`);
@@ -789,16 +789,16 @@ export async function predict(modelId: string, text: string): Promise<number | n
       }
     }
 
-    // 更新最后使用时间
+    // update last used time
     cached.lastUsed = Date.now();
 
-    // 检查模型是否已训练
+    // check if model is trained
     if (!cached.config.modelTrained) {
       console.warn(`Model not trained yet: ${modelId}`);
       return null;
     }
 
-    // 使用缓存的模型进行预测
+    // use cached model for prediction
     const classifier = Classifier.fromCache(modelId, cached);
     const result = classifier.predict(text);
     return result;
@@ -809,9 +809,9 @@ export async function predict(modelId: string, text: string): Promise<number | n
 }
 
 /**
- * 清理缓存中过期的模型（超过指定时间未使用）
+ * Clean up expired models in cache (unused longer than specified time)
  *
- * @param maxAge - 最大存活时间（毫秒），默认1小时
+ * @param maxAge - maximum lifetime (milliseconds), default 1 hour
  */
 export function cleanupCache(maxAge: number = 60 * 60 * 1000) {
   const now = Date.now();

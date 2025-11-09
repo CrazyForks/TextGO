@@ -1,11 +1,11 @@
-/** 分类模型前缀标识 */
+/** Classifier model prefix identifier */
 export const MODEL_MARK = 'model-';
 
-/** 正则表达式前缀标识 */
+/** Regular expression prefix identifier */
 export const REGEXP_MARK = 'regexp-';
 
-/** 脚本前缀标识 */
+/** Script prefix identifier */
 export const SCRIPT_MARK = 'script-';
 
-/** 提示词前缀标识 */
+/** Prompt prefix identifier */
 export const PROMPT_MARK = 'prompt-';

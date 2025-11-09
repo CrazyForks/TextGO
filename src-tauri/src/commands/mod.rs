@@ -7,7 +7,7 @@ mod tray;
 mod typer;
 mod window;
 
-// 重新导出所有命令函数
+// re-export all command functions
 pub use clipboard::*;
 pub use executor::*;
 pub use popup::*;

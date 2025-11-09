@@ -7,7 +7,7 @@ import { listen } from '@tauri-apps/api/event';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 
 /**
- * 快捷键管理类
+ * Shortcut key manager class
  */
 export class Manager {
   constructor() {
@@ -15,12 +15,12 @@ export class Manager {
   }
 
   /**
-   * 初始化事件监听器
+   * Initialize event listeners
    */
   private async initialize(): Promise<void> {
     if (getCurrentWindow().label === 'main') {
       try {
-        // 监听来自 Rust 后端的快捷键触发事件
+        // listen for shortcut triggered events from Rust backend
         await listen('shortcut-triggered', async (event) => {
           const payload = event.payload as { key: string; selection: string };
           await this.handleShortcutEvent(payload.key, payload.selection);
@@ -32,30 +32,30 @@ export class Manager {
   }
 
   /**
-   * 处理快捷键事件
+   * Handle shortcut event
    *
-   * @param key - 触发的快捷键
-   * @param selection - 选中的文本
+   * @param key - triggered shortcut key
+   * @param selection - selected text
    */
   private async handleShortcutEvent(key: string, selection: string): Promise<void> {
     try {
-      // 获取所有绑定到该键位的规则
+      // get all rules bound to this key
       const rules = shortcuts.current[key];
       if (!rules || rules.length === 0) {
         return;
       }
-      // 匹配要执行的动作
+      // match the action to execute
       const rule = await match(selection, rules);
       if (rule === null) {
         console.warn('No matching rule found');
         return;
       }
-      // 执行默认动作
+      // execute default action
       if (rule.action === '') {
         await invoke('show_main_window');
         return;
       }
-      // 执行动作
+      // execute action
       await execute(rule, selection);
     } catch (error) {
       console.error(`Failed to handle shortcut event: ${error}`);
@@ -63,19 +63,19 @@ export class Manager {
   }
 
   /**
-   * 注册规则
+   * Register rule
    *
-   * @param rule - 规则对象
+   * @param rule - rule object
    */
   async register(rule: Rule): Promise<void> {
     try {
-      // 检查后端快捷键是否注册
+      // check if backend shortcut is registered
       const isRegistered = await invoke('is_shortcut_registered', { key: rule.key });
       if (!isRegistered) {
-        // 注册后端快捷键
+        // register backend shortcut
         await invoke('register_shortcut', { key: rule.key });
       }
-      // 保存规则到前端注册表中
+      // save rule to frontend registry
       const rules = shortcuts.current[rule.key];
       if (rules && !rules.find((r) => r.id === rule.id)) {
         rules.push(rule);
@@ -87,20 +87,20 @@ export class Manager {
   }
 
   /**
-   * 注销规则
+   * Unregister rule
    *
-   * @param rule - 规则对象
+   * @param rule - rule object
    */
   async unregister(rule: Rule): Promise<void> {
     try {
-      // 从前端注册表中移除规则
+      // remove rule from frontend registry
       const rules = shortcuts.current[rule.key];
       if (rules) {
         const index = rules.findIndex((r) => r.id === rule.id);
         if (index !== -1) {
           rules.splice(index, 1);
         }
-        // 没有剩余规则时注销后端快捷键
+        // unregister backend shortcut when no remaining rules
         if (rules.length === 0) {
           await invoke('unregister_shortcut', { key: rule.key });
         }
@@ -112,5 +112,5 @@ export class Manager {
   }
 }
 
-// 导出单例实例
+// export singleton instance
 export const manager = new Manager();
