@@ -13,24 +13,36 @@
 
 </div>
 
-`TextGO` is a cross-platform global hotkey application for modern text workers. It automatically identifies selected text types and triggers custom actions, eliminating the need to memorize complex hotkeys.
+> TextGO is a cross-platform text processing tool that automatically recognizes text types and executes custom actions via a global hotkey.
 
 ## ✨ Core Features
 
-- **Text Recognition**: Automatically identifies text type using regex, ML models, and NLP technologies.
-- **Custom Actions**: Supports JavaScript/Python scripts and local AI conversations via Ollama.
-- **Trainable Models**: Quickly train custom text recognition models with minimal samples.
-- **Cross-Platform**: Built on Tauri framework, supports Windows and macOS.
-- **Zero Memory Burden**: No need to memorize complex key combinations.
+1. **Effortless Operation**: Bind multiple rules to a single hotkey, eliminating the need to remember complex key combinations.
+2. **Ready to Use**: Comes with a rich set of built-in text types and processing actions, allowing for quick setup with simple configuration.
+3. **Highly Extensible**: Supports extending text recognition types via regular expressions or machine learning models, and allows for custom processing logic using scripts or local AI.
+4. **Cross-Platform**: Built with Tauri for native support on macOS and Windows.
 
 ## 🚀 Use Cases
 
-Here are the features you can achieve using `TextGO`:
+_With a single hotkey, you can perform all of the following actions:_
 
-- **Format Conversion**: Identify text with fixed rules and convert it to the format you need.
-- **Text Generation**: Embed selected text into custom templates through scripts.
-- **Word Translation**: Call local LLM to achieve AI translation.
-- ...
+- **Format Conversion**: Automatically recognize variable naming formats and convert them to the target style
+
+  ![Format Conversion](screenshots/01.gif)
+
+- **Text Generation**: Automatically recognize business data formats and generate corresponding SQL statements
+
+  ![Text Generation](screenshots/02.gif)
+
+- **Quick Actions**: Automatically recognize URLs or file paths and open them with the default application
+
+  ![Quick Actions](screenshots/03.gif)
+
+- **Text Translation**: Automatically recognize natural language text and translate it using local LLM
+
+  ![Text Translation](screenshots/04.gif)
+
+- **...and More**
 
 ## ⬇️ Getting Started
 
