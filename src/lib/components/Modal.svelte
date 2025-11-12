@@ -4,37 +4,23 @@
   import { SvelteMap } from 'svelte/reactivity';
 
   export type ModalProps = Partial<{
-    /**
-     * Icon displayed before title
-     */
+    /** Modal dialog icon. */
     icon: Component<IconComponentProps>;
-    /**
-     * Title of modal dialog
-     */
+    /** Modal dialog title. */
     title: string;
-    /**
-     * Content of modal dialog
-     */
+    /** Modal dialog content snippet. */
     children: Snippet;
-    /**
-     * Maximum width of modal dialog
-     */
+    /** Maximum width of modal dialog. */
     maxWidth: string;
-    /**
-     * Class name of modal dialog
-     */
+    /** Custom style class name. */
     class: string;
     boxClass: string;
     cornerClass: string;
-    /**
-     * Callback function when dialog closes
-     */
+    /** Callback function when dialog closes. */
     onclose: () => void;
   }>;
 
-  /**
-   * Reactive map of modal dialogs
-   */
+  // reactive map of modal dialogs
   export const modals = new SvelteMap<string, ModalProps>();
 </script>
 
@@ -49,7 +35,7 @@
   const id: string = `modal-${crypto.randomUUID()}`;
 
   /**
-   * Show modal dialog
+   * Show modal dialog.
    */
   export function show() {
     modals.set(id, { onclose });
@@ -69,9 +55,9 @@
   }
 
   /**
-   * Close modal dialog
+   * Close modal dialog.
    *
-   * @param event - Mouse event that triggered close action
+   * @param event - mouse event that triggered the close operation
    */
   export function close(event: MouseEvent | null = null) {
     if (event) {
@@ -86,7 +72,7 @@
   }
 
   /**
-   * Check if modal dialog is currently open
+   * Check if modal dialog is currently open.
    *
    * @return true if modal dialog is open, otherwise false
    */

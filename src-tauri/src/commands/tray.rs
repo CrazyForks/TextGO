@@ -2,7 +2,7 @@ use crate::error::AppError;
 use tauri::menu::{Menu, MenuItem, PredefinedMenuItem};
 use tauri::tray::TrayIconBuilder;
 
-/// Initialize or update tray menu
+/// Initialize or update tray menu.
 #[tauri::command]
 pub fn setup_tray(
     app: tauri::AppHandle,
@@ -58,7 +58,7 @@ pub fn setup_tray(
     Ok(())
 }
 
-/// Show about dialog
+/// Show about dialog.
 #[tauri::command]
 pub fn show_about(app: tauri::AppHandle) {
     use tauri_plugin_dialog::{DialogExt, MessageDialogKind};

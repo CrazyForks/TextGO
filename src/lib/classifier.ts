@@ -1,7 +1,7 @@
 import * as tf from '@tensorflow/tfjs';
 
 /**
- * Model storage key constants
+ * Model storage key constants.
  */
 const STORAGE = {
   CLASSIFIER: 'classifier',
@@ -10,7 +10,7 @@ const STORAGE = {
 } as const;
 
 /**
- * Model cache interface
+ * Model cache interface.
  */
 interface ModelCache {
   model: tf.LayersModel;
@@ -25,13 +25,14 @@ interface ModelCache {
 }
 
 /**
- * Global model cache map
+ * Global model cache map.
+ *
  * key: model ID, value: model cache object
  */
 const MODEL_CACHE = new Map<string, ModelCache>();
 
 /**
- * Text classifier based on synthetic negative samples
+ * Text classifier based on synthetic negative samples.
  */
 export class Classifier {
   private model: tf.LayersModel | null = null;
@@ -758,8 +759,8 @@ export class Classifier {
 }
 
 /**
- * Global prediction function
- * Parameters are model ID and text, get model from cache map directly, or try to load from localStorage if not found
+ * Global prediction function.
+ * Parameters are model ID and text, get model from cache map directly, or try to load from localStorage if not found.
  *
  * @param modelId - model ID
  * @param text - text to predict
@@ -809,7 +810,7 @@ export async function predict(modelId: string, text: string): Promise<number | n
 }
 
 /**
- * Clean up expired models in cache (unused longer than specified time)
+ * Clean up expired models in cache (unused longer than specified time).
  *
  * @param maxAge - maximum lifetime (milliseconds), default 1 hour
  */

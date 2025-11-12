@@ -14,45 +14,25 @@
   import { flip } from 'svelte/animate';
 
   type ListProps = {
-    /**
-     * List title
-     */
+    /** List title. */
     title?: string | Snippet;
-    /**
-     * Title icon
-     */
+    /** Title icon. */
     icon?: Component<IconComponentProps>;
-    /**
-     * Tip text
-     */
+    /** Tip text. */
     hint?: string;
-    /**
-     * Data name
-     */
+    /** Data name. */
     name?: string;
-    /**
-     * List data
-     */
+    /** List data. */
     data: T[];
-    /**
-     * Data row snippet
-     */
+    /** Data row snippet. */
     row: Snippet<[T]>;
-    /**
-     * Custom style class name
-     */
+    /** Custom style class name. */
     class?: string;
-    /**
-     * Callback function when clicking create
-     */
+    /** Callback function when clicking create. */
     oncreate?: () => void;
-    /**
-     * Callback function after data deletion
-     */
+    /** Callback function after data deletion. */
     ondelete?: (item: T) => void;
-    /**
-     * Callback function when clicking more operations
-     */
+    /** Callback function when clicking more operations. */
     moreOptions?: () => void;
   };
 
@@ -77,7 +57,7 @@
   let selectedElement: HTMLLIElement | null = $state(null);
 
   /**
-   * scroll selected row into view
+   * Scroll selected row into view.
    */
   function scrollIntoView() {
     if (!selectedElement) {

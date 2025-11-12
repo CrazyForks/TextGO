@@ -2,7 +2,7 @@ import { alert } from '$lib/components';
 import type { EventHandler } from 'svelte/elements';
 
 /**
- * Constraint types applicable to form input
+ * Constraint types applicable to form input.
  */
 export type Constraint = Partial<{
   value: any; // eslint-disable-line
@@ -20,7 +20,7 @@ export type Constraint = Partial<{
 }>;
 
 /**
- * Type of constraint builder
+ * Type of constraint builder.
  */
 export type ConstraintBuilder =
   | StringConstraintBuilder
@@ -29,7 +29,7 @@ export type ConstraintBuilder =
   | DatetimeConstraintBuilder;
 
 /**
- * Abstract class of constraint builder
+ * Abstract class of constraint builder.
  */
 abstract class AbstractConstraintBuilder<T> {
   protected constraint: Constraint = {
@@ -67,7 +67,7 @@ abstract class AbstractConstraintBuilder<T> {
 }
 
 /**
- * Builder for string constraint
+ * Builder for string constraint.
  */
 class StringConstraintBuilder extends AbstractConstraintBuilder<string> {
   minlength(minlength: number): this {
@@ -82,7 +82,7 @@ class StringConstraintBuilder extends AbstractConstraintBuilder<string> {
 }
 
 /**
- * String constraint builder with regular expression pattern
+ * Builder for string constraint with pattern.
  */
 class PatternConstraintBuilder extends StringConstraintBuilder {
   constructor(type: string) {
@@ -97,7 +97,7 @@ class PatternConstraintBuilder extends StringConstraintBuilder {
 }
 
 /**
- * Builder for number constraint
+ * Builder for number constraint.
  */
 class NumberConstraintBuilder extends AbstractConstraintBuilder<number> {
   constructor(type: string) {
@@ -122,7 +122,7 @@ class NumberConstraintBuilder extends AbstractConstraintBuilder<number> {
 }
 
 /**
- * Builder for datetime constraint
+ * Builder for datetime constraint.
  */
 class DatetimeConstraintBuilder extends AbstractConstraintBuilder<string> {
   constructor(type: string) {
@@ -147,7 +147,7 @@ class DatetimeConstraintBuilder extends AbstractConstraintBuilder<string> {
 }
 
 /**
- * Mapping of constraint builder factories
+ * Mapping of constraint builder factories.
  */
 const constraintBuilderFactories = {
   // textarea element
@@ -169,10 +169,10 @@ const constraintBuilderFactories = {
 };
 
 /**
- * Create a form schema with constraints
+ * Create a form schema with constraints.
  *
- * @param use - Function to select and configure constraint builders from the factory
- * @returns The created form schema
+ * @param use - function to select and configure constraint builders from the factory
+ * @returns created form schema
  */
 export function buildFormSchema<T extends Record<string, ConstraintBuilder>>(
   use: (arg: typeof constraintBuilderFactories) => T

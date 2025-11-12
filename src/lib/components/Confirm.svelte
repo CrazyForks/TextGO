@@ -8,35 +8,23 @@
   import { fade } from 'svelte/transition';
 
   export type Message = Partial<{
-    /**
-     * Confirm message icon
-     */
+    /** Confirm message icon. */
     icon: Component<IconComponentProps>;
-    /**
-     * Confirm message title
-     */
+    /** Confirm message title. */
     title: string;
-    /**
-     * Confirm message content
-     */
+    /** Confirm message content. */
     message: string;
-    /**
-     * Callback function when canceling
-     */
+    /** Callback function when canceling. */
     oncancel: () => void;
-    /**
-     * Callback function when confirming
-     */
+    /** Callback function when confirming. */
     onconfirm: () => void;
   }>;
 
-  /**
-   * Reactive mapping of confirm messages
-   */
+  // reactive mapping of confirm messages
   export const messages = new SvelteMap<string, Message>();
 
   /**
-   * Display confirm message dialog
+   * Display confirm message dialog.
    *
    * @param msg - confirm message instance
    */
@@ -56,7 +44,7 @@
   }
 
   /**
-   * Close confirm message dialog
+   * Close confirm message dialog.
    *
    * @param id - ID of the message dialog
    * @param callback - callback function to call before closing
@@ -75,7 +63,7 @@
   }
 
   /**
-   * Convert part of the title to special format
+   * Convert part of the title to special format.
    *
    * @param title - title string
    * @return formatted HTML string

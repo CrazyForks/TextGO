@@ -8,17 +8,17 @@ import { untrack } from 'svelte';
 const store = new LazyStore('.settings.dat');
 
 /**
- * Options for creating persisted state
+ * Options for creating persisted state.
  */
 type Options<T> = {
-  /** Callback function when loading is complete */
+  /** Callback function when loading is complete. */
   onload?: (value: T) => void;
-  /** Callback function when the stored value changes */
+  /** Callback function when the stored value changes. */
   onchange?: (value: T | $state.Snapshot<T>) => void;
 };
 
 /**
- * Create a persisted reactive state
+ * Create a persisted reactive state.
  *
  * @param key - key for local storage
  * @param initial - initial value
@@ -29,7 +29,7 @@ function persisted<T>(key: string, initial: T, options?: Options<T>) {
   let state = $state(initial);
   let initialized = $state(false);
 
-  // load data from local storage
+  // load data from store
   store
     .get<T>(key)
     .then((item) => {
@@ -47,7 +47,7 @@ function persisted<T>(key: string, initial: T, options?: Options<T>) {
       initialized = true;
     });
 
-  // save data to local storage
+  // save data to store
   $effect.root(() => {
     $effect(() => {
       if (!initialized) {
@@ -100,7 +100,7 @@ function persisted<T>(key: string, initial: T, options?: Options<T>) {
   };
 }
 
-// theme
+// theme (light / dark)
 export const theme = persisted<string>('theme', 'light', {
   onchange: (theme) => {
     // set data-theme attribute on root element to switch theme

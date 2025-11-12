@@ -4,29 +4,17 @@
   import type { Placement } from 'tippy.js';
 
   export type LabelProps = {
-    /**
-     * Label text snippet
-     */
+    /** Label text snippet. */
     children: Snippet;
-    /**
-     * Label icon
-     */
+    /** Label icon. */
     icon?: Component<IconComponentProps>;
-    /**
-     * Tip text
-     */
+    /** Tip text. */
     tip?: string;
-    /**
-     * Tip position
-     */
+    /** Tip position. */
     tipPlacement?: Placement;
-    /**
-     * Whether to mark as required
-     */
+    /** Whether to mark as required. */
     required?: boolean;
-    /**
-     * Custom style class name
-     */
+    /** Custom style class name. */
     class?: string;
   };
 </script>

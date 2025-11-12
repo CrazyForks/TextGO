@@ -7,7 +7,7 @@ import type { Instance, Props } from 'tippy.js';
 import tippy from 'tippy.js';
 
 /**
- * Create tooltip using Tippy.js
+ * Create tooltip using Tippy.js.
  *
  * @param target - target element
  * @param props - tooltip properties
@@ -51,7 +51,7 @@ export function tooltip(target: HTMLElement, props: Partial<Props>): ActionRetur
 }
 
 /**
- * Format ISO8601 datetime string
+ * Format ISO8601 datetime string.
  *
  * @param str - ISO8601 format datetime string
  * @returns formatted datetime string
@@ -68,7 +68,8 @@ export function formatISO8601(str: string | null | undefined): string {
 }
 
 /**
- * Freeze current window size to prevent blank edges when rapidly resizing window
+ * Freeze current window size to prevent blank edges when rapidly resizing window.
+ *
  * https://github.com/tauri-apps/tauri/issues/6322
  */
 export function freeze(): Promise<void> {
@@ -76,7 +77,7 @@ export function freeze(): Promise<void> {
 }
 
 /**
- * Unfreeze window size when there are no message boxes and modal dialogs
+ * Unfreeze window size when there are no message boxes and modal dialogs.
  */
 export function unfreeze(): Promise<void> {
   if (messages.size === 0 && modals.size === 0) {

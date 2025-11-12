@@ -87,7 +87,7 @@
   });
 
   /**
-   * Register and save rule
+   * Register rule.
    *
    * @param form - form element
    */
@@ -116,7 +116,7 @@
   }
 
   /**
-   * Unregister and delete rule
+   * Unregister rule.
    *
    * @param rule - rule object
    */
@@ -129,7 +129,7 @@
   }
 
   /**
-   * Get text type option
+   * Get text type option.
    *
    * @param value - text type value
    * @returns text type option
@@ -139,7 +139,7 @@
   }
 
   /**
-   * Get action identifier option
+   * Get action identifier option.
    *
    * @param value - action identifier value
    * @returns action identifier option

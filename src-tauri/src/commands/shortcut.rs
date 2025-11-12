@@ -2,7 +2,7 @@ use crate::error::AppError;
 use crate::REGISTERED_SHORTCUTS;
 use tauri_plugin_global_shortcut::{Code, GlobalShortcutExt, Modifiers, Shortcut};
 
-/// register global shortcut CmdOrCtrl+Shift+<key>
+/// Register global shortcut CmdOrCtrl+Shift+<key>.
 #[tauri::command]
 pub fn register_shortcut(app: tauri::AppHandle, key: String) -> Result<(), AppError> {
     // validate input parameters
@@ -48,7 +48,7 @@ pub fn register_shortcut(app: tauri::AppHandle, key: String) -> Result<(), AppEr
     Ok(())
 }
 
-/// unregister global shortcut CmdOrCtrl+Shift+<key>
+/// Unregister global shortcut CmdOrCtrl+Shift+<key>.
 #[tauri::command]
 pub fn unregister_shortcut(app: tauri::AppHandle, key: String) -> Result<(), AppError> {
     // validate input parameters
@@ -94,7 +94,7 @@ pub fn unregister_shortcut(app: tauri::AppHandle, key: String) -> Result<(), App
     Ok(())
 }
 
-/// check if global shortcut CmdOrCtrl+Shift+<key> is registered
+/// Check if global shortcut CmdOrCtrl+Shift+<key> is registered.
 #[tauri::command]
 pub fn is_shortcut_registered(key: String) -> Result<bool, AppError> {
     // validate input parameters

@@ -35,7 +35,7 @@ unsafe extern "C" {
     unsafe fn AXValueGetValue(value: CFTypeRef, value_type: i32, value_ptr: *mut c_void) -> bool;
 }
 
-/// get UI element attribute value
+/// Get UI element attribute value.
 fn get_element_attribute(element: &CFType, attribute: &str) -> Result<CFType, AppError> {
     unsafe {
         let mut value_ptr: CFTypeRef = std::ptr::null();
@@ -53,7 +53,7 @@ fn get_element_attribute(element: &CFType, attribute: &str) -> Result<CFType, Ap
     }
 }
 
-/// set UI element attribute value
+/// Set UI element attribute value.
 fn set_element_attribute(
     element: &CFType,
     attribute: &str,
@@ -74,7 +74,7 @@ fn set_element_attribute(
     }
 }
 
-/// get focused element
+/// Get currently focused UI element.
 fn get_focused_element() -> Result<CFType, AppError> {
     unsafe {
         // check accessibility permission
@@ -94,7 +94,7 @@ fn get_focused_element() -> Result<CFType, AppError> {
     }
 }
 
-/// get selected text from element
+/// Get selected text attribute from given element.
 fn get_selected_text(element: &CFType) -> Option<String> {
     // try to get selected text
     if let Ok(selected_text) = get_element_attribute(element, "AXSelectedText") {
@@ -105,7 +105,7 @@ fn get_selected_text(element: &CFType) -> Option<String> {
     None
 }
 
-/// get selected text by user in current focused element
+/// Get selected text in currently focused element.
 pub fn get_selection() -> Result<String, AppError> {
     // get focused element
     let focused_element = get_focused_element()?;
@@ -140,7 +140,7 @@ pub fn get_selection() -> Result<String, AppError> {
     Ok(String::new())
 }
 
-/// check if current focused element is editable
+/// Check if currently focused element is editable.
 pub fn is_cursor_editable() -> Result<bool, AppError> {
     // get focused element
     let focused_element = get_focused_element()?;
@@ -156,13 +156,13 @@ pub fn is_cursor_editable() -> Result<bool, AppError> {
     }))
 }
 
-/// select specified number of characters from current cursor position backward
+/// Select specified number of characters from current cursor position backward.
 pub fn select_backward_chars(chars: usize) -> Result<(), AppError> {
     unsafe {
         // get focused element
         let focused_element = get_focused_element()?;
 
-        // get current selection text range
+        // get currently selected text range
         let text_range = get_element_attribute(&focused_element, "AXSelectedTextRange")?;
 
         // extract raw CFRange structure from AXValue

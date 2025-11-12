@@ -2,142 +2,144 @@ import type { IconComponentProps } from 'phosphor-svelte';
 import type { Component } from 'svelte';
 
 /**
- * Convert all properties in type T to nullable
+ * Convert all properties in type T to nullable.
  */
 export type Optional<T> = {
   [P in keyof T]?: T[P] | null;
 };
 
 /**
- * Convert type T itself to nullable
+ * Convert type T itself to nullable.
  */
 type Nullable<T> = T | null | undefined;
 
 /**
- * Option value
+ * Type of option value.
  */
 export type OptionValue = string | number | boolean | null | undefined;
 
 /**
- * Option
+ * Type of option.
  */
 export type Option = {
-  /** option value */
+  /** Option value. */
   value: OptionValue;
-  /** option label */
+  /** Option label. */
   label: string;
-  /** whether disabled */
+  /** Whether disabled. */
   disabled?: boolean;
-  /** regular expression */
+  /** Regular expression. */
   pattern?: RegExp;
-  /** option icon */
+  /** Option icon. */
   icon?: Component<IconComponentProps>;
 };
 
 /**
- * Trigger record
+ * Type of triggered record.
  */
 export type Entry = {
-  /** record ID */
+  /** Record ID. */
   id: string;
-  /** triggered key */
+  /** Triggered key. */
   key: string;
-  /** trigger time */
+  /** Trigger time. */
   datetime: string;
-  /** clipboard text */
+  /** Clipboard text. */
   clipboard: string;
-  /** selected text */
+  /** Selected text. */
   selection: string;
-  /** text type */
+  /** Text type. */
   caseLabel?: string;
-  /** triggered action */
+  /** Triggered action. */
   actionLabel?: string;
-  /** action type */
+  /** Action type. */
   actionType?: 'script' | 'prompt';
-  /** execution result (script return value/prompt) */
+  /** Execution result (script return value / prompt content). */
   result?: string;
-  /** script language */
+  /** Script language. */
   scriptLang?: 'javascript' | 'python';
-  /** silent mode */
+  /** Silent mode. */
   quietMode?: boolean;
-  /** model provider */
+  /** Model provider. */
   provider?: 'ollama' | 'lmstudio';
-  /** model name */
+  /** Model name. */
   model?: string;
-  /** system prompt */
+  /** System prompt. */
   systemPrompt?: string;
-  /** response content */
+  /** Response content. */
   response?: string;
 };
 
 /**
- * Rule
+ * Type of rule.
  */
 export type Rule = {
-  /** rule ID */
+  /** Rule ID. */
   id: string;
-  /** bound shortcut key */
+  /** Bound shortcut key. */
   key: string;
-  /** bound text type */
+  /** Bound text type. */
   case: string;
+  /** Case label. */
   caseLabel?: string;
-  /** ID of the action to execute */
+  /** ID of the action to execute. */
   action: string;
+  /** Action label. */
   actionLabel?: string;
 };
 
 /**
- * Script
+ * Type of script.
  */
 export type Script = {
-  /** script ID */
+  /** Script ID. */
   id: string;
-  /** script language */
+  /** Script language. */
   lang: 'javascript' | 'python';
-  /** script content */
+  /** Script content. */
   script: string;
-  /** silent mode */
+  /** Silent mode. */
   quietMode?: boolean;
 };
 
 /**
- * Prompt
+ * Type of prompt.
  */
 export type Prompt = {
-  /** prompt ID */
+  /** Prompt ID. */
   id: string;
-  /** model provider */
+  /** Model provider. */
   provider: 'ollama' | 'lmstudio';
-  /** model name */
+  /** Model name. */
   model: string;
-  /** prompt content */
+  /** Prompt content. */
   prompt: string;
-  /** system prompt */
+  /** System prompt. */
   systemPrompt?: string;
 };
 
 /**
- * Classification model
+ * Type of classification model.
  */
 export type Model = {
-  /** classification model ID */
+  /** Model ID. */
   id: string;
-  /** training sample */
+  /** Training sample. */
   sample: string;
-  /** confidence threshold */
+  /** Confidence threshold. */
   threshold: number;
-  /** whether model is trained */
+  /** Whether model is trained. */
   modelTrained?: boolean;
 };
 
 /**
- * Regular expression
+ * Type of regular expression.
  */
 export type Regexp = {
-  /** regex ID */
+  /** Regex ID. */
   id: string;
-  /** regex pattern */
+  /** Regex pattern. */
   pattern: string;
-  /** regex flags */
+  /** Regex flags. */
   flags?: string;
 };

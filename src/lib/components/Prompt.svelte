@@ -3,7 +3,7 @@
   import type { Prompt } from '$lib/types';
 
   /**
-   * Prompt template variable explanation
+   * Prompt template variable explanation.
    */
   const PROMPT_PLACEHOLDER = `
 ${m.prompt_variables_tip()}
@@ -53,7 +53,7 @@ ${m.prompt_variables_tip()}
   };
 
   /**
-   * Save prompt to local storage
+   * Save prompt to persistent storage.
    *
    * @param form - form element
    */

@@ -20,7 +20,7 @@ interface Package {
 }
 
 /**
- * Execute license-checker command
+ * Execute license-checker command.
  *
  * https://github.com/davglass/license-checker
  */
@@ -40,7 +40,7 @@ function runLicenseChecker() {
 }
 
 /**
- * Execute cargo license command
+ * Execute cargo license command.
  *
  * https://github.com/onur/cargo-license
  */
@@ -60,9 +60,9 @@ function runCargoLicense() {
 }
 
 /**
- * Parse frontend dependencies JSON file
+ * Parse frontend dependencies JSON file.
  *
- * @returns Array of dependency data
+ * @returns array of dependency data
  */
 function parseFrontendJson(): Package[] {
   console.log('📖 Parsing frontend license data...');
@@ -83,9 +83,9 @@ function parseFrontendJson(): Package[] {
 }
 
 /**
- * Parse backend dependencies JSON file
+ * Parse backend dependencies JSON file.
  *
- * @returns Array of dependency data
+ * @returns array of dependency data
  */
 function parseBackendJson(): Package[] {
   console.log('📖 Parsing backend license data...');
@@ -105,11 +105,11 @@ function parseBackendJson(): Package[] {
 }
 
 /**
- * Generate Markdown table for dependency data
+ * Generate Markdown table for dependency data.
  *
- * @param packages - Dependency data
- * @param title - Table title
- * @returns Array of table rows
+ * @param packages - dependency data
+ * @param title - table title
+ * @returns array of table rows
  */
 function generateTable(packages: Package[], title: string): string[] {
   const table: string[] = [];
@@ -136,10 +136,10 @@ function generateTable(packages: Package[], title: string): string[] {
 }
 
 /**
- * Generate complete Markdown document
+ * Generate complete Markdown document.
  *
- * @param frontendData - Frontend dependency data
- * @param backendData - Backend dependency data
+ * @param frontendData - frontend dependency data
+ * @param backendData - backend dependency data
  */
 function generateMarkdown(frontendData: Package[], backendData: Package[]) {
   const markdown: string[] = [];
@@ -170,9 +170,9 @@ function generateMarkdown(frontendData: Package[], backendData: Package[]) {
   }
 }
 
-// 1. Run license-checker
+// 1. run license-checker
 runLicenseChecker();
-// 2. Run cargo license
+// 2. run cargo license
 runCargoLicense();
-// 3. Parse and generate Markdown file
+// 3. parse and generate Markdown file
 generateMarkdown(parseFrontendJson(), parseBackendJson());

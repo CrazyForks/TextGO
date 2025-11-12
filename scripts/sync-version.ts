@@ -10,7 +10,7 @@ const CARGO_TOML_PATH = path.join(PROJECT_ROOT, 'src-tauri', 'Cargo.toml');
 const PACKAGE_JSON_PATH = path.join(PROJECT_ROOT, 'package.json');
 
 /**
- * Sync version to package.json and Cargo.toml
+ * Sync version to package.json and Cargo.toml.
  */
 function syncVersion() {
   // read tauri.conf.json

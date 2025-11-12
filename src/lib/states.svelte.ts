@@ -1,11 +1,11 @@
 /**
- * Reactive class representing loading state
+ * Reactive class representing loading state.
  */
 export class Loading {
   private loading = $state<boolean | null>(null);
 
   /**
-   * Set the loading state to `false`, then set it to `true` after the specified delay
+   * Set the loading state to `false`, then set it to `true` after the specified delay.
    *
    * @param delay - milliseconds to wait before setting the loading state to `true`
    */
@@ -21,28 +21,28 @@ export class Loading {
   }
 
   /**
-   * Set the loading state to `null`, indicating loading is complete
+   * Set the loading state to `null`, indicating loading is complete.
    */
   end() {
     this.loading = null;
   }
 
   /**
-   * Get current loading state
+   * Get current loading state.
    */
   get current() {
     return this.loading;
   }
 
   /**
-   * Whether loading has already started
+   * Whether loading has already started.
    */
   get started() {
     return this.loading !== null;
   }
 
   /**
-   * Whether the delay time has been reached
+   * Whether the delay time has been reached.
    */
   get delayed() {
     return this.loading === true;

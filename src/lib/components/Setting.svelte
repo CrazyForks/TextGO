@@ -3,25 +3,15 @@
   import type { Component, Snippet } from 'svelte';
 
   export type SettingProps = {
-    /**
-     * Setting content snippet
-     */
+    /** Setting content snippet. */
     children: Snippet;
-    /**
-     * Setting icon
-     */
+    /** Setting icon. */
     icon?: Component<IconComponentProps>;
-    /**
-     * Setting title
-     */
+    /** Setting title. */
     title: string;
-    /**
-     * Tip text
-     */
+    /** Tip text. */
     tip?: string;
-    /**
-     * Custom style class name
-     */
+    /** Custom style class name. */
     class?: string;
   };
 </script>

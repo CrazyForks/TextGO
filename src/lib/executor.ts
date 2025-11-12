@@ -30,26 +30,26 @@ const PATH_REGEX =
   /(?:[a-zA-Z]:\\[^<>:"|?*\n\r/]+(?:\\[^<>:"|?*\n\r/]+)*|~?\/[^<>:"|?*\n\r\\]+(?:\/[^<>:"|?*\n\r\\]+)*)/gm;
 
 /**
- * Data type
+ * Type of data passed to scripts and prompts.
  */
 type Data = {
-  /** selected text */
+  /** Selected text. */
   selection: string;
-  /** clipboard text */
+  /** Clipboard text. */
   clipboard: string;
-  /** current datetime */
+  /** Current datetime. */
   datetime: string;
 };
 
 /**
- * Built-in action type
+ * Built-in action type.
  */
 type Processor = Option & {
   process: (selection: string) => string;
 };
 
 /**
- * General action option
+ * General actions.
  */
 export const GENERAL_ACTIONS: Processor[] = [
   {
@@ -87,7 +87,7 @@ export const GENERAL_ACTIONS: Processor[] = [
 ];
 
 /**
- * Format conversion action option
+ * Naming convention conversion actions.
  */
 export const CONVERT_ACTIONS: Processor[] = [
   {
@@ -129,7 +129,7 @@ export const CONVERT_ACTIONS: Processor[] = [
 ];
 
 /**
- * Text processing action option
+ * Text processing actions.
  */
 export const PROCESS_ACTIONS: Processor[] = [
   {
@@ -206,7 +206,7 @@ const findBuiltinAction = memoize((action: string) =>
 );
 
 /**
- * Execute action
+ * Execute action.
  *
  * @param rule - rule object
  * @param selection - selected text
@@ -289,7 +289,7 @@ export async function execute(rule: Rule, selection: string): Promise<void> {
 }
 
 /**
- * Execute input script and return result
+ * Execute input script and return result.
  *
  * @param script - script object
  * @param data - data object
@@ -321,7 +321,7 @@ export async function executeScript(script: Script, data: Data): Promise<string>
 }
 
 /**
- * Render the input prompt and return the result
+ * Render the input prompt and return the result.
  *
  * @param prompt - prompt object
  * @param data - data object
@@ -339,9 +339,9 @@ export async function renderPrompt(prompt: Prompt, data: Data): Promise<string> 
 }
 
 /**
- * Show popup window
+ * Show popup window.
  *
- * @param entry - record object
+ * @param entry - record object to display
  */
 async function showPopup(entry: Entry): Promise<void> {
   try {

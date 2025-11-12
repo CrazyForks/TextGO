@@ -10,13 +10,13 @@ use windows::Win32::UI::Accessibility::{
     UIA_EditControlTypeId, UIA_LegacyIAccessiblePatternId, UIA_TextPatternId, UIA_ValuePatternId,
 };
 
-/// COM resource guard
+/// COM resource guard.
 struct ComGuard {
     initialized: bool,
 }
 
 impl ComGuard {
-    /// initialize COM environment
+    /// Initialize COM environment.
     fn new() -> Result<Self, AppError> {
         unsafe {
             let result = CoInitializeEx(None, COINIT_APARTMENTTHREADED);
@@ -35,7 +35,7 @@ impl ComGuard {
 }
 
 impl Drop for ComGuard {
-    /// release COM resources
+    /// Release COM resources.
     fn drop(&mut self) {
         if self.initialized {
             unsafe {
@@ -45,7 +45,7 @@ impl Drop for ComGuard {
     }
 }
 
-/// get focused element
+/// Get currently focused UI element.
 fn get_focused_element() -> Result<IUIAutomationElement, AppError> {
     unsafe {
         // create UI Automation instance
@@ -59,31 +59,31 @@ fn get_focused_element() -> Result<IUIAutomationElement, AppError> {
     }
 }
 
-/// get text selection range from focused element
-fn get_text_selection(
-    focused_element: &IUIAutomationElement,
+/// Get selected text range array from given element.
+fn get_selected_text_ranges(
+    element: &IUIAutomationElement,
 ) -> Result<IUIAutomationTextRangeArray, AppError> {
     unsafe {
-        // get text pattern from focused element
-        let text_pattern: IUIAutomationTextPattern = focused_element
+        // get text pattern from element
+        let text_pattern: IUIAutomationTextPattern = element
             .GetCurrentPattern(UIA_TextPatternId)
             .and_then(|p| p.cast())
             .map_err(|_| "Failed to get text pattern")?;
 
-        // get current selected text range
-        let selection = text_pattern
+        // get currently selected text ranges
+        let text_ranges = text_pattern
             .GetSelection()
             .map_err(|_| "Failed to get text selection")?;
 
-        if selection.Length().unwrap_or(0) == 0 {
+        if text_ranges.Length().unwrap_or(0) == 0 {
             return Err("No text selection found".into());
         }
 
-        Ok(selection)
+        Ok(text_ranges)
     }
 }
 
-/// get selected text by user in current focused element
+/// Get selected text in currently focused element.
 pub fn get_selection() -> Result<String, AppError> {
     unsafe {
         // initialize COM
@@ -92,11 +92,11 @@ pub fn get_selection() -> Result<String, AppError> {
         // get focused element
         let focused_element = get_focused_element()?;
 
-        // get current selected text range
-        let selection = get_text_selection(&focused_element)?;
+        // get currently selected text ranges
+        let text_ranges = get_selected_text_ranges(&focused_element)?;
 
         // get first selection range and extract text
-        let text = selection
+        let text = text_ranges
             .GetElement(0)
             .and_then(|e| e.GetText(-1))
             .map_err(|_| "Failed to get text from selection")?;
@@ -105,7 +105,7 @@ pub fn get_selection() -> Result<String, AppError> {
     }
 }
 
-/// check if current focused element is editable
+/// Check if currently focused element is editable.
 pub fn is_cursor_editable() -> Result<bool, AppError> {
     unsafe {
         // initialize COM
@@ -123,7 +123,7 @@ pub fn is_cursor_editable() -> Result<bool, AppError> {
             }
         }
 
-        // 2. check if pattern is not readonly
+        // 2. check if value pattern is not read-only
         if let Ok(is_readonly) = focused_element
             .GetCurrentPattern(UIA_ValuePatternId)
             .and_then(|p| p.cast::<IUIAutomationValuePattern>())
@@ -134,7 +134,7 @@ pub fn is_cursor_editable() -> Result<bool, AppError> {
             }
         }
 
-        // 3. check legacy control role
+        // 3. check if legacy control role is editable
         if let Ok(role) = focused_element
             .GetCurrentPattern(UIA_LegacyIAccessiblePatternId)
             .and_then(|p| p.cast::<IUIAutomationLegacyIAccessiblePattern>())
@@ -151,7 +151,7 @@ pub fn is_cursor_editable() -> Result<bool, AppError> {
     }
 }
 
-/// select specified number of characters from current cursor position backward
+/// Select specified number of characters from current cursor position backward.
 pub fn select_backward_chars(chars: usize) -> Result<(), AppError> {
     unsafe {
         // initialize COM
@@ -160,15 +160,15 @@ pub fn select_backward_chars(chars: usize) -> Result<(), AppError> {
         // get focused element
         let focused_element = get_focused_element()?;
 
-        // get current selected text range
-        let selection = get_text_selection(&focused_element)?;
+        // get currently selected text ranges
+        let text_ranges = get_selected_text_ranges(&focused_element)?;
 
         // get first selection range
-        let text_range = selection
+        let text_range = text_ranges
             .GetElement(0)
             .map_err(|_| "Failed to get selection range")?;
 
-        // move start point backward
+        // move endpoint backward
         text_range
             .MoveEndpointByUnit(
                 TextPatternRangeEndpoint_Start,

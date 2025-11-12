@@ -2,7 +2,7 @@ use crate::error::AppError;
 use std::process::Stdio;
 use tokio::{io::AsyncWriteExt, process::Command};
 
-/// Execute JavaScript code
+/// Execute JavaScript code.
 #[tauri::command]
 pub async fn execute_javascript(
     code: String,
@@ -151,7 +151,7 @@ console.log(typeof result === 'string' ? result : JSON.stringify(result));
     Err("JavaScript runtime not found. Please install Node.js or Deno.".into())
 }
 
-/// Execute Python code
+/// Execute Python code.
 #[tauri::command]
 pub async fn execute_python(
     code: String,

@@ -53,22 +53,22 @@ const modelOperations = new ModelOperations({
 });
 
 /**
- * Minimum expected confidence
+ * Minimum expected confidence.
  */
 const MIN_CONFIDENCE = 0.2;
 
 /**
- * Initial confidence threshold
+ * Initial confidence threshold.
  */
 const INITIAL_THRESHOLD = 0.5;
 
 /**
- * Relative confidence difference threshold
+ * Relative confidence difference threshold.
  */
 const RELATIVE_THRESHOLD = 0.15;
 
 /**
- * General recognition option
+ * General recognition options.
  */
 export const GENERAL_CASES: Option[] = [
   {
@@ -157,7 +157,7 @@ export const GENERAL_CASES: Option[] = [
 ];
 
 /**
- * Naming format recognition options
+ * Naming convention recognition options.
  */
 export const TEXT_CASES: Option[] = [
   {
@@ -199,7 +199,7 @@ export const TEXT_CASES: Option[] = [
 ];
 
 /**
- * Natural language recognition options
+ * Natural language recognition options.
  */
 export const NATURAL_CASES: Option[] = [
   { value: 'cmn', label: m.lang_cmn() },
@@ -215,7 +215,7 @@ export const NATURAL_CASES: Option[] = [
 ];
 
 /**
- * Programming language recognition options
+ * Programming language recognition options.
  */
 export const PROGRAMMING_CASES: Option[] = [
   { value: 'asm', label: 'Assembly' },
@@ -280,11 +280,11 @@ const findNaturalCase = memoize((_case: string) => NATURAL_CASES.find((c) => c.v
 const findProgrammingCase = memoize((_case: string) => PROGRAMMING_CASES.find((c) => c.value === _case));
 
 /**
- * Match the shortcut key action to be executed based on the text type
+ * Match the shortcut action to be executed based on the text type.
  *
  * @param text - text to match
  * @param rules - list of specified rules
- * @returns The matched rule object, returns `null` if no match is found
+ * @returns the matched rule object, returns `null` if no match is found
  */
 export async function match(text: string, rules: Rule[]): Promise<Rule | null> {
   console.debug(`Matching patterns: ${rules.map((r) => r.case || 'skip').join(', ')}`);
@@ -382,8 +382,9 @@ export async function match(text: string, rules: Rule[]): Promise<Rule | null> {
 }
 
 /**
- * Determine if the programming language detection result matches the target language
- * Referenced VS Code's recognition strategy, using dynamic threshold and confidence difference from adjacent positions to judge
+ * Determine if the programming language detection result matches the target language.
+ * Referenced VS Code's recognition strategy, using dynamic threshold and confidence difference from adjacent positions to judge.
+ *
  * https://github.com/microsoft/vscode/blob/main/src/vs/workbench/services/languageDetection/browser/languageDetectionWebWorker.ts
  *
  * @param targetId - target language ID
@@ -418,7 +419,7 @@ function matchProgrammingCase(targetId: string, results: ModelResult[]): boolean
 }
 
 /**
- * Determine if the selected text matches the custom model
+ * Determine if the selected text matches the custom model.
  *
  * @param model - custom model
  * @param text - text to match

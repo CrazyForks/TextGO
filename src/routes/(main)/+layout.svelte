@@ -19,18 +19,14 @@
   // operating system type
   const osType = type();
 
-  /**
-   * navigation menu item
-   */
+  // navigation menus
   const menus = [
     { text: m.histories(), icon: ClockCounterClockwise, path: resolve('/histories') },
     { text: m.shortcuts(), icon: Keyboard, path: resolve('/shortcuts') },
     { text: m.settings(), icon: GearSix, path: resolve('/settings') }
   ];
 
-  /**
-   * title bar bottom border display status
-   */
+  // whether to show title bar bottom border
   let titleBorder = $state(false);
   let sentinelElement: HTMLElement;
 
@@ -74,7 +70,9 @@
   onMount(() => {
     const unlisten = getCurrentWindow().onFocusChanged(({ payload: focused }) => {
       if (focused) {
-        // in some cases, after hiding and showing the window, an element in the page may unexpectedly get focus, which is canceled here
+        // in some cases, after hiding and showing the window,
+        // an element in the page may unexpectedly get focus,
+        // which is canceled here
         const activeElement = document.activeElement as HTMLElement;
         if (activeElement && activeElement !== document.body) {
           activeElement.blur();
@@ -87,7 +85,7 @@
   });
 
   onMount(() => {
-    // listen to shortcut key registration page events
+    // listen to navigation events from backend
     const unlisten = listen('goto-shortcuts', async () => {
       goto(resolve('/shortcuts'));
     });
@@ -100,7 +98,7 @@
 <main class="h-screen w-screen overflow-auto overscroll-none bg-base-300">
   <Title class="sticky top-0 z-101 bg-base-300/80 backdrop-blur-sm {titleBorder ? 'border-b' : ''}">
     {#snippet fallback()}
-      <!-- navigation menu -->
+      <!-- navigation menus -->
       <span class="flex gap-2 {osType === 'macos' ? 'mx-auto pl-16' : 'mr-auto pl-2'}">
         {#each menus as menu (menu.path)}
           {@const active = deLocalizeHref(page.url.pathname).startsWith(menu.path)}
@@ -120,7 +118,7 @@
           />
         {/each}
       </span>
-      <!-- theme toggle -->
+      <!-- theme toggler -->
       <label class="swap mr-2 swap-rotate opacity-50 transition-opacity hover:opacity-100">
         <input
           type="checkbox"
@@ -134,7 +132,7 @@
         <Moon class="swap-off size-5" />
         <Sun class="swap-on size-5" />
       </label>
-      <!-- gitHub link -->
+      <!-- GitHub link -->
       <button
         class="mr-4 cursor-pointer opacity-50 transition-opacity hover:opacity-100"
         onclick={() => openUrl('https://github.com/C5H12O5/TextGO')}

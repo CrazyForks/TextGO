@@ -27,14 +27,17 @@
   // operating system type
   const osType = type();
 
-  // calculate total number of rules
+  // total number of rules
   let totalRules = $derived(Object.values(shortcuts.current).reduce((sum, arr) => sum + arr.length, 0));
 
   // key to register
   let key: string = $state('');
 
-  // key registration popup
+  // key registration modal
   let keyModal: Modal;
+
+  // rule manager modal
+  let ruleManager: Rule | null = $state(null);
 
   // whether in input method composition state
   let compositing: boolean = false;
@@ -51,11 +54,8 @@
       })
   }));
 
-  // rule manager
-  let ruleManager: Rule | null = $state(null);
-
   /**
-   * Handle invalid input
+   * Handle invalid input.
    *
    * @param message - prompt message
    */
@@ -67,7 +67,7 @@
   }
 
   /**
-   * Check for duplicates
+   * Check for duplicates.
    *
    * @param value - input value
    */
@@ -80,7 +80,7 @@
   }
 
   /**
-   * Submit registration
+   * Submit registration.
    */
   async function submit() {
     // take only first character and convert to uppercase
@@ -100,7 +100,7 @@
   }
 
   /**
-   * Get script by action ID
+   * Get script by action ID.
    *
    * @param action - action ID
    */
@@ -110,7 +110,7 @@
   }
 
   /**
-   * Get prompt by action ID
+   * Get prompt by action ID.
    *
    * @param action - action ID
    */
@@ -198,7 +198,11 @@
               <!-- default type -->
               <ArrowArcRight class="size-5 shrink-0 opacity-30" />
               <span class="truncate opacity-30">{caseLabel}</span>
-            {:else if caseLabel}
+            {:else if !caseLabel}
+              <!-- invalid type -->
+              <Warning class="size-5 shrink-0 opacity-50" />
+              <span class="truncate opacity-50">{m.invalid_type()}</span>
+            {:else}
               <!-- type name -->
               {#if item.case.startsWith(MODEL_MARK)}
                 <Tensorflow class="h-5 shrink-0" />
@@ -211,10 +215,6 @@
                 <FingerprintSimple class="size-5 shrink-0 text-emphasis/60" />
               {/if}
               <span class="truncate text-base-content/80">{caseLabel}</span>
-            {:else}
-              <!-- invalid type -->
-              <Warning class="size-5 shrink-0 opacity-50" />
-              <span class="truncate opacity-50">{m.invalid_type()}</span>
             {/if}
           </div>
           <ArrowFatLineRight class="size-5 shrink-0 opacity-15" />
@@ -223,7 +223,11 @@
               <!-- default action -->
               <Browser class="size-5 shrink-0 opacity-30" />
               <span class="truncate opacity-30">{actionLabel}</span>
-            {:else if actionLabel}
+            {:else if !actionLabel}
+              <!-- invalid action -->
+              <Warning class="size-5 shrink-0 opacity-50" />
+              <span class="truncate opacity-50">{m.invalid_action()}</span>
+            {:else}
               <!-- action name -->
               {#if item.action.startsWith(SCRIPT_MARK)}
                 {@const script = getScript(item.action)}
@@ -244,10 +248,6 @@
                 <ActionIcon class="size-5 shrink-0 text-emphasis/60" />
               {/if}
               <span class="truncate text-base-content/80">{actionLabel}</span>
-            {:else}
-              <!-- invalid action -->
-              <Warning class="size-5 shrink-0 opacity-50" />
-              <span class="truncate opacity-50">{m.invalid_action()}</span>
             {/if}
           </div>
         {/snippet}

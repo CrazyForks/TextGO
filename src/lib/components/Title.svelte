@@ -2,17 +2,11 @@
   import type { Snippet } from 'svelte';
 
   export type TitleProps = {
-    /**
-     * Window title snippet
-     */
+    /** Window title snippet. */
     children?: Snippet;
-    /**
-     * Default title snippet
-     */
+    /** Default title snippet. */
     fallback?: Snippet;
-    /**
-     * Custom style class name
-     */
+    /** Custom style class name. */
     class?: string;
   };
 

@@ -1,11 +1,19 @@
-/** Classifier model prefix identifier */
+/**
+ * Classification model prefix.
+ */
 export const MODEL_MARK = 'model-';
 
-/** Regular expression prefix identifier */
+/**
+ * Regular expression prefix.
+ */
 export const REGEXP_MARK = 'regexp-';
 
-/** Script prefix identifier */
+/**
+ * Script prefix.
+ */
 export const SCRIPT_MARK = 'script-';
 
-/** Prompt prefix identifier */
+/**
+ * Prompt prefix.
+ */
 export const PROMPT_MARK = 'prompt-';

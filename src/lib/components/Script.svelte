@@ -3,7 +3,7 @@
   import type { Script } from '$lib/types';
 
   /**
-   * JavaScript code template
+   * JavaScript code template.
    */
   const JAVASCRIPT_TEMPLATE = `
 function process(data) {
@@ -14,7 +14,7 @@ function process(data) {
 `.trimStart();
 
   /**
-   * Python code template
+   * Python code template.
    */
   const PYTHON_TEMPLATE = `
 def process(data):
@@ -59,7 +59,7 @@ def process(data):
   };
 
   /**
-   * Save script to local storage
+   * Save script to persistent storage.
    *
    * @param form - form element
    */

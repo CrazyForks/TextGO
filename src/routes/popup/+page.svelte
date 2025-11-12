@@ -12,10 +12,10 @@
   // operating system type
   const osType = type();
 
-  // shortcut key trigger record
+  // shortcut trigger record
   let entry: Entry | null = $state(null);
 
-  // codeMirror instance
+  // CodeMirror instance
   let codeMirror: CodeMirror | null = $state(null);
 
   // whether in prompt mode
@@ -24,7 +24,7 @@
   // streaming status
   let streaming: boolean = $state(false);
 
-  // ollama instance
+  // Ollama instance
   let ollama = new Ollama();
   $effect(() => {
     ollama = new Ollama({ host: ollamaHost.current || undefined });
@@ -40,7 +40,7 @@
   let scrollInterval: ReturnType<typeof setInterval> | null = $state(null);
 
   /**
-   * start conversation
+   * Start conversation.
    */
   async function chat() {
     if (streaming || !entry || !entry.result || !entry.model || entry.actionType !== 'prompt') {
@@ -92,7 +92,7 @@
   }
 
   /**
-   * abort conversation
+   * Abort conversation.
    */
   function abort() {
     autoScroll && stopAutoScroll();
@@ -101,7 +101,7 @@
   }
 
   /**
-   * start auto scroll
+   * Start auto scroll.
    */
   function startAutoScroll() {
     if (scrollInterval) {
@@ -119,7 +119,7 @@
   }
 
   /**
-   * stop auto scroll
+   * Stop auto scroll.
    */
   function stopAutoScroll() {
     if (scrollInterval) {

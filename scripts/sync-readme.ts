@@ -9,9 +9,9 @@ const PACKAGE_JSON = join(PROJECT_ROOT, 'package.json');
 const CARGO_TOML = join(PROJECT_ROOT, 'src-tauri', 'Cargo.toml');
 
 /**
- * Get Svelte version number
+ * Get Svelte version number.
  *
- * @return Version string
+ * @return version string
  */
 function getSvelteVersion(): string {
   const packageJson = JSON.parse(readFileSync(PACKAGE_JSON, 'utf-8'));
@@ -23,9 +23,9 @@ function getSvelteVersion(): string {
 }
 
 /**
- * Get Tauri version number
+ * Get Tauri version number.
  *
- * @return Version string
+ * @return version string
  */
 function getTauriVersion(): string {
   const cargoToml = readFileSync(CARGO_TOML, 'utf-8');
@@ -37,7 +37,7 @@ function getTauriVersion(): string {
 }
 
 /**
- * Update all README files in project root directory
+ * Update all README files in project root directory.
  */
 function updateReadme() {
   const svelteVersion = getSvelteVersion();

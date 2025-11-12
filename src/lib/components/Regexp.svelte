@@ -32,7 +32,7 @@
   };
 
   /**
-   * Save regular expression to local storage
+   * Save regular expression to persistent storage.
    *
    * @param form - form element
    */

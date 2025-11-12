@@ -1,24 +1,24 @@
 use tauri::{Emitter, Manager, WebviewWindow};
 
-/// show main window
+/// Show main window.
 #[tauri::command]
 pub fn show_main_window(app: tauri::AppHandle) {
     show_window(&app, "main");
 }
 
-/// hide main window
+/// Hide main window.
 #[tauri::command]
 pub fn hide_main_window(app: tauri::AppHandle) {
     hide_window(&app, "main");
 }
 
-/// toggle main window visibility
+/// Toggle main window visibility.
 #[tauri::command]
 pub fn toggle_main_window(app: tauri::AppHandle) {
     toggle_window(&app, "main");
 }
 
-/// navigate to shortcut settings page
+/// Navigate to shortcut registration page.
 #[tauri::command]
 pub fn goto_shortcuts(app: tauri::AppHandle) {
     if let Some(window) = show_window(&app, "main") {
@@ -27,7 +27,7 @@ pub fn goto_shortcuts(app: tauri::AppHandle) {
     }
 }
 
-/// show and focus window
+/// Show and focus window.
 pub fn show_window(app: &tauri::AppHandle, label: &str) -> Option<WebviewWindow> {
     if let Some(window) = app.get_webview_window(label) {
         if window.is_minimized().unwrap_or(false) {
@@ -46,7 +46,7 @@ pub fn show_window(app: &tauri::AppHandle, label: &str) -> Option<WebviewWindow>
     }
 }
 
-/// hide window
+/// Hide window.
 pub fn hide_window(app: &tauri::AppHandle, label: &str) -> Option<WebviewWindow> {
     if let Some(window) = app.get_webview_window(label) {
         let _ = window.hide();
@@ -61,7 +61,7 @@ pub fn hide_window(app: &tauri::AppHandle, label: &str) -> Option<WebviewWindow>
     }
 }
 
-/// toggle window visibility
+/// Toggle window visibility.
 pub fn toggle_window(app: &tauri::AppHandle, label: &str) -> Option<WebviewWindow> {
     if let Some(window) = app.get_webview_window(label) {
         // check if window is minimized

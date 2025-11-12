@@ -39,7 +39,7 @@
   };
 
   /**
-   * Save model information to local storage
+   * Save model information to persistent storage.
    *
    * @param form - form element
    */

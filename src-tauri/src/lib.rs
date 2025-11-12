@@ -14,16 +14,16 @@ use tauri::{Emitter, Manager, RunEvent, WindowEvent};
 use tauri_plugin_global_shortcut::{Shortcut, ShortcutEvent, ShortcutState};
 use tauri_plugin_log::{Target, TargetKind};
 
-// Global, shared Enigo wrapped in a Mutex
-// The Enigo struct should be created once and then reused for efficiency
+// global, shared Enigo wrapped in a Mutex
+// the Enigo struct should be created once and then reused for efficiency
 pub static ENIGO: LazyLock<Mutex<Result<Enigo, enigo::NewConError>>> =
     LazyLock::new(|| Mutex::new(Enigo::new(&Settings::default())));
 
-// Global registered shortcuts mapping
+// global registered shortcuts mapping
 pub static REGISTERED_SHORTCUTS: LazyLock<Mutex<HashMap<String, String>>> =
     LazyLock::new(|| Mutex::new(HashMap::new()));
 
-/// Application setup function
+/// Application setup function.
 fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     let app_handle = app.app_handle().clone();
 
@@ -37,7 +37,7 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     )
     .ok();
 
-    // get main window
+    // get main window and set close behavior
     if let Some(window) = app.get_webview_window("main") {
         let app_handle = window.app_handle().clone();
 
@@ -45,15 +45,13 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
         #[cfg(target_os = "macos")]
         let _ = app_handle.set_dock_visibility(false);
 
-        // set window close behavior, hide instead of quit on close
+        // hide main window on close instead of quitting
         window.on_window_event(move |event| {
             if let WindowEvent::CloseRequested { api, .. } = event {
-                // prevent default close behavior
                 api.prevent_close();
-                // hide window to system tray
                 if let Some(window) = app_handle.get_webview_window("main") {
                     let _ = window.hide();
-                    // when hiding window, also hide dock icon
+                    // also hide dock icon
                     #[cfg(target_os = "macos")]
                     let _ = app_handle.set_dock_visibility(false);
                 }
@@ -64,12 +62,10 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     // get popup window and set close behavior
     if let Some(window) = app.get_webview_window("popup") {
         let app_handle = window.app_handle().clone();
-        // set popup window close behavior, hide instead of destroy on close
+        // hide popup window on close instead of quitting
         window.on_window_event(move |event| {
             if let WindowEvent::CloseRequested { api, .. } = event {
-                // prevent default close behavior
                 api.prevent_close();
-                // hide window instead of destroy
                 if let Some(popup) = app_handle.get_webview_window("popup") {
                     let _ = popup.hide();
                 }
@@ -80,7 +76,7 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-/// Runtime event handler function
+/// Runtime event handler function.
 #[allow(unused_variables)]
 fn handle_run_event(app: &tauri::AppHandle, event: RunEvent) {
     // handle Reopen event on macOS
@@ -97,7 +93,7 @@ fn handle_run_event(app: &tauri::AppHandle, event: RunEvent) {
     }
 }
 
-/// Global shortcut handler function
+/// Global shortcut handler function.
 fn handle_shortcut_event(app: &tauri::AppHandle, shortcut: &Shortcut, event: ShortcutEvent) {
     if event.state() == ShortcutState::Pressed {
         // extract last character from shortcut.key formatted string

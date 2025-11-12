@@ -12,94 +12,54 @@
   import * as prettier from 'prettier/standalone';
 
   export type CodeMirrorProps = Partial<{
-    /**
-     * Document language
-     */
+    /** Document language. */
     language: LanguageSupport | Language | null;
-    /**
-     * Document content
-     */
+    /** Document content. */
     document: string;
-    /**
-     * Placeholder text
-     */
+    /** Placeholder text. */
     placeholder: string;
-    /**
-     * Tab size in spaces
-     */
+    /** Tab size in spaces. */
     tabSize: number;
-    /**
-     * Maximum line length
-     */
+    /** Maximum line length. */
     lineLength: number;
-    /**
-     * Whether the editor is read-only
-     */
+    /** Whether the editor is read-only. */
     readOnly: boolean;
-    /**
-     * Whether to use dark theme
-     */
+    /** Whether to use dark theme. */
     darkMode: boolean | 'auto';
 
-    /**
-     * Container class name
-     */
+    /** Container class name. */
     class: string;
-    /**
-     * Panel class name
-     */
+    /** Panel class name. */
     panelClass: string;
-    /**
-     * Editor class name
-     */
+    /** Editor class name. */
     editorClass: string;
-    /**
-     * Minimum height of editor
-     */
+    /** Minimum height of editor. */
     minHeight: string | null;
-    /**
-     * Maximum height of editor
-     */
+    /** Maximum height of editor. */
     maxHeight: string | null;
-    /**
-     * Minimum width of editor
-     */
+    /** Minimum width of editor. */
     minWidth: string | null;
-    /**
-     * Maximum width of editor
-     */
+    /** Maximum width of editor. */
     maxWidth: string | null;
 
-    /**
-     * Title of enlarged view
-     */
+    /** Title of enlarged view. */
     title: string;
-    /**
-     * Whether to enable enlarged view feature
-     */
+    /** Whether to enable enlarged view feature. */
     enlarger: boolean;
-    /**
-     * Whether to show copy button in panel
-     */
+    /** Whether to show copy button in panel. */
     copier: boolean;
-    /**
-     * Whether to show reset button in panel
-     */
+    /** Whether to show reset button in panel. */
     resetter: boolean;
-    /**
-     * Whether to show format button in panel
-     */
+    /** Whether to show format button in panel. */
     formatter: boolean;
-    /**
-     * Callback function when document changes
-     */
+    /** Callback function when document changes. */
     onchange: (doc: string) => void;
   }>;
 
   /**
-   * Get language name from language support object
+   * Get language name from language support object.
    *
-   * @param language - Language support object
+   * @param language - language support object
    */
   function getLanguageName(language: LanguageSupport | Language | null | undefined): string {
     let name = null;
@@ -122,10 +82,10 @@
   }
 
   /**
-   * Replace document in editor view
+   * Replace document in editor view.
    *
-   * @param view - Editor view
-   * @param newDoc - New document
+   * @param view - editor view
+   * @param newDoc - new document
    */
   function replaceDocument(view: EditorView, newDoc: string | undefined) {
     // https://codemirror.net/examples/change/
@@ -135,12 +95,12 @@
   }
 
   /**
-   * Format document based on language type
+   * Format document based on language type.
    *
-   * @param view - Editor view
-   * @param language - Document language
-   * @param tabSize - Tab size in spaces
-   * @param lineLength - Maximum line length
+   * @param view - editor view
+   * @param language - document language
+   * @param tabSize - tab size in spaces
+   * @param lineLength - maximum line length
    */
   async function formatDocument(view: EditorView, language: string, tabSize: number, lineLength: number) {
     const formatOptions: Record<string, Options> = {
@@ -169,7 +129,7 @@
   }
 
   /**
-   * Translation of phrases in editor
+   * Translation of phrases in editor.
    */
   const phrases: Record<string, string> = {
     // search related translations
@@ -261,28 +221,28 @@
   const languageName = getLanguageName(language);
 
   /**
-   * Reset document content
+   * Reset document content.
    */
   export function reset() {
     replaceDocument(editorView, originalDoc);
   }
 
   /**
-   * Format document content
+   * Format document content.
    */
   export function format() {
     formatDocument(editorView, languageName, tabSize, lineLength);
   }
 
   /**
-   * Copy document content to clipboard
+   * Copy document content to clipboard.
    */
   export function copy() {
     document && navigator.clipboard && navigator.clipboard.writeText(document);
   }
 
   /**
-   * Basic extension set for editor
+   * Basic extension set for editor.
    *
    * https://github.com/codemirror/basic-setup
    */
@@ -317,7 +277,7 @@
   ];
 
   /**
-   * Extension for styling editor
+   * Extension for styling editor.
    *
    * https://codemirror.net/examples/styling/
    */
@@ -354,12 +314,12 @@
   ];
 
   /**
-   * Extension for specified language support
+   * Extension for specified language support.
    */
   const languageSupport: Extension = language ? language : [];
 
   /**
-   * Extension for listening to document changes
+   * Extension for listening to document changes.
    */
   const updateListener: Extension = EditorView.updateListener.of((update) => {
     if (update.docChanged) {
@@ -369,14 +329,14 @@
   });
 
   /**
-   * Extension for handling tab key
+   * Extension for handling tab key.
    *
    * https://codemirror.net/examples/tab/
    */
   const tabKeyHandler: Extension = [keymap.of([indentWithTab]), indentUnit.of(' '.repeat(tabSize))];
 
   /**
-   * Extension for editor theme
+   * Extension for editor theme.
    */
   const getTheme = () => (darkMode === true || (darkMode === 'auto' && theme.current !== 'light') ? oneDark : []);
   const editorTheme = new Compartment();
@@ -390,7 +350,7 @@
   });
 
   /**
-   * Extension for making editor read-only
+   * Extension for making editor read-only.
    */
   const readOnlyHandler: Extension = (() => {
     if (readOnly) {
@@ -401,7 +361,7 @@
   })();
 
   /**
-   * Extension for enabling placeholder text
+   * Extension for enabling placeholder text.
    */
   const placeholderHandler: Extension = _placeholder ? placeholder(_placeholder) : [];
 

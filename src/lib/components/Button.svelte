@@ -4,65 +4,37 @@
   import type { MouseEventHandler } from 'svelte/elements';
 
   export type ButtonProps = Partial<{
-    /**
-     * Button content snippet
-     */
+    /** Button content snippet. */
     children: Snippet;
-    /**
-     * Button icon
-     */
+    /** Button icon. */
     icon: Component<IconComponentProps>;
-    /**
-     * Icon weight
-     */
+    /** Icon weight. */
     weight: 'thin' | 'light' | 'regular' | 'bold' | 'fill' | 'duotone';
-    /**
-     * Button text
-     */
+    /** Button text. */
     text: string;
-    /**
-     * Button size
-     */
+    /** Button size. */
     size: keyof typeof PRESETS;
-    /**
-     * Whether to use subtle button style
-     */
+    /** Whether to use subtle button style. */
     subtle: boolean;
-    /**
-     * Whether to make the button square
-     */
+    /** Whether to make the button square. */
     square: boolean;
-    /**
-     * Whether to add border to button
-     */
+    /** Whether to add border to button. */
     border: boolean;
-    /**
-     * Whether to add shadow to button
-     */
+    /** Whether to add shadow to button. */
     shadow: boolean;
-    /**
-     * Whether to show loading animation
-     */
+    /** Whether to show loading animation. */
     loading: boolean | null;
-    /**
-     * Whether to disable button
-     */
+    /** Whether to disable button. */
     disabled: boolean;
-    /**
-     * Custom style class name
-     */
+    /** Custom style class name. */
     class: string;
     iconClass: string;
     textClass: string;
-    /**
-     * Button click event callback
-     */
+    /** Button click event callback. */
     onclick: MouseEventHandler<HTMLButtonElement>;
   }>;
 
-  /**
-   * Button preset sizes
-   */
+  // preset sizes
   const PRESETS = {
     xs: {
       size: '1.5rem',

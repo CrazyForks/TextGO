@@ -4,33 +4,19 @@
   import type { ChangeEventHandler } from 'svelte/elements';
 
   export type SelectProps = Partial<{
-    /**
-     * Option content snippet
-     */
+    /** Option content snippet. */
     children: Snippet;
-    /**
-     * Option list
-     */
+    /** Option list. */
     options: Option[];
-    /**
-     * Selected value
-     */
+    /** Selected value. */
     value: OptionValue;
-    /**
-     * Placeholder text
-     */
+    /** Placeholder text. */
     placeholder: string;
-    /**
-     * Whether to disable select box
-     */
+    /** Whether to disable select box. */
     disabled: boolean;
-    /**
-     * Custom style class name
-     */
+    /** Custom style class name. */
     class: string;
-    /**
-     * Callback function when selected value changes
-     */
+    /** Callback function when selected value changes. */
     onchange: ChangeEventHandler<HTMLSelectElement>;
   }>;
 </script>

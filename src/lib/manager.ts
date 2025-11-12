@@ -7,7 +7,7 @@ import { listen } from '@tauri-apps/api/event';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 
 /**
- * Shortcut key manager class
+ * Shortcut manager class.
  */
 export class Manager {
   constructor() {
@@ -15,7 +15,7 @@ export class Manager {
   }
 
   /**
-   * Initialize event listeners
+   * Initialize event listeners.
    */
   private async initialize(): Promise<void> {
     if (getCurrentWindow().label === 'main') {
@@ -32,7 +32,7 @@ export class Manager {
   }
 
   /**
-   * Handle shortcut event
+   * Handle shortcut event.
    *
    * @param key - triggered shortcut key
    * @param selection - selected text
@@ -63,7 +63,7 @@ export class Manager {
   }
 
   /**
-   * Register rule
+   * Register rule.
    *
    * @param rule - rule object
    */
@@ -87,7 +87,7 @@ export class Manager {
   }
 
   /**
-   * Unregister rule
+   * Unregister rule.
    *
    * @param rule - rule object
    */

@@ -9,11 +9,11 @@ const POPUP_WINDOW_WIDTH: i32 = 400;
 // popup window height
 const POPUP_WINDOW_HEIGHT: i32 = 300;
 // popup window offset
-const POPUP_MOUSE_OFFSET: i32 = 10;
+const POPUP_WINDOW_OFFSET: i32 = 10;
 // bottom safe area height
 const POPUP_SAFE_AREA_BOTTOM: i32 = 80;
 
-/// Show popup and position it near the mouse
+/// Show popup and position it near the mouse.
 #[tauri::command]
 pub fn show_popup(app: tauri::AppHandle, payload: String) -> Result<(), AppError> {
     // get current mouse position
@@ -47,8 +47,8 @@ pub fn show_popup(app: tauri::AppHandle, payload: String) -> Result<(), AppError
 
         // set adjusted window position
         window.set_position(tauri::Position::Logical(tauri::LogicalPosition {
-            x: (mouse_x + POPUP_MOUSE_OFFSET).clamp(min_x, max_x) as f64,
-            y: (mouse_y + POPUP_MOUSE_OFFSET).clamp(min_y, max_y) as f64,
+            x: (mouse_x + POPUP_WINDOW_OFFSET).clamp(min_x, max_x) as f64,
+            y: (mouse_y + POPUP_WINDOW_OFFSET).clamp(min_y, max_y) as f64,
         }))?;
 
         // add some delay to prevent flickering

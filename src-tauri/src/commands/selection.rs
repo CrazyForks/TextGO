@@ -7,7 +7,7 @@ use log::warn;
 use std::time::Duration;
 use tokio::time::sleep;
 
-/// Get selected text
+/// Get selected text.
 #[tauri::command]
 pub async fn get_selection(app: tauri::AppHandle) -> Result<String, AppError> {
     // try using platform native API to get selected text first
@@ -22,7 +22,7 @@ pub async fn get_selection(app: tauri::AppHandle) -> Result<String, AppError> {
     get_selection_fallback(app).await
 }
 
-/// Get selected text through clipboard
+/// Get selected text through clipboard.
 async fn get_selection_fallback(app: tauri::AppHandle) -> Result<String, AppError> {
     // create clipboard context
     let clipboard = ClipboardContext::new()
@@ -73,7 +73,7 @@ async fn get_selection_fallback(app: tauri::AppHandle) -> Result<String, AppErro
     Ok(selected_text)
 }
 
-/// send copy shortcut key
+/// Send copy shortcut key.
 fn send_copy_keys() -> Result<(), AppError> {
     let mut enigo_guard = ENIGO.lock()?;
     let enigo = enigo_guard.as_mut()?;
@@ -94,7 +94,7 @@ fn send_copy_keys() -> Result<(), AppError> {
     Ok(())
 }
 
-/// backup clipboard contents, execute operation, then restore clipboard contents
+/// Backup clipboard contents, execute operation, then restore clipboard contents.
 async fn with_clipboard_backup<F, Fut, T>(clipboard: &ClipboardContext, operation: F) -> T
 where
     F: FnOnce() -> Fut,

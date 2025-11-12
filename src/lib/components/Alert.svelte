@@ -3,51 +3,33 @@
   import type { Component } from 'svelte';
 
   export type Message = {
-    /**
-     * Alert message level
-     */
+    /** Alert message level. */
     level?: 'info' | 'success' | 'warning' | 'error';
-    /**
-     * Alert message content
-     */
+    /** Alert message content. */
     message: string;
-    /**
-     * Alert display time (milliseconds)
-     */
+    /** Alert display time (milliseconds). */
     timeout?: number;
-    /**
-     * Whether alert message is unique
-     */
+    /** Whether alert message is unique. */
     unique?: boolean;
   };
 
   export type AlertProps = {
-    /**
-     * Whether to display in dialog
-     */
+    /** Whether to display in dialog. */
     dialog?: boolean;
-    /**
-     * Maximum number of alerts to display
-     */
+    /** Maximum number of alerts to display. */
     maxSize?: number;
-    /**
-     * Default alert display time (milliseconds)
-     */
+    /** Default alert display time (milliseconds). */
     timeout?: number;
   };
 
-  /**
-   * Current dialog identifier
-   */
+  // current dialog identifier
   let _dialogId: string = $state('');
 
-  /**
-   * Reactive storage for current message
-   */
+  // reactive storage for current message
   let message: Message | null = $state(null);
 
   /**
-   * Display alert message
+   * Display alert message.
    *
    * @param msg - alert message instance
    */
@@ -58,9 +40,7 @@
     message = msg;
   }
 
-  /**
-   * Alert level to color and icon mapping
-   */
+  // mapping of alert levels to colors and icons
   const mappings: Record<string, { color: string; icon: Component<IconComponentProps> }> = {
     info: { color: 'var(--color-info)', icon: Info },
     success: { color: 'var(--color-success)', icon: CheckCircle },
