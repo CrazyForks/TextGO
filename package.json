@@ -58,8 +58,8 @@
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.1.17",
     "@tauri-apps/cli": "^2.9.4",
-    "@types/node": "^24.10.0",
-    "daisyui": "^5.4.7",
+    "@types/node": "^24.10.1",
+    "daisyui": "^5.5.0",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-svelte": "^3.13.0",
@@ -67,12 +67,12 @@
     "prettier": "^3.6.2",
     "prettier-plugin-svelte": "^3.4.0",
     "prettier-plugin-tailwindcss": "^0.7.1",
-    "svelte": "^5.43.5",
-    "svelte-check": "^4.3.3",
+    "svelte": "^5.43.6",
+    "svelte-check": "^4.3.4",
     "tailwind-scrollbar": "^4.0.2",
     "tailwindcss": "^4.1.17",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.46.3",
+    "typescript-eslint": "^8.46.4",
     "vite": "^7.2.2"
   }
 }
