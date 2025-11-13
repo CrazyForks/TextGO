@@ -2,12 +2,12 @@
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
-  import { Button } from '$lib/components';
+  import { Button, Title } from '$lib/components';
   import { formatISO8601 } from '$lib/helpers';
   import { m } from '$lib/paraglide/messages';
   import { deLocalizeHref } from '$lib/paraglide/runtime';
   import { entries } from '$lib/stores.svelte';
-  import { Trash } from 'phosphor-svelte';
+  import { ArrowLeft, ClockCounterClockwise, Trash } from 'phosphor-svelte';
   import { type Snippet } from 'svelte';
   import { flip } from 'svelte/animate';
 
@@ -17,6 +17,19 @@
   const SIDEBAR_WIDTH = '13.5rem';
 </script>
 
+<Title>
+  <Button
+    size="sm"
+    icon={ArrowLeft}
+    weight="bold"
+    class="border-none gradient bg-base-300"
+    onclick={() => goto(resolve('/shortcuts'))}
+  />
+  <div class="pointer-events-none mx-auto flex items-center gap-1">
+    <ClockCounterClockwise class="size-5" />
+    <span>{m.histories()}</span>
+  </div>
+</Title>
 <div class="relative h-(--app-h) rounded-container p-0">
   <div class="absolute inset-y-0 left-0 flex flex-col border-r" style:width={SIDEBAR_WIDTH}>
     <div class="menu-title pt-3 text-xs tracking-wide text-base-content/60">{m.history_records()}</div>

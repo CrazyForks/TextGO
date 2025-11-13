@@ -32,7 +32,7 @@
   "text_case": "Text Case",
   "text_case_convert": "Convert Case",
   "text_processing": "Text Processing",
-  "shortcuts": "Shortcuts",
+  "shortcuts": "Global Shortcuts",
   "shortcuts_count": "Registered Shortcuts Count",
   "register_shortcut": "Register Shortcut",
   "register_key_tip": "Please enter a letter or number key to register",

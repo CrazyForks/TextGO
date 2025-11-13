@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { goto } from '$app/navigation';
+  import { resolve } from '$app/paths';
   import { Classifier } from '$lib/classifier';
   import {
     Button,
@@ -10,7 +12,8 @@
     Regexp,
     Script as ScriptModal,
     Select,
-    Setting
+    Setting,
+    Title
   } from '$lib/components';
   import { buildFormSchema } from '$lib/constraint';
   import { JavaScript, LMStudio, Ollama, Python, Regexp as RegexpIcon, Tensorflow } from '$lib/icons';
@@ -30,6 +33,7 @@
   import { invoke } from '@tauri-apps/api/core';
   import {
     ArrowFatLineRight,
+    ArrowLeft,
     ClockCounterClockwise,
     Code,
     Cube,
@@ -91,6 +95,19 @@
   let promptOptions: Modal;
 </script>
 
+<Title>
+  <Button
+    size="sm"
+    icon={ArrowLeft}
+    weight="bold"
+    class="border-none gradient bg-base-300"
+    onclick={() => goto(resolve('/shortcuts'))}
+  />
+  <div class="pointer-events-none mx-auto flex items-center gap-1">
+    <GearSix class="size-5" />
+    <span>{m.settings()}</span>
+  </div>
+</Title>
 <div class="flex flex-col gap-2">
   <Setting icon={FingerprintSimple} title={m.text_type()} tip={m.text_type_tip()}>
     <List

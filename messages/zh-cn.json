@@ -32,7 +32,7 @@
   "text_case": "命名格式",
   "text_case_convert": "格式转换",
   "text_processing": "文本处理",
-  "shortcuts": "快捷键",
+  "shortcuts": "全局快捷键",
   "shortcuts_count": "已注册快捷键组数量",
   "register_shortcut": "注册快捷键组",
   "register_key_tip": "请输入要注册的字母或数字键",

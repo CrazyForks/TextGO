@@ -10,13 +10,19 @@
     class?: string;
   };
 
+  // current title snippet
   let title: Snippet | null = $state(null);
 </script>
 
 <script lang="ts">
+  import { type } from '@tauri-apps/plugin-os';
   import { onMount } from 'svelte';
+  import { fly } from 'svelte/transition';
 
   let { children, fallback, class: _class }: TitleProps = $props();
+
+  // operating system type
+  const osType = type();
 
   onMount(() => {
     if (children) {
@@ -29,11 +35,15 @@
 </script>
 
 {#if !children}
-  <div class="flex h-11 shrink-0 items-center justify-center select-none {_class}" data-tauri-drag-region>
+  <div class="px-4 select-none {osType === 'macos' ? 'pl-20 [&_.mx-auto]:pr-16' : ''} {_class}" data-tauri-drag-region>
     {#if title}
-      {@render title()}
+      <div class="flex h-10 items-center" in:fly={{ x: 50, duration: 150 }} data-tauri-drag-region>
+        {@render title()}
+      </div>
     {:else if fallback}
-      {@render fallback()}
+      <div class="flex h-10 items-center" in:fly={{ x: -50, duration: 150 }} data-tauri-drag-region>
+        {@render fallback()}
+      </div>
     {/if}
   </div>
 {/if}

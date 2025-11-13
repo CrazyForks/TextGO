@@ -23,7 +23,7 @@
         "skipTaskbar": true,
         "hiddenTitle": true,
         "titleBarStyle": "Overlay",
-        "trafficLightPosition": { "x": 16, "y": 20 }
+        "trafficLightPosition": { "x": 16, "y": 18 }
       },
       {
         "label": "popup",
