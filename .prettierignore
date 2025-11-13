@@ -9,6 +9,7 @@ bun.lockb
 build/
 .svelte-kit/
 src-tauri/target/
+src-tauri/gen/
 
 # Static Assets
 static/
