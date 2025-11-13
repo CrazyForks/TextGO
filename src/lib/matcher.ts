@@ -185,6 +185,12 @@ export const TEXT_CASES: Option[] = [
     pattern: /^[a-z0-9]+(?:-[a-z0-9]+)+$/
   },
   {
+    value: 'start_case',
+    label: m.start_case(),
+    icon: TextAa,
+    pattern: /^[A-Z][a-z0-9]*(?: [A-Z][a-z0-9]+)+$/
+  },
+  {
     value: 'lower_case',
     label: m.lower_case(),
     icon: TextAa,
@@ -195,6 +201,12 @@ export const TEXT_CASES: Option[] = [
     label: m.upper_case(),
     icon: TextAa,
     pattern: /^(?=.*[A-Z])[A-Z0-9]+(?: [A-Z0-9]+)*$/
+  },
+  {
+    value: 'constant_case',
+    label: m.constant_case(),
+    icon: TextAa,
+    pattern: /^[A-Z0-9]+(?:_[A-Z0-9]+)+$/
   }
 ];
 

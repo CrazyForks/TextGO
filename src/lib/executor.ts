@@ -8,6 +8,7 @@ import { memoize } from 'es-toolkit/function';
 import {
   camelCase,
   capitalize,
+  constantCase,
   deburr,
   escape,
   kebabCase,
@@ -15,6 +16,7 @@ import {
   pascalCase,
   reverseString,
   snakeCase,
+  startCase,
   trim,
   trimEnd,
   trimStart,
@@ -115,6 +117,12 @@ export const CONVERT_ACTIONS: Processor[] = [
     process: kebabCase
   },
   {
+    value: 'start_case',
+    label: m.start_case(),
+    icon: TextAa,
+    process: startCase
+  },
+  {
     value: 'lower_case',
     label: m.lower_case(),
     icon: TextAa,
@@ -125,6 +133,12 @@ export const CONVERT_ACTIONS: Processor[] = [
     label: m.upper_case(),
     icon: TextAa,
     process: upperCase
+  },
+  {
+    value: 'constant_case',
+    label: m.constant_case(),
+    icon: TextAa,
+    process: constantCase
   }
 ];
 

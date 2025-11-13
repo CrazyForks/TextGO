@@ -23,7 +23,7 @@
     <div class="h-full overflow-y-auto">
       <ul class="menu w-full gap-1.5">
         {#each entries.current as entry, index (entry.id)}
-          {@const href = `/histories/${entry.id}`}
+          {@const href = resolve(`/histories/${entry.id}`)}
           {@const active = deLocalizeHref(page.url.pathname) === href}
           <li animate:flip={{ duration: 200 }}>
             <a {href} class="group gap-1 rounded-md px-1.5 {active ? 'glass bg-emphasis text-neutral-content' : ''}">
