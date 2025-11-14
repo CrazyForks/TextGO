@@ -100,7 +100,7 @@
   }
 </script>
 
-<Modal icon={Sphere} title="{modelId ? m.update() : m.add()}{m.classification_model()}" bind:this={modelModal}>
+<Modal icon={Sphere} title="{modelId ? m.update() : m.add()}{m.model()}" bind:this={modelModal}>
   <form
     method="post"
     use:enhance={({ formElement, cancel }) => {

@@ -13,7 +13,7 @@
     'Noto Sans Variable', 'Noto Sans SC Variable', 'ui-sans-serif', 'system-ui', 'sans-serif', 'Apple Color Emoji',
     'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
-  --app-h: calc(100vh - 3.35rem);
+  --app-h: calc(100vh - 3.25rem);
 
   --color-border: color-mix(in oklab, var(--color-base-content) 15%, transparent);
   --color-surface: color-mix(in oklab, var(--color-primary) 30%, var(--color-base-content) 70%);

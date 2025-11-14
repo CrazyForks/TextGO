@@ -35,7 +35,7 @@
 </script>
 
 {#if !children}
-  <div class="px-4 select-none {osType === 'macos' ? 'pl-20 [&_.mx-auto]:pr-16' : ''} {_class}" data-tauri-drag-region>
+  <div class="px-4 select-none {osType === 'macos' ? 'pl-22 [&_.mx-auto]:pr-18' : ''} {_class}" data-tauri-drag-region>
     {#if title}
       <div class="flex h-10 items-center" in:fly={{ x: 50, duration: 150 }} data-tauri-drag-region>
         {@render title()}
