@@ -35,7 +35,7 @@
     const options: Option[] = [{ value: '', label: m.skip() }];
     // classification model
     if (models.current && models.current.length > 0) {
-      options.push({ value: '--model--', label: `-- ${m.classification_model()} --`, disabled: true });
+      options.push({ value: '--model--', label: `-- ${m.model()} --`, disabled: true });
       for (const model of models.current) {
         options.push({ value: MODEL_MARK + model.id, label: model.id });
       }

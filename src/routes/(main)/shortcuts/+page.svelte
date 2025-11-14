@@ -133,7 +133,7 @@
     <span class="pl-1 text-sm opacity-60">
       {m.shortcuts_count()}: {Object.keys(shortcuts.current).length}
       {#if totalRules > 0}
-        <span class="text-xs tracking-wider opacity-50">({totalRules}{m.rules_count()})</span>
+        <span class="text-xs tracking-wider opacity-50">({m.rules_count({ count: totalRules })})</span>
       {/if}
     </span>
     <button class="btn text-sm btn-sm btn-submit" onclick={() => keyModal.show()}>
@@ -184,9 +184,9 @@
           <Sparkle class="mx-1 size-4 opacity-60" />
           <span class="text-sm tracking-wide opacity-60">
             {#if shortcuts.current[key].length > 0}
-              {shortcuts.current[key].length}{m.rules_count()}
+              {m.rules_count({ count: shortcuts.current[key].length })}
             {:else}
-              {m.no_rules()}
+              {m.rules_empty()}
             {/if}
           </span>
         {/snippet}

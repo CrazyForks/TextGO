@@ -79,10 +79,10 @@
     <span class="flex items-center gap-1 text-base-content/80">
       {#if icon}
         {@const Icon = icon}
-        <Icon class="mx-1 size-4" />
+        <Icon class="mx-1 size-4 opacity-60" />
       {/if}
       {#if typeof title === 'string'}
-        <span class="text-sm tracking-wide">{title}</span>
+        <span class="text-sm tracking-wide opacity-60">{title}</span>
       {:else}
         {@render title()}
       {/if}
@@ -159,14 +159,7 @@
         }}
       />
       {#if moreOptions}
-        <Button
-          icon={DotsThree}
-          weight="bold"
-          text={m.more_options()}
-          onclick={() => {
-            moreOptions?.();
-          }}
-        />
+        <Button icon={DotsThree} weight="bold" text={m.more_options()} onclick={() => moreOptions?.()} />
       {/if}
     </span>
   </div>

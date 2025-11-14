@@ -85,8 +85,8 @@
   <Title class="sticky top-0 z-101 bg-base-300/80 backdrop-blur-sm {titleBorder ? 'border-b' : ''}">
     {#snippet fallback()}
       <!-- shortcuts -->
-      <div class="pointer-events-none flex items-center gap-2 rounded-field gradient bg-base-300 px-3 py-0.5">
-        <Keyboard class="size-6" />
+      <div class="pointer-events-none flex items-center gap-2 rounded-field gradient bg-base-300 px-2 py-0.5">
+        <Keyboard class="size-6 opacity-60" />
         <span class="text-sm tracking-wide">{m.shortcuts()}</span>
       </div>
       <div class="ml-auto flex items-center gap-2">
