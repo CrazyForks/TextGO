@@ -205,6 +205,10 @@ print(result if isinstance(result, str) else json.dumps(result, ensure_ascii=Fal
             #[cfg(target_os = "windows")]
             command.creation_flags(CREATE_NO_WINDOW);
 
+            // set UTF-8 encoding for Python on Windows
+            #[cfg(target_os = "windows")]
+            command.env("PYTHONIOENCODING", "utf-8");
+
             match command.spawn() {
                 Ok(mut child) => {
                     // if using stdin, write code
@@ -303,6 +307,10 @@ print(result if isinstance(result, str) else json.dumps(result, ensure_ascii=Fal
 
         #[cfg(target_os = "windows")]
         command.creation_flags(CREATE_NO_WINDOW);
+
+        // set UTF-8 encoding for Python on Windows
+        #[cfg(target_os = "windows")]
+        command.env("PYTHONIOENCODING", "utf-8");
 
         match command.spawn() {
             Ok(child) => {
