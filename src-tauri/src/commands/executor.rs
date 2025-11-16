@@ -2,6 +2,9 @@ use crate::error::AppError;
 use std::process::Stdio;
 use tokio::{io::AsyncWriteExt, process::Command};
 
+#[cfg(target_os = "windows")]
+const CREATE_NO_WINDOW: u32 = 0x08000000;
+
 /// Execute JavaScript code.
 #[tauri::command]
 pub async fn execute_javascript(
@@ -42,6 +45,9 @@ console.log(typeof result === 'string' ? result : JSON.stringify(result));
             };
 
             command.stdout(Stdio::piped()).stderr(Stdio::piped());
+
+            #[cfg(target_os = "windows")]
+            command.creation_flags(CREATE_NO_WINDOW);
 
             match command.spawn() {
                 Ok(mut child) => {
@@ -126,6 +132,9 @@ console.log(typeof result === 'string' ? result : JSON.stringify(result));
             .stdout(Stdio::piped())
             .stderr(Stdio::piped());
 
+        #[cfg(target_os = "windows")]
+        command.creation_flags(CREATE_NO_WINDOW);
+
         match command.spawn() {
             Ok(child) => {
                 let output = child.wait_with_output().await?;
@@ -192,6 +201,9 @@ print(result if isinstance(result, str) else json.dumps(result, ensure_ascii=Fal
             };
 
             command.stdout(Stdio::piped()).stderr(Stdio::piped());
+
+            #[cfg(target_os = "windows")]
+            command.creation_flags(CREATE_NO_WINDOW);
 
             match command.spawn() {
                 Ok(mut child) => {
@@ -288,6 +300,9 @@ print(result if isinstance(result, str) else json.dumps(result, ensure_ascii=Fal
             .env("PATH", &path)
             .stdout(Stdio::piped())
             .stderr(Stdio::piped());
+
+        #[cfg(target_os = "windows")]
+        command.creation_flags(CREATE_NO_WINDOW);
 
         match command.spawn() {
             Ok(child) => {
