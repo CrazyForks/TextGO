@@ -2,14 +2,21 @@
   import { Label, Select, Setting } from '$lib/components';
   import { m } from '$lib/paraglide/messages';
   import { getLocale, setLocale, type Locale } from '$lib/paraglide/runtime';
-  import { historySize, theme } from '$lib/stores.svelte';
+  import { historySize, minimizeToTray, theme } from '$lib/stores.svelte';
   import { invoke } from '@tauri-apps/api/core';
-  import { ClockCounterClockwise, Swatches, Translate } from 'phosphor-svelte';
+  import { disable, enable, isEnabled } from '@tauri-apps/plugin-autostart';
+  import { ClockCounterClockwise, Monitor, ShieldCheck } from 'phosphor-svelte';
+  import { onMount } from 'svelte';
 
   // current language
   let locale: Locale = $state(getLocale());
 
-  // update tray menu language
+  // auto start state
+  let autoStart = $state(false);
+
+  /**
+   * Update tray menu language.
+   */
   async function updateTrayMenu() {
     try {
       await invoke('setup_tray', {
@@ -22,12 +29,41 @@
       console.error(`Failed to update tray menu language: ${error}`);
     }
   }
+
+  /**
+   * Toggle auto start status.
+   *
+   * @param enabled - whether to enable auto start
+   */
+  async function toggleAutoStart(enabled: boolean) {
+    try {
+      if (enabled) {
+        await enable();
+      } else {
+        await disable();
+      }
+      autoStart = enabled;
+    } catch (error) {
+      console.error(`Failed to toggle auto start status: ${error}`);
+      // revert the state on error
+      autoStart = !enabled;
+    }
+  }
+
+  // check auto start status on mount
+  onMount(async () => {
+    try {
+      autoStart = await isEnabled();
+    } catch (error) {
+      console.error(`Failed to check auto start status: ${error}`);
+    }
+  });
 </script>
 
 <div class="flex flex-col gap-2">
-  <div class="flex flex-col gap-1 rounded-container">
+  <Setting icon={Monitor} title={m.appearance_settings()}>
     <fieldset class="flex items-center justify-between">
-      <Label icon={Translate}>{m.language_settings()}</Label>
+      <Label>{m.language_settings()}</Label>
       <Select
         value={locale}
         options={[
@@ -45,7 +81,7 @@
     </fieldset>
     <div class="divider my-0 opacity-60"></div>
     <fieldset class="flex items-center justify-between">
-      <Label icon={Swatches}>{m.theme_settings()}</Label>
+      <Label>{m.theme_settings()}</Label>
       <Select
         options={[
           { value: 'light', label: m.light_theme() },
@@ -55,7 +91,7 @@
         class="w-36 select-sm"
       />
     </fieldset>
-  </div>
+  </Setting>
   <Setting icon={ClockCounterClockwise} title={m.history_records()}>
     <fieldset class="flex items-center justify-between">
       <Label>{m.history_records_retention()}</Label>
@@ -69,6 +105,26 @@
         ]}
         bind:value={historySize.current}
         class="w-36 select-sm"
+      />
+    </fieldset>
+  </Setting>
+  <Setting icon={ShieldCheck} title={m.behavior_settings()}>
+    <fieldset class="flex items-center justify-between">
+      <Label>{m.auto_start()}</Label>
+      <input
+        type="checkbox"
+        checked={autoStart}
+        onchange={(event) => toggleAutoStart(event.currentTarget.checked)}
+        class="toggle checked:border-emphasis checked:bg-emphasis checked:text-white"
+      />
+    </fieldset>
+    <div class="divider my-0 opacity-60"></div>
+    <fieldset class="flex items-center justify-between">
+      <Label>{m.minimize_to_tray()}</Label>
+      <input
+        type="checkbox"
+        bind:checked={minimizeToTray.current}
+        class="toggle checked:border-emphasis checked:bg-emphasis checked:text-white"
       />
     </fieldset>
   </Setting>

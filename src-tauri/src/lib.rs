@@ -13,6 +13,7 @@ use std::{
 use tauri::{Emitter, Manager, RunEvent, WindowEvent};
 use tauri_plugin_global_shortcut::{Shortcut, ShortcutEvent, ShortcutState};
 use tauri_plugin_log::{Target, TargetKind};
+use tauri_plugin_store::StoreExt;
 
 // global, shared Enigo wrapped in a Mutex
 // the Enigo struct should be created once and then reused for efficiency
@@ -41,20 +42,20 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     if let Some(window) = app.get_webview_window("main") {
         let app_handle = window.app_handle().clone();
 
-        // since window is initially hidden, hide dock icon
-        #[cfg(target_os = "macos")]
-        let _ = app_handle.set_dock_visibility(false);
+        // hide window if minimizeToTray is enabled
+        if let Ok(store) = app_handle.store(".settings.dat") {
+            if let Some(minimize_to_tray) = store.get("minimizeToTray").and_then(|v| v.as_bool()) {
+                if minimize_to_tray {
+                    hide_window(&app_handle, "main");
+                }
+            }
+        }
 
         // hide main window on close instead of quitting
         window.on_window_event(move |event| {
             if let WindowEvent::CloseRequested { api, .. } = event {
                 api.prevent_close();
-                if let Some(window) = app_handle.get_webview_window("main") {
-                    let _ = window.hide();
-                    // also hide dock icon
-                    #[cfg(target_os = "macos")]
-                    let _ = app_handle.set_dock_visibility(false);
-                }
+                hide_window(&app_handle, "main");
             }
         });
     }
@@ -66,9 +67,7 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
         window.on_window_event(move |event| {
             if let WindowEvent::CloseRequested { api, .. } = event {
                 api.prevent_close();
-                if let Some(popup) = app_handle.get_webview_window("popup") {
-                    let _ = popup.hide();
-                }
+                hide_window(&app_handle, "popup");
             }
         });
     }
@@ -123,6 +122,7 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_store::Builder::new().build())
+        .plugin(tauri_plugin_autostart::Builder::new().build())
         .plugin(
             tauri_plugin_global_shortcut::Builder::new()
                 .with_handler(handle_shortcut_event)

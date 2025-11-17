@@ -53,7 +53,9 @@ pub fn hide_window(app: &tauri::AppHandle, label: &str) -> Option<WebviewWindow>
 
         // also hide dock icon on macOS
         #[cfg(target_os = "macos")]
-        let _ = app.set_dock_visibility(false);
+        if label == "main" {
+            let _ = app.set_dock_visibility(false);
+        }
 
         Some(window)
     } else {

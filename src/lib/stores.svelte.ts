@@ -111,6 +111,9 @@ export const theme = persisted<string>('theme', 'light', {
   }
 });
 
+// minimize to tray setting
+export const minimizeToTray = persisted<boolean>('minimizeToTray', true);
+
 // Node.js path
 export const nodePath = persisted<string>('nodePath', '');
 
