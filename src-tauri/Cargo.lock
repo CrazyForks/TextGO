@@ -4604,7 +4604,7 @@ dependencies = [
 
 [[package]]
 name = "text-go"
-version = "0.1.8"
+version = "0.1.9"
 dependencies = [
  "clipboard-rs",
  "core-foundation",
@@ -4623,7 +4623,7 @@ dependencies = [
  "tauri-plugin-os",
  "tauri-plugin-store",
  "tokio",
- "windows 0.61.3",
+ "windows 0.59.0",
 ]
 
 [[package]]

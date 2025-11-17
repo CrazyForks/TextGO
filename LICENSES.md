@@ -1,10 +1,10 @@
 # Third-Party License Notices
 
-> This document was automatically generated on November 17, 2025 at 09:33 AM GMT+8
+> This document was automatically generated on November 18, 2025 at 01:11 AM GMT+8
 
 ## Frontend Dependencies
 
-> **52** packages included
+> **53** packages included
 
 | Package                                                                                    | Version | License           | Description                                                                                                                                       |
 | ------------------------------------------------------------------------------------------ | ------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -31,6 +31,7 @@
 | [@tailwindcss/vite](https://github.com/tailwindlabs/tailwindcss)                           | 4.1.17  | MIT               | A utility-first CSS framework for rapidly building custom user interfaces.                                                                        |
 | [@tauri-apps/api](https://github.com/tauri-apps/tauri)                                     | 2.9.0   | Apache-2.0 OR MIT | Tauri API definitions                                                                                                                             |
 | [@tauri-apps/cli](https://github.com/tauri-apps/tauri)                                     | 2.9.4   | Apache-2.0 OR MIT | Command line interface for building Tauri apps                                                                                                    |
+| [@tauri-apps/plugin-autostart](https://github.com/tauri-apps/plugins-workspace)            | 2.5.1   | MIT OR Apache-2.0 | ![plugin-autostart](https://github.com/tauri-apps/plugins-workspace/raw/v2/plugins/autostart/banner.png)                                          |
 | [@tauri-apps/plugin-log](https://github.com/tauri-apps/plugins-workspace)                  | 2.7.1   | MIT OR Apache-2.0 | Configurable logging for your Tauri app.                                                                                                          |
 | [@tauri-apps/plugin-opener](https://github.com/tauri-apps/plugins-workspace)               | 2.5.2   | MIT OR Apache-2.0 | Open files and URLs using their default application.                                                                                              |
 | [@tauri-apps/plugin-os](https://github.com/tauri-apps/plugins-workspace)                   | 2.3.2   | MIT OR Apache-2.0 | ![plugin-os](https://github.com/tauri-apps/plugins-workspace/raw/v2/plugins/os/banner.png)                                                        |
@@ -63,7 +64,7 @@
 
 ## Backend Dependencies
 
-> **17** packages included
+> **18** packages included
 
 | Package                                                                         | Version | License           | Description                                                                                                                                                                        |
 | ------------------------------------------------------------------------------- | ------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -76,6 +77,7 @@
 | [serde_json](https://github.com/serde-rs/json)                                  | 1.0.145 | Apache-2.0 OR MIT | A JSON serialization file format                                                                                                                                                   |
 | [tauri](https://github.com/tauri-apps/tauri)                                    | 2.9.3   | Apache-2.0 OR MIT | Make tiny, secure apps for all desktop platforms with Tauri                                                                                                                        |
 | [tauri-build](https://github.com/tauri-apps/tauri)                              | 2.5.2   | Apache-2.0 OR MIT | build time code to pair with https://crates.io/crates/tauri                                                                                                                        |
+| [tauri-plugin-autostart](https://github.com/tauri-apps/plugins-workspace)       | 2.5.1   | Apache-2.0 OR MIT | Automatically launch your application at startup.                                                                                                                                  |
 | [tauri-plugin-dialog](https://github.com/tauri-apps/plugins-workspace)          | 2.4.2   | Apache-2.0 OR MIT | Native system dialogs for opening and saving files along with message dialogs on your Tauri application.                                                                           |
 | [tauri-plugin-global-shortcut](https://github.com/tauri-apps/plugins-workspace) | 2.3.1   | Apache-2.0 OR MIT | Register global hotkeys listeners on your Tauri application.                                                                                                                       |
 | [tauri-plugin-log](https://github.com/tauri-apps/plugins-workspace)             | 2.7.1   | Apache-2.0 OR MIT | Configurable logging for your Tauri app.                                                                                                                                           |

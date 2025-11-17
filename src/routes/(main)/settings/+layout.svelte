@@ -41,7 +41,7 @@
 {/snippet}
 
 <div class="h-(--app-h)">
-  <div class="fixed top-11 bottom-2 rounded-container p-0" style:width={SIDEBAR_WIDTH}>
+  <div class="fixed top-11 bottom-2 overflow-y-auto rounded-container p-0" style:width={SIDEBAR_WIDTH}>
     <ul class="menu w-full gap-1">
       <li class="menu-title pl-1 text-xs">{m.custom_recognition()}</li>
       {@render menu(Sphere, m.model(), resolve('/settings/model'))}
