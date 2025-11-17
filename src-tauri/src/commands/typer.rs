@@ -1,40 +1,75 @@
+use crate::commands::clipboard::with_clipboard_backup;
 use crate::error::AppError;
 use crate::platform;
 use crate::ENIGO;
+use clipboard_rs::Clipboard;
 use enigo::{Direction, Key, Keyboard};
+use std::time::Duration;
+use tokio::time::sleep;
 
 /// Enter text and try to select it.
 #[tauri::command]
-pub fn enter_text(text: String) -> Result<(), AppError> {
+pub async fn enter_text(app: tauri::AppHandle, text: String) -> Result<(), AppError> {
     if text.is_empty() {
         return Ok(());
     }
 
-    // use Enigo to enter text
-    let mut enigo_guard = ENIGO.lock()?;
-    let enigo = enigo_guard.as_mut()?;
-    enigo.text(&text)?;
+    // calculate number of characters before moving text
+    let chars = text.chars().count();
 
-    // if cursor position is editable, try to select entered text
-    if platform::is_cursor_editable()? {
-        // delay 100 ms to ensure input operation completes
-        std::thread::sleep(std::time::Duration::from_millis(100));
+    // use clipboard to enter text
+    with_clipboard_backup(|clipboard| async move {
+        // set clipboard text
+        let _ = clipboard.set_text(text);
 
-        // calculate number of characters to select
-        let chars = text.chars().count();
+        // send paste shortcut
+        let _ = app.run_on_main_thread(|| {
+            let _ = send_paste_keys();
+        });
 
-        // first try using native API to select text
-        if platform::select_backward_chars(chars).is_err() {
-            // if native API call fails and char count is <= 50, use keyboard simulation
-            if chars <= 50 {
-                enigo.key(Key::Shift, Direction::Press)?;
-                for _ in 0..chars {
-                    enigo.key(Key::LeftArrow, Direction::Click)?;
+        // if cursor position is editable, try to select entered text
+        if platform::is_cursor_editable()? {
+            // delay 100 ms to ensure paste operation completes
+            sleep(Duration::from_millis(100)).await;
+
+            // first try using native API to select text
+            if platform::select_backward_chars(chars).is_err() {
+                // if native API call fails and char count is <= 50, use keyboard simulation
+                if chars <= 50 {
+                    let mut enigo_guard = ENIGO.lock()?;
+                    let enigo = enigo_guard.as_mut()?;
+
+                    enigo.key(Key::Shift, Direction::Press)?;
+                    for _ in 0..chars {
+                        enigo.key(Key::LeftArrow, Direction::Click)?;
+                    }
+                    enigo.key(Key::Shift, Direction::Release)?;
                 }
-                enigo.key(Key::Shift, Direction::Release)?;
             }
         }
-    }
+
+        Ok(())
+    })
+    .await
+}
+
+/// Send paste shortcut key.
+fn send_paste_keys() -> Result<(), AppError> {
+    let mut enigo_guard = ENIGO.lock()?;
+    let enigo = enigo_guard.as_mut()?;
+
+    #[cfg(target_os = "macos")]
+    let modifier = Key::Meta;
+    #[cfg(not(target_os = "macos"))]
+    let modifier = Key::Control;
+
+    // release shift key
+    enigo.key(Key::Shift, Direction::Release)?;
+
+    // send Cmd+V or Ctrl+V
+    enigo.key(modifier, Direction::Press)?;
+    enigo.key(Key::Unicode('v'), Direction::Click)?;
+    enigo.key(modifier, Direction::Release)?;
 
     Ok(())
 }

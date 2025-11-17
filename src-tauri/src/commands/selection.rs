@@ -1,7 +1,8 @@
+use crate::commands::clipboard::with_clipboard_backup;
 use crate::error::AppError;
 use crate::platform;
 use crate::ENIGO;
-use clipboard_rs::{Clipboard, ClipboardContext};
+use clipboard_rs::Clipboard;
 use enigo::{Direction, Key, Keyboard};
 use log::warn;
 use std::time::Duration;
@@ -24,18 +25,14 @@ pub async fn get_selection(app: tauri::AppHandle) -> Result<String, AppError> {
 
 /// Get selected text through clipboard.
 async fn get_selection_fallback(app: tauri::AppHandle) -> Result<String, AppError> {
-    // create clipboard context
-    let clipboard = ClipboardContext::new()
-        .map_err(|e| format!("Failed to create clipboard context: {}", e))?;
-
     // use backup-operation-restore mode
-    let selected_text = with_clipboard_backup(&clipboard, || async {
+    with_clipboard_backup(|clipboard| async move {
         // clear clipboard
         let _ = clipboard.clear();
 
         // send copy shortcut
         // https://github.com/enigo-rs/enigo/issues/153
-        let _ = app.run_on_main_thread(move || {
+        let _ = app.run_on_main_thread(|| {
             let _ = send_copy_keys();
         });
 
@@ -66,11 +63,9 @@ async fn get_selection_fallback(app: tauri::AppHandle) -> Result<String, AppErro
             );
         }
 
-        selected_text
+        Ok(selected_text)
     })
-    .await;
-
-    Ok(selected_text)
+    .await
 }
 
 /// Send copy shortcut key.
@@ -92,35 +87,4 @@ fn send_copy_keys() -> Result<(), AppError> {
     enigo.key(modifier, Direction::Release)?;
 
     Ok(())
-}
-
-/// Backup clipboard contents, execute operation, then restore clipboard contents.
-async fn with_clipboard_backup<F, Fut, T>(clipboard: &ClipboardContext, operation: F) -> T
-where
-    F: FnOnce() -> Fut,
-    Fut: std::future::Future<Output = T>,
-{
-    use clipboard_rs::ContentFormat;
-
-    // backup all format contents
-    let formats = [
-        ContentFormat::Text,
-        ContentFormat::Rtf,
-        ContentFormat::Html,
-        ContentFormat::Image,
-        ContentFormat::Files,
-    ];
-    let contents = clipboard.get(&formats).unwrap_or_default();
-
-    // execute operation
-    let result = operation().await;
-
-    // restore original clipboard contents
-    if !contents.is_empty() {
-        if let Err(e) = clipboard.set(contents) {
-            warn!("Failed to restore clipboard contents: {}", e);
-        }
-    }
-
-    result
 }
