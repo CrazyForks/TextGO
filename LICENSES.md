@@ -1,6 +1,6 @@
 # Third-Party License Notices
 
-> This document was automatically generated on November 16, 2025 at 09:04 PM GMT+8
+> This document was automatically generated on November 17, 2025 at 09:33 AM GMT+8
 
 ## Frontend Dependencies
 
@@ -53,7 +53,7 @@
 | [prettier-plugin-tailwindcss](https://github.com/tailwindlabs/prettier-plugin-tailwindcss) | 0.7.1   | MIT               | A Prettier plugin for sorting Tailwind CSS classes.                                                                                               |
 | [prettier](https://github.com/prettier/prettier)                                           | 3.6.2   | MIT               | Prettier is an opinionated code formatter                                                                                                         |
 | [svelte-check](https://github.com/sveltejs/language-tools)                                 | 4.3.4   | MIT               | Svelte Code Checker Terminal Interface                                                                                                            |
-| [svelte](https://github.com/sveltejs/svelte)                                               | 5.43.7  | MIT               | Cybernetically enhanced web apps                                                                                                                  |
+| [svelte](https://github.com/sveltejs/svelte)                                               | 5.43.8  | MIT               | Cybernetically enhanced web apps                                                                                                                  |
 | [tailwind-scrollbar](https://github.com/adoxography/tailwind-scrollbar)                    | 4.0.2   | MIT               | Tailwind plugin for styling scrollbars                                                                                                            |
 | [tailwindcss](https://github.com/tailwindlabs/tailwindcss)                                 | 4.1.17  | MIT               | A utility-first CSS framework for rapidly building custom user interfaces.                                                                        |
 | [tippy.js](https://github.com/atomiks/tippyjs)                                             | 6.3.7   | MIT               | The complete tooltip, popover, dropdown, and menu solution for the web                                                                            |
