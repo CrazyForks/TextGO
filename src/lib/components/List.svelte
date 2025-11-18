@@ -163,7 +163,7 @@
       {/if}
     </span>
   </div>
-  <ul class="list scrollbar-none overflow-y-auto bg-base-100 [&_.list-row]:min-h-10 [&_.list-row]:py-1">
+  <ul class="list overflow-y-auto bg-base-100 scrollbar-none [&_.list-row]:min-h-10 [&_.list-row]:py-1">
     {#if data.length === 0 && hint}
       <li class="list-row mx-auto items-center gap-1 text-surface/35">
         <Lightbulb class="size-3.5" />{hint}

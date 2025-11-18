@@ -1,11 +1,14 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
-@plugin 'tailwind-scrollbar';
 @plugin 'daisyui' {
   themes:
     light --default,
     dracula --prefersdark;
   logs: false;
+}
+
+* {
+  scrollbar-width: thin;
 }
 
 @theme {
@@ -123,6 +126,10 @@
   box-shadow:
     1px 2px 6px 0 rgb(0 0 0 / 0.1),
     0 0 3px -1px rgb(0 0 0 / 0.2);
+}
+
+@utility scrollbar-none {
+  scrollbar-width: none !important;
 }
 
 @utility rounded-container {
