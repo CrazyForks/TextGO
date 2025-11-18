@@ -1,6 +1,6 @@
 # Third-Party License Notices
 
-> This document was automatically generated on November 18, 2025 at 11:36 PM GMT+8
+> This document was automatically generated on November 19, 2025 at 01:18 AM GMT+8
 
 ## Frontend Dependencies
 
@@ -18,7 +18,7 @@
 | [@codemirror/search](https://github.com/codemirror/search)                                 | 6.5.11  | MIT               | Search functionality for the CodeMirror code editor                                                                                               |
 | [@codemirror/state](https://github.com/codemirror/state)                                   | 6.5.2   | MIT               | Editor state data structures for the CodeMirror code editor                                                                                       |
 | [@codemirror/theme-one-dark](https://github.com/codemirror/theme-one-dark)                 | 6.1.3   | MIT               | One Dark theme for the CodeMirror code editor                                                                                                     |
-| [@codemirror/view](https://github.com/codemirror/view)                                     | 6.38.7  | MIT               | DOM view component for the CodeMirror code editor                                                                                                 |
+| [@codemirror/view](https://github.com/codemirror/view)                                     | 6.38.8  | MIT               | DOM view component for the CodeMirror code editor                                                                                                 |
 | [@eslint/compat](https://github.com/eslint/rewrite)                                        | 2.0.0   | Apache-2.0        | Compatibility utilities for ESLint                                                                                                                |
 | [@eslint/js](https://github.com/eslint/eslint)                                             | 9.39.1  | MIT               | ESLint JavaScript language implementation                                                                                                         |
 | [@fontsource-variable/noto-sans-sc](https://github.com/fontsource/font-files)              | 5.2.9   | OFL-1.1           | Self-host the Noto Sans SC font in a neatly bundled NPM package.                                                                                  |
@@ -41,7 +41,7 @@
 | [@vscode/vscode-languagedetection](https://github.com/microsoft/vscode-languagedetection)  | 1.0.22  | MIT               | An npm package that uses guesslang's ML model to detect source code languages                                                                     |
 | [codemirror](https://github.com/codemirror/basic-setup)                                    | 6.0.2   | MIT               | Basic configuration for the CodeMirror code editor                                                                                                |
 | [daisyui](https://github.com/saadeghi/daisyui)                                             | 5.5.5   | MIT               | daisyUI 5 - The Tailwind CSS Component Library                                                                                                    |
-| [es-toolkit](https://github.com/toss/es-toolkit)                                           | 1.41.0  | MIT               | A state-of-the-art, high-performance JavaScript utility library with a small bundle size and strong type annotations.                             |
+| [es-toolkit](https://github.com/toss/es-toolkit)                                           | 1.42.0  | MIT               | A state-of-the-art, high-performance JavaScript utility library with a small bundle size and strong type annotations.                             |
 | [eslint-config-prettier](https://github.com/prettier/eslint-config-prettier)               | 10.1.8  | MIT               | Turns off all rules that are unnecessary or might conflict with Prettier.                                                                         |
 | [eslint-plugin-svelte](https://github.com/sveltejs/eslint-plugin-svelte)                   | 3.13.0  | MIT               | ESLint plugin for Svelte using AST                                                                                                                |
 | [eslint](https://github.com/eslint/eslint)                                                 | 9.39.1  | MIT               | An AST-based pattern checker for JavaScript.                                                                                                      |
@@ -54,10 +54,10 @@
 | [prettier-plugin-tailwindcss](https://github.com/tailwindlabs/prettier-plugin-tailwindcss) | 0.7.1   | MIT               | A Prettier plugin for sorting Tailwind CSS classes.                                                                                               |
 | [prettier](https://github.com/prettier/prettier)                                           | 3.6.2   | MIT               | Prettier is an opinionated code formatter                                                                                                         |
 | [svelte-check](https://github.com/sveltejs/language-tools)                                 | 4.3.4   | MIT               | Svelte Code Checker Terminal Interface                                                                                                            |
-| [svelte](https://github.com/sveltejs/svelte)                                               | 5.43.8  | MIT               | Cybernetically enhanced web apps                                                                                                                  |
+| [svelte](https://github.com/sveltejs/svelte)                                               | 5.43.11 | MIT               | Cybernetically enhanced web apps                                                                                                                  |
 | [tailwindcss](https://github.com/tailwindlabs/tailwindcss)                                 | 4.1.17  | MIT               | A utility-first CSS framework for rapidly building custom user interfaces.                                                                        |
 | [tippy.js](https://github.com/atomiks/tippyjs)                                             | 6.3.7   | MIT               | The complete tooltip, popover, dropdown, and menu solution for the web                                                                            |
-| [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint)                | 8.46.4  | MIT               | Tooling which enables you to use TypeScript with ESLint                                                                                           |
+| [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint)                | 8.47.0  | MIT               | Tooling which enables you to use TypeScript with ESLint                                                                                           |
 | [typescript](https://github.com/microsoft/TypeScript)                                      | 5.9.3   | Apache-2.0        | TypeScript is a language for application scale JavaScript development                                                                             |
 | [vite](https://github.com/vitejs/vite)                                                     | 7.2.2   | MIT               | Native-ESM powered web dev build tool                                                                                                             |
 

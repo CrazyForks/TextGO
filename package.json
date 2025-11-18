@@ -29,7 +29,7 @@
     "@codemirror/search": "^6.5.11",
     "@codemirror/state": "^6.5.2",
     "@codemirror/theme-one-dark": "^6.1.3",
-    "@codemirror/view": "^6.38.7",
+    "@codemirror/view": "^6.38.8",
     "@fontsource-variable/noto-sans": "^5.2.10",
     "@fontsource-variable/noto-sans-sc": "^5.2.9",
     "@tauri-apps/api": "^2.9.0",
@@ -41,7 +41,7 @@
     "@tensorflow/tfjs": "^4.22.0",
     "@vscode/vscode-languagedetection": "^1.0.22",
     "codemirror": "^6.0.2",
-    "es-toolkit": "^1.41.0",
+    "es-toolkit": "^1.42.0",
     "franc-min": "^6.2.0",
     "marked": "^17.0.0",
     "ollama": "^0.6.3",
@@ -67,11 +67,11 @@
     "prettier": "^3.6.2",
     "prettier-plugin-svelte": "^3.4.0",
     "prettier-plugin-tailwindcss": "^0.7.1",
-    "svelte": "^5.43.8",
+    "svelte": "^5.43.11",
     "svelte-check": "^4.3.4",
     "tailwindcss": "^4.1.17",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.46.4",
+    "typescript-eslint": "^8.47.0",
     "vite": "^7.2.2"
   }
 }

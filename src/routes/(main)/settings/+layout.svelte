@@ -5,7 +5,7 @@
   import { Button, Title } from '$lib/components';
   import { m } from '$lib/paraglide/messages';
   import { deLocalizeHref } from '$lib/paraglide/runtime';
-  import { ArrowLeft, Code, GearSix, Robot, Scroll, Gear, Sphere, type IconComponentProps } from 'phosphor-svelte';
+  import { ArrowLeft, Code, Gear, GearSix, Robot, Scroll, Sphere, type IconComponentProps } from 'phosphor-svelte';
   import type { Component, Snippet } from 'svelte';
 
   let { children }: { children: Snippet } = $props();
@@ -41,7 +41,7 @@
 {/snippet}
 
 <div class="h-(--app-h)">
-  <div class="fixed top-11 bottom-2 overflow-y-auto rounded-container p-0" style:width={SIDEBAR_WIDTH}>
+  <div class="fixed top-10.5 bottom-2 overflow-y-auto rounded-container p-0" style:width={SIDEBAR_WIDTH}>
     <ul class="menu w-full gap-1">
       <li class="menu-title pl-1 text-xs">{m.custom_recognition()}</li>
       {@render menu(Sphere, m.model(), resolve('/settings/model'))}
@@ -54,7 +54,7 @@
       {@render menu(Gear, m.general_settings(), resolve('/settings/general'))}
     </ul>
   </div>
-  <div class="overflow-y-auto p-2 pt-0.5 pr-0" style:margin-left={SIDEBAR_WIDTH}>
+  <div class="overflow-y-auto p-2 pt-0 pr-0" style:margin-left={SIDEBAR_WIDTH}>
     {@render children()}
   </div>
 </div>
