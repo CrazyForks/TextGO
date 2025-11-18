@@ -29,12 +29,12 @@
 
 <div class="rounded-container {_class}">
   <div class="flex items-center gap-2">
-    <span class="mr-auto flex items-center gap-2">
+    <span class="mr-auto flex min-h-7 items-center gap-2">
       {#if icon}
         {@const Icon = icon}
-        <Icon class="size-6 select-none" />
+        <Icon class="size-5 opacity-80" />
       {/if}
-      <span class="text-lg font-semibold tracking-wider">
+      <span class="font-semibold tracking-wider">
         {title}
       </span>
     </span>
@@ -44,13 +44,7 @@
       </span>
     {/if}
     {#if moreOptions}
-      <Button
-        size="sm"
-        icon={SlidersHorizontal}
-        weight="bold"
-        text={m.more_options()}
-        onclick={() => moreOptions?.()}
-      />
+      <Button size="sm" icon={SlidersHorizontal} text={m.more_options()} onclick={() => moreOptions?.()} />
     {/if}
   </div>
   <div class="divider my-1"></div>

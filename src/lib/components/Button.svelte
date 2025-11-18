@@ -43,7 +43,7 @@
     },
     sm: {
       size: '1.75rem',
-      iconSize: '1.25rem',
+      iconSize: '1.35rem',
       textClass: 'text-sm'
     }
   };

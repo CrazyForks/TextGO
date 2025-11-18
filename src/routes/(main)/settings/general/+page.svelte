@@ -2,7 +2,7 @@
   import { Label, Select, Setting } from '$lib/components';
   import { m } from '$lib/paraglide/messages';
   import { getLocale, setLocale, type Locale } from '$lib/paraglide/runtime';
-  import { historySize, minimizeToTray, theme } from '$lib/stores.svelte';
+  import { autoStart, historySize, minimizeToTray, theme } from '$lib/stores.svelte';
   import { invoke } from '@tauri-apps/api/core';
   import { disable, enable, isEnabled } from '@tauri-apps/plugin-autostart';
   import { ClockCounterClockwise, Monitor, ShieldCheck } from 'phosphor-svelte';
@@ -10,9 +10,6 @@
 
   // current language
   let locale: Locale = $state(getLocale());
-
-  // auto start state
-  let autoStart = $state(false);
 
   /**
    * Update tray menu language.
@@ -42,18 +39,18 @@
       } else {
         await disable();
       }
-      autoStart = enabled;
+      autoStart.current = enabled;
     } catch (error) {
       console.error(`Failed to toggle auto start status: ${error}`);
-      // revert the state on error
-      autoStart = !enabled;
+      // revert the status on error
+      autoStart.current = !enabled;
     }
   }
 
   // check auto start status on mount
   onMount(async () => {
     try {
-      autoStart = await isEnabled();
+      autoStart.current = await isEnabled();
     } catch (error) {
       console.error(`Failed to check auto start status: ${error}`);
     }
@@ -113,7 +110,7 @@
       <Label>{m.auto_start()}</Label>
       <input
         type="checkbox"
-        checked={autoStart}
+        checked={autoStart.current}
         onchange={(event) => toggleAutoStart(event.currentTarget.checked)}
         class="toggle checked:border-emphasis checked:bg-emphasis checked:text-white"
       />

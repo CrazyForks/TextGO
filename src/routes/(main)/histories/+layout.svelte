@@ -27,7 +27,7 @@
   />
   <div class="pointer-events-none mx-auto flex items-center gap-1">
     <ClockCounterClockwise class="size-5" />
-    <span>{m.histories()}</span>
+    <span class="tracking-wider">{m.histories()}</span>
   </div>
 </Title>
 

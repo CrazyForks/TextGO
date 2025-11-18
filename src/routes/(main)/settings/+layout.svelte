@@ -11,7 +11,7 @@
   let { children }: { children: Snippet } = $props();
 
   // sidebar width
-  const SIDEBAR_WIDTH = '12.5rem';
+  const SIDEBAR_WIDTH = '13rem';
 </script>
 
 <Title>
@@ -24,7 +24,7 @@
   />
   <div class="pointer-events-none mx-auto flex items-center gap-1">
     <GearSix class="size-5" />
-    <span>{m.settings()}</span>
+    <span class="tracking-wider">{m.settings()}</span>
   </div>
 </Title>
 
@@ -33,8 +33,8 @@
   {@const active = deLocalizeHref(page.url.pathname) === href}
   <li>
     <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-    <a {href} class="gap-2 rounded-field px-2 {active ? 'glass bg-emphasis/85 text-neutral-content' : ''}">
-      <Icon class="size-5 opacity-70" />
+    <a {href} class="gap-2 rounded-field active:bg-emphasis {active ? 'menu-emphasis' : ''}">
+      <Icon class="size-5 opacity-80" />
       <span class="truncate">{text}</span>
     </a>
   </li>

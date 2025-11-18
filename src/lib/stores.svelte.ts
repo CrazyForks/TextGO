@@ -111,6 +111,9 @@ export const theme = persisted<string>('theme', 'light', {
   }
 });
 
+// auto start setting
+export const autoStart = persisted<boolean>('autoStart', false);
+
 // minimize to tray setting
 export const minimizeToTray = persisted<boolean>('minimizeToTray', true);
 
