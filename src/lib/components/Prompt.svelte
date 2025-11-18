@@ -154,7 +154,7 @@ ${m.prompt_variables_tip()}
           <HeadCircuit class="size-5" />
           {m.system_prompt_explain()}
         </div>
-        <div class="collapse-content overflow-x-auto p-0!">
+        <div class="collapse-content p-0!">
           <CodeMirror
             title={m.system_prompt()}
             language={markdown()}

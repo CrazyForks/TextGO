@@ -1,7 +1,4 @@
-import { messages } from '$lib/components/Confirm.svelte';
-import { modals } from '$lib/components/Modal.svelte';
 import { getLocale } from '$lib/paraglide/runtime';
-import { getCurrentWindow } from '@tauri-apps/api/window';
 import type { ActionReturn } from 'svelte/action';
 import type { Instance, Props } from 'tippy.js';
 import tippy from 'tippy.js';
@@ -65,23 +62,4 @@ export function formatISO8601(str: string | null | undefined): string {
     dateStyle: 'medium',
     timeStyle: 'medium'
   });
-}
-
-/**
- * Freeze current window size to prevent blank edges when rapidly resizing window.
- *
- * https://github.com/tauri-apps/tauri/issues/6322
- */
-export function freeze(): Promise<void> {
-  return getCurrentWindow().setResizable(false);
-}
-
-/**
- * Unfreeze window size when there are no message boxes and modal dialogs.
- */
-export function unfreeze(): Promise<void> {
-  if (messages.size === 0 && modals.size === 0) {
-    return getCurrentWindow().setResizable(true);
-  }
-  return Promise.reject();
 }

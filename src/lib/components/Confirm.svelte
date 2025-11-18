@@ -1,5 +1,4 @@
 <script lang="ts" module>
-  import { freeze, unfreeze } from '$lib/helpers';
   import { m } from '$lib/paraglide/messages';
   import { escape } from 'es-toolkit/string';
   import { Warning, type IconComponentProps } from 'phosphor-svelte';
@@ -38,8 +37,6 @@
         return;
       }
       dialog.showModal();
-      // freeze window
-      freeze();
     });
   }
 
@@ -58,7 +55,6 @@
     if (msg) {
       callback?.();
       messages.delete(id);
-      unfreeze();
     }
   }
 

@@ -26,7 +26,6 @@
 
 <script lang="ts">
   import { Alert } from '$lib/components';
-  import { freeze, unfreeze } from '$lib/helpers';
   import { tick } from 'svelte';
   import { fade } from 'svelte/transition';
 
@@ -49,8 +48,6 @@
       if (autofocus) {
         setTimeout(() => autofocus.focus(), 0);
       }
-      // freeze window
-      freeze();
     });
   }
 
@@ -67,7 +64,6 @@
     if (modal) {
       modal.onclose?.();
       modals.delete(id);
-      unfreeze();
     }
   }
 
