@@ -16,9 +16,8 @@
 
 <Title>
   <Button
-    size="sm"
+    size="md"
     icon={ArrowLeft}
-    weight="bold"
     class="border-none gradient bg-base-300"
     onclick={() => goto(resolve('/shortcuts'))}
   />

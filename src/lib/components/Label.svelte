@@ -11,7 +11,7 @@
     /** Tip text. */
     tip?: string;
     /** Tip position. */
-    tipPlacement?: Placement;
+    tipPlacement?: Placement | 'duplex';
     /** Whether to mark as required. */
     required?: boolean;
     /** Custom style class name. */
@@ -35,11 +35,16 @@
       {@const Icon = icon}
       <Icon class="mr-1 size-5" />
     {/if}
-    <span class="text-base tracking-wide opacity-90">
-      {@render children()}
+    <span class="flex flex-col gap-1">
+      <div class="text-base tracking-wide opacity-90">{@render children()}</div>
+      <!-- duplex tip -->
+      {#if tip && tipPlacement == 'duplex'}
+        <div class="pr-1 text-xs italic opacity-30">{tip}</div>
+      {/if}
     </span>
   </span>
-  {#if tip}
+  <!-- hover tip -->
+  {#if tip && tipPlacement != 'duplex'}
     <span class="cursor-help" use:tooltip={{ content: tip, placement: tipPlacement }}>
       <Question class="size-5 opacity-60" />
     </span>

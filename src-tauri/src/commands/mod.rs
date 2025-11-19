@@ -1,3 +1,4 @@
+mod accessibility;
 mod clipboard;
 mod executor;
 mod popup;
@@ -8,6 +9,7 @@ mod typer;
 mod window;
 
 // re-export all command functions
+pub use accessibility::*;
 pub use clipboard::*;
 pub use executor::*;
 pub use popup::*;

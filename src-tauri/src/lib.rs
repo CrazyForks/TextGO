@@ -150,13 +150,15 @@ pub fn run() {
             unregister_shortcut,
             is_shortcut_registered,
             get_selection,
+            get_clipboard_text,
             execute_python,
             execute_javascript,
-            get_clipboard_text,
             enter_text,
             show_popup,
             show_about,
-            setup_tray
+            setup_tray,
+            check_accessibility,
+            open_accessibility
         ])
         .build(tauri::generate_context!())
         .expect("error while running tauri application")

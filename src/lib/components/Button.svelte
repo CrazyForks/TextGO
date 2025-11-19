@@ -42,9 +42,14 @@
       textClass: 'text-xs'
     },
     sm: {
-      size: '1.75rem',
-      iconSize: '1.35rem',
+      size: '1.6rem',
+      iconSize: '1.3rem',
       textClass: 'text-sm'
+    },
+    md: {
+      size: '1.75rem',
+      iconSize: '1.5rem',
+      textClass: 'text-base'
     }
   };
 </script>

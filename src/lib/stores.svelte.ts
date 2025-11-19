@@ -117,6 +117,9 @@ export const autoStart = persisted<boolean>('autoStart', false);
 // minimize to tray setting
 export const minimizeToTray = persisted<boolean>('minimizeToTray', true);
 
+// accessibility permission granted
+export const accessibility = persisted<boolean>('accessibility', false);
+
 // Node.js path
 export const nodePath = persisted<string>('nodePath', '');
 

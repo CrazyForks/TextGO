@@ -50,7 +50,6 @@
         </div>
       {:else}
         <Button
-          size="sm"
           icon={PencilSimpleLine}
           onclick={(event) => {
             event.stopPropagation();

@@ -44,11 +44,11 @@
       </span>
     {/if}
     {#if moreOptions}
-      <Button size="sm" icon={SlidersHorizontal} text={m.more_options()} onclick={() => moreOptions?.()} />
+      <Button size="md" icon={SlidersHorizontal} text={m.more_options()} onclick={() => moreOptions?.()} />
     {/if}
   </div>
   <div class="divider my-1"></div>
-  <div class="flex flex-col gap-1">
+  <div class="flex flex-col gap-0.5 [&_fieldset]:px-1">
     {@render children()}
   </div>
 </div>

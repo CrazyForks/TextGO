@@ -1,12 +1,16 @@
 <script lang="ts">
-  import { Label, Select, Setting } from '$lib/components';
+  import { Button, Label, Select, Setting } from '$lib/components';
   import { m } from '$lib/paraglide/messages';
   import { getLocale, setLocale, type Locale } from '$lib/paraglide/runtime';
-  import { autoStart, historySize, minimizeToTray, theme } from '$lib/stores.svelte';
+  import { accessibility, autoStart, historySize, minimizeToTray, theme } from '$lib/stores.svelte';
   import { invoke } from '@tauri-apps/api/core';
   import { disable, enable, isEnabled } from '@tauri-apps/plugin-autostart';
-  import { ClockCounterClockwise, Monitor, ShieldCheck } from 'phosphor-svelte';
+  import { type } from '@tauri-apps/plugin-os';
+  import { CheckCircle, ClockCounterClockwise, Monitor, ShieldCheck, WarningCircle } from 'phosphor-svelte';
   import { onMount } from 'svelte';
+
+  // operating system type
+  const osType = type();
 
   // current language
   let locale: Locale = $state(getLocale());
@@ -51,6 +55,7 @@
   onMount(async () => {
     try {
       autoStart.current = await isEnabled();
+      accessibility.current = await invoke<boolean>('check_accessibility');
     } catch (error) {
       console.error(`Failed to check auto start status: ${error}`);
     }
@@ -106,6 +111,26 @@
     </fieldset>
   </Setting>
   <Setting icon={ShieldCheck} title={m.behavior_settings()}>
+    {#if osType === 'macos'}
+      <fieldset class="flex items-center justify-between">
+        <Label tip={m.accessibility_explain()} tipPlacement="duplex">{m.accessibility()}</Label>
+        {#if accessibility.current}
+          <div class="badge bg-base-200 badge-md text-emphasis">
+            <CheckCircle class="size-4" />
+            <span class="text-sm">{m.permission_granted()}</span>
+          </div>
+        {:else}
+          <Button
+            icon={WarningCircle}
+            square={false}
+            class="border-emphasis/30 bg-base-200 text-emphasis"
+            text={m.request_permission()}
+            onclick={() => invoke('open_accessibility')}
+          />
+        {/if}
+      </fieldset>
+      <div class="divider my-0 opacity-60"></div>
+    {/if}
     <fieldset class="flex items-center justify-between">
       <Label>{m.auto_start()}</Label>
       <input

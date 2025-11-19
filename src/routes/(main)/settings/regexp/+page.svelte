@@ -25,7 +25,6 @@
         <span class="truncate text-base font-light">{item.id}</span>
       </div>
       <Button
-        size="sm"
         icon={PencilSimpleLine}
         onclick={(event) => {
           event.stopPropagation();
