@@ -193,62 +193,64 @@
         {#snippet row(item)}
           {@const { label: caseLabel, icon: caseIcon } = ruleManager?.getCaseOption(item.case) ?? {}}
           {@const { label: actionLabel, icon: actionIcon } = ruleManager?.getActionOption(item.action) ?? {}}
-          <div class="ml-4 flex w-60 items-center gap-1.5 truncate" title={caseLabel}>
-            {#if item.case === ''}
-              <!-- default type -->
-              <ArrowArcRight class="size-5 shrink-0 opacity-30" />
-              <span class="truncate opacity-30">{caseLabel}</span>
-            {:else if !caseLabel}
-              <!-- invalid type -->
-              <Warning class="size-5 shrink-0 opacity-50" />
-              <span class="truncate opacity-50">{m.invalid_type()}</span>
-            {:else}
-              <!-- type name -->
-              {#if item.case.startsWith(MODEL_MARK)}
-                <Tensorflow class="h-5 shrink-0" />
-              {:else if item.case.startsWith(REGEXP_MARK)}
-                <Regexp class="h-5 shrink-0" />
-              {:else if caseIcon}
-                {@const CaseIcon = caseIcon}
-                <CaseIcon class="size-5 shrink-0 text-emphasis/60" />
+          <div class="list-col-grow flex items-center gap-4 pl-4">
+            <div class="flex w-1/2 items-center gap-1.5 truncate" title={caseLabel}>
+              {#if item.case === ''}
+                <!-- default type -->
+                <ArrowArcRight class="size-5 shrink-0 opacity-30" />
+                <span class="truncate opacity-30">{caseLabel}</span>
+              {:else if !caseLabel}
+                <!-- invalid type -->
+                <Warning class="size-5 shrink-0 opacity-50" />
+                <span class="truncate opacity-50">{m.invalid_type()}</span>
               {:else}
-                <FingerprintSimple class="size-5 shrink-0 text-emphasis/60" />
-              {/if}
-              <span class="truncate text-base-content/80">{caseLabel}</span>
-            {/if}
-          </div>
-          <ArrowFatLineRight class="size-5 shrink-0 opacity-15" />
-          <div class="list-col-grow ml-4 flex items-center gap-1.5 truncate" title={actionLabel}>
-            {#if item.action === ''}
-              <!-- default action -->
-              <Browser class="size-5 shrink-0 opacity-30" />
-              <span class="truncate opacity-30">{actionLabel}</span>
-            {:else if !actionLabel}
-              <!-- invalid action -->
-              <Warning class="size-5 shrink-0 opacity-50" />
-              <span class="truncate opacity-50">{m.invalid_action()}</span>
-            {:else}
-              <!-- action name -->
-              {#if item.action.startsWith(SCRIPT_MARK)}
-                {@const script = getScript(item.action)}
-                {#if script?.lang === 'javascript'}
-                  <JavaScript class="h-5 shrink-0" />
-                {:else if script?.lang === 'python'}
-                  <Python class="h-5 shrink-0" />
+                <!-- type name -->
+                {#if item.case.startsWith(MODEL_MARK)}
+                  <Tensorflow class="h-5 shrink-0" />
+                {:else if item.case.startsWith(REGEXP_MARK)}
+                  <Regexp class="h-5 shrink-0" />
+                {:else if caseIcon}
+                  {@const CaseIcon = caseIcon}
+                  <CaseIcon class="size-5 shrink-0 text-emphasis/60" />
+                {:else}
+                  <FingerprintSimple class="size-5 shrink-0 text-emphasis/60" />
                 {/if}
-              {:else if item.action.startsWith(PROMPT_MARK)}
-                {@const prompt = getPrompt(item.action)}
-                {#if prompt?.provider === 'ollama'}
-                  <Ollama class="h-5 shrink-0" />
-                {:else if prompt?.provider === 'lmstudio'}
-                  <LMStudio class="h-5 shrink-0" />
-                {/if}
-              {:else if actionIcon}
-                {@const ActionIcon = actionIcon}
-                <ActionIcon class="size-5 shrink-0 text-emphasis/60" />
+                <span class="truncate text-base-content/80">{caseLabel}</span>
               {/if}
-              <span class="truncate text-base-content/80">{actionLabel}</span>
-            {/if}
+            </div>
+            <ArrowFatLineRight class="size-5 shrink-0 opacity-15" />
+            <div class="flex w-1/2 items-center gap-1.5 truncate" title={actionLabel}>
+              {#if item.action === ''}
+                <!-- default action -->
+                <Browser class="size-5 shrink-0 opacity-30" />
+                <span class="truncate opacity-30">{actionLabel}</span>
+              {:else if !actionLabel}
+                <!-- invalid action -->
+                <Warning class="size-5 shrink-0 opacity-50" />
+                <span class="truncate opacity-50">{m.invalid_action()}</span>
+              {:else}
+                <!-- action name -->
+                {#if item.action.startsWith(SCRIPT_MARK)}
+                  {@const script = getScript(item.action)}
+                  {#if script?.lang === 'javascript'}
+                    <JavaScript class="h-5 shrink-0" />
+                  {:else if script?.lang === 'python'}
+                    <Python class="h-5 shrink-0" />
+                  {/if}
+                {:else if item.action.startsWith(PROMPT_MARK)}
+                  {@const prompt = getPrompt(item.action)}
+                  {#if prompt?.provider === 'ollama'}
+                    <Ollama class="h-5 shrink-0" />
+                  {:else if prompt?.provider === 'lmstudio'}
+                    <LMStudio class="h-5 shrink-0" />
+                  {/if}
+                {:else if actionIcon}
+                  {@const ActionIcon = actionIcon}
+                  <ActionIcon class="size-5 shrink-0 text-emphasis/60" />
+                {/if}
+                <span class="truncate text-base-content/80">{actionLabel}</span>
+              {/if}
+            </div>
           </div>
         {/snippet}
       </List>
