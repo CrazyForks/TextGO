@@ -218,7 +218,7 @@
                 <span class="truncate text-base-content/80">{caseLabel}</span>
               {/if}
             </div>
-            <ArrowFatLineRight class="size-5 shrink-0 opacity-15" />
+            <ArrowFatLineRight class="size-5 shrink-0 opacity-15 sm:mx-1 md:mx-2 lg:mx-3 xl:mx-4 2xl:mx-5" />
             <div class="flex w-1/2 items-center gap-1.5 truncate" title={actionLabel}>
               {#if item.action === ''}
                 <!-- default action -->

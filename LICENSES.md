@@ -1,6 +1,6 @@
 # Third-Party License Notices
 
-> This document was automatically generated on November 19, 2025 at 04:45 PM GMT+8
+> This document was automatically generated on November 21, 2025 at 01:24 PM GMT+8
 
 ## Frontend Dependencies
 
@@ -8,7 +8,7 @@
 
 | Package                                                                                    | Version | License           | Description                                                                                                                                       |
 | ------------------------------------------------------------------------------------------ | ------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [@codemirror/autocomplete](https://github.com/codemirror/autocomplete)                     | 6.19.1  | MIT               | Autocompletion for the CodeMirror code editor                                                                                                     |
+| [@codemirror/autocomplete](https://github.com/codemirror/autocomplete)                     | 6.20.0  | MIT               | Autocompletion for the CodeMirror code editor                                                                                                     |
 | [@codemirror/commands](https://github.com/codemirror/commands)                             | 6.10.0  | MIT               | Collection of editing commands for the CodeMirror code editor                                                                                     |
 | [@codemirror/lang-javascript](https://github.com/codemirror/lang-javascript)               | 6.2.4   | MIT               | JavaScript language support for the CodeMirror code editor                                                                                        |
 | [@codemirror/lang-markdown](https://github.com/codemirror/lang-markdown)                   | 6.5.0   | MIT               | Markdown language support for the CodeMirror code editor                                                                                          |
@@ -25,7 +25,7 @@
 | [@fontsource-variable/noto-sans](https://github.com/fontsource/font-files)                 | 5.2.10  | OFL-1.1           | Self-host the Noto Sans font in a neatly bundled NPM package.                                                                                     |
 | [@inlang/paraglide-js](https://github.com/opral/inlang-paraglide-js)                       | 2.5.0   | MIT               | [![Inlang-ecosystem compatibility badge](https://cdn.jsdelivr.net/gh/opral/monorepo@main/inlang/assets/md-badges/inlang.svg)](https://inlang.com) |
 | [@sveltejs/adapter-static](https://github.com/sveltejs/kit)                                | 3.0.10  | MIT               | Adapter for SvelteKit apps that prerenders your entire site as a collection of static files                                                       |
-| [@sveltejs/kit](https://github.com/sveltejs/kit)                                           | 2.48.5  | MIT               | SvelteKit is the fastest way to build Svelte apps                                                                                                 |
+| [@sveltejs/kit](https://github.com/sveltejs/kit)                                           | 2.49.0  | MIT               | SvelteKit is the fastest way to build Svelte apps                                                                                                 |
 | [@sveltejs/vite-plugin-svelte](https://github.com/sveltejs/vite-plugin-svelte)             | 6.2.1   | MIT               | The official [Svelte](https://svelte.dev) plugin for [Vite](https://vitejs.dev).                                                                  |
 | [@tailwindcss/typography](https://github.com/tailwindlabs/tailwindcss-typography)          | 0.5.19  | MIT               | A Tailwind CSS plugin for automatically styling plain HTML content with beautiful typographic defaults.                                           |
 | [@tailwindcss/vite](https://github.com/tailwindlabs/tailwindcss)                           | 4.1.17  | MIT               | A utility-first CSS framework for rapidly building custom user interfaces.                                                                        |
@@ -47,19 +47,19 @@
 | [eslint](https://github.com/eslint/eslint)                                                 | 9.39.1  | MIT               | An AST-based pattern checker for JavaScript.                                                                                                      |
 | [franc-min](https://github.com/wooorm/franc/tree/main/packages/franc-min)                  | 6.2.0   | MIT               | Detect the language of text                                                                                                                       |
 | [globals](https://github.com/sindresorhus/globals)                                         | 16.5.0  | MIT               | Global identifiers from different JavaScript environments                                                                                         |
-| [marked](https://github.com/markedjs/marked)                                               | 17.0.0  | MIT               | A markdown parser built for speed                                                                                                                 |
+| [marked](https://github.com/markedjs/marked)                                               | 17.0.1  | MIT               | A markdown parser built for speed                                                                                                                 |
 | [ollama](https://github.com/ollama/ollama-js)                                              | 0.6.3   | MIT               | Ollama Javascript library                                                                                                                         |
 | [phosphor-svelte](https://github.com/haruaki07/phosphor-svelte)                            | 3.0.1   | MIT               | A clean and friendly icon family for Svelte                                                                                                       |
 | [prettier-plugin-svelte](https://github.com/sveltejs/prettier-plugin-svelte)               | 3.4.0   | MIT               | Svelte plugin for prettier                                                                                                                        |
 | [prettier-plugin-tailwindcss](https://github.com/tailwindlabs/prettier-plugin-tailwindcss) | 0.7.1   | MIT               | A Prettier plugin for sorting Tailwind CSS classes.                                                                                               |
 | [prettier](https://github.com/prettier/prettier)                                           | 3.6.2   | MIT               | Prettier is an opinionated code formatter                                                                                                         |
 | [svelte-check](https://github.com/sveltejs/language-tools)                                 | 4.3.4   | MIT               | Svelte Code Checker Terminal Interface                                                                                                            |
-| [svelte](https://github.com/sveltejs/svelte)                                               | 5.43.12 | MIT               | Cybernetically enhanced web apps                                                                                                                  |
+| [svelte](https://github.com/sveltejs/svelte)                                               | 5.43.14 | MIT               | Cybernetically enhanced web apps                                                                                                                  |
 | [tailwindcss](https://github.com/tailwindlabs/tailwindcss)                                 | 4.1.17  | MIT               | A utility-first CSS framework for rapidly building custom user interfaces.                                                                        |
 | [tippy.js](https://github.com/atomiks/tippyjs)                                             | 6.3.7   | MIT               | The complete tooltip, popover, dropdown, and menu solution for the web                                                                            |
 | [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint)                | 8.47.0  | MIT               | Tooling which enables you to use TypeScript with ESLint                                                                                           |
 | [typescript](https://github.com/microsoft/TypeScript)                                      | 5.9.3   | Apache-2.0        | TypeScript is a language for application scale JavaScript development                                                                             |
-| [vite](https://github.com/vitejs/vite)                                                     | 7.2.2   | MIT               | Native-ESM powered web dev build tool                                                                                                             |
+| [vite](https://github.com/vitejs/vite)                                                     | 7.2.4   | MIT               | Native-ESM powered web dev build tool                                                                                                             |
 
 ## Backend Dependencies
 
