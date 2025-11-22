@@ -40,8 +40,8 @@ export type Option = {
 export type Entry = {
   /** Record ID. */
   id: string;
-  /** Triggered key. */
-  key: string;
+  /** Triggered shortcut. */
+  shortcut: string;
   /** Trigger time. */
   datetime: string;
   /** Clipboard text. */
@@ -76,8 +76,8 @@ export type Entry = {
 export type Rule = {
   /** Rule ID. */
   id: string;
-  /** Bound shortcut key. */
-  key: string;
+  /** Bound shortcut string. */
+  shortcut: string;
   /** Bound text type. */
   case: string;
   /** Case label. */

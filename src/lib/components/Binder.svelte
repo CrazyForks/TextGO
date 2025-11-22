@@ -14,8 +14,8 @@
   // loading status
   const loading = new Loading();
 
-  // key to bind
-  let lastKey: string = $state('');
+  // shortcut to bind
+  let shortcut: string = $state('');
 
   // text type
   let textCase: string = $state('');
@@ -24,10 +24,10 @@
   let actionId: string = $state('');
 
   // rule modal
-  let ruleModal: Modal;
-  export const showModal = (key: string) => {
-    lastKey = key.toUpperCase();
-    ruleModal.show();
+  let modal: Modal;
+  export const showModal = (value: string) => {
+    shortcut = value;
+    modal.show();
   };
 
   // text type options
@@ -87,13 +87,13 @@
   });
 
   /**
-   * Register rule.
+   * Register new rule.
    *
    * @param form - form element
    */
   async function register(form: HTMLFormElement) {
-    const rules = shortcuts.current[lastKey];
-    if (rules.find((r) => r.key === lastKey && r.case === textCase)) {
+    const rules = shortcuts.current[shortcut];
+    if (rules.find((r) => r.shortcut === shortcut && r.case === textCase)) {
       alert({ level: 'error', message: m.type_already_used() });
       return;
     }
@@ -101,12 +101,12 @@
     try {
       await manager.register({
         id: crypto.randomUUID(),
-        key: lastKey,
+        shortcut: shortcut,
         case: textCase,
         action: actionId
       });
       form.reset();
-      ruleModal.close();
+      modal.close();
       alert(m.rule_added_success());
     } catch (error) {
       console.error(`Failed to register rule: ${error}`);
@@ -149,7 +149,7 @@
   }
 </script>
 
-<Modal icon={Sparkle} title="{m.add()}{m.rule()}" bind:this={ruleModal}>
+<Modal icon={Sparkle} title="{m.add()}{m.rule()}" bind:this={modal}>
   <form
     method="post"
     use:enhance={({ formElement, cancel }) => {
@@ -164,7 +164,7 @@
       <Select bind:value={actionId} options={actionIds} class="w-full" />
     </fieldset>
     <div class="modal-action">
-      <button type="button" class="btn" onclick={() => ruleModal?.close()}>{m.cancel()}</button>
+      <button type="button" class="btn" onclick={() => modal?.close()}>{m.cancel()}</button>
       <button type="submit" class="btn btn-submit" disabled={loading.started}>
         {m.confirm()}
         {#if loading.delayed}

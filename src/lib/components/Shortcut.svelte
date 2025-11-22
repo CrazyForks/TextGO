@@ -1,23 +1,21 @@
 <script lang="ts">
-  import { type } from '@tauri-apps/plugin-os';
-  import { ArrowFatUp, Command, Control } from 'phosphor-svelte';
+  import { getKeyDisplay } from '$lib/helpers';
 
-  const { key, class: _class }: { key?: string; class?: string } = $props();
-  const osType = type();
+  const { shortcut, class: _class }: { shortcut: string; class?: string } = $props();
+
+  // split shortcut into individual keys
+  const keys = $derived(shortcut.split('+'));
 </script>
 
-<div class="flex items-center gap-1 text-primary/80 {_class}">
-  <kbd class="kbd px-1.5 kbd-sm">
-    {#if osType === 'macos'}
-      <Command class="size-3.5" />
+<div class="flex items-center gap-0.5 text-primary/80 {_class}">
+  {#each keys as code, index (code)}
+    {@const key = getKeyDisplay(code)}
+    {@const modifier = index < keys.length - 1}
+    {#if modifier}
+      <kbd class="kbd min-w-8 text-lg">{key}</kbd>
+      <span class="text-sm opacity-30">+</span>
     {:else}
-      <Control class="size-3.5" />
+      <kbd class="kbd min-w-8">{key}</kbd>
     {/if}
-  </kbd>
-  <kbd class="kbd px-1.5 kbd-sm">
-    <ArrowFatUp class="size-3.5" />
-  </kbd>
-  <kbd class="kbd px-2 kbd-sm">
-    <div class="text-sm font-light">{key}</div>
-  </kbd>
+  {/each}
 </div>

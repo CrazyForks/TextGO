@@ -2,112 +2,93 @@ use crate::error::AppError;
 use crate::REGISTERED_SHORTCUTS;
 use tauri_plugin_global_shortcut::{Code, GlobalShortcutExt, Modifiers, Shortcut};
 
-/// Register global shortcut CmdOrCtrl+Shift+<key>.
+/// Register global shortcut.
 #[tauri::command]
-pub fn register_shortcut(app: tauri::AppHandle, key: String) -> Result<(), AppError> {
-    // validate input parameters
-    if key.len() != 1 || !key.chars().all(|c| c.is_alphanumeric()) {
-        return Err("Shortcut key must be a single letter or digit".into());
-    }
-
-    let key_upper = key.to_uppercase();
-    let shortcut_str = format!("CmdOrCtrl+Shift+{}", key_upper);
-
-    // check if already registered
-    {
-        let registered = REGISTERED_SHORTCUTS.lock()?;
-        if registered.contains_key(&shortcut_str) {
-            return Err(format!("Shortcut {} is already registered", shortcut_str).into());
+pub fn register_shortcut(app: tauri::AppHandle, shortcut: String) -> Result<(), AppError> {
+    // check if registered
+    if let Ok(registered) = is_shortcut_registered(shortcut.clone()) {
+        if registered {
+            return Err(format!("Shortcut {} is already registered", shortcut).into());
         }
     }
 
-    // create shortcut object
-    #[cfg(target_os = "macos")]
-    let modifiers = Modifiers::META | Modifiers::SHIFT;
-    #[cfg(not(target_os = "macos"))]
-    let modifiers = Modifiers::CONTROL | Modifiers::SHIFT;
-
-    let code_str = if key_upper.chars().all(|c| c.is_alphabetic()) {
-        format!("Key{}", key_upper)
-    } else {
-        format!("Digit{}", key_upper)
-    };
-
-    let code = code_str.parse::<Code>().map_err(|_| "Unsupported key")?;
-    let shortcut = Shortcut::new(Some(modifiers), code);
+    // parse and create shortcut object
+    let hotkey = parse_shortcut(&shortcut)?;
 
     // use plugin to register shortcut
-    app.global_shortcut().register(shortcut)?;
+    app.global_shortcut().register(hotkey)?;
 
     // save to registry
     {
         let mut registered = REGISTERED_SHORTCUTS.lock()?;
-        registered.insert(shortcut_str.clone(), key_upper);
+        registered.insert(hotkey.id, shortcut);
     }
 
     Ok(())
 }
 
-/// Unregister global shortcut CmdOrCtrl+Shift+<key>.
+/// Unregister global shortcut.
 #[tauri::command]
-pub fn unregister_shortcut(app: tauri::AppHandle, key: String) -> Result<(), AppError> {
-    // validate input parameters
-    if key.len() != 1 || !key.chars().all(|c| c.is_alphanumeric()) {
-        return Err("Shortcut key must be a single letter or digit".into());
-    }
-
-    let key_upper = key.to_uppercase();
-    let shortcut_str = format!("CmdOrCtrl+Shift+{}", key_upper);
-
+pub fn unregister_shortcut(app: tauri::AppHandle, shortcut: String) -> Result<(), AppError> {
     // check if registered
-    {
-        let registered = REGISTERED_SHORTCUTS.lock()?;
-        if !registered.contains_key(&shortcut_str) {
-            return Err(format!("Shortcut {} is not registered", shortcut_str).into());
+    if let Ok(registered) = is_shortcut_registered(shortcut.clone()) {
+        if !registered {
+            return Err(format!("Shortcut {} is not registered", shortcut).into());
         }
     }
 
-    // create shortcut object
-    #[cfg(target_os = "macos")]
-    let modifiers = Modifiers::META | Modifiers::SHIFT;
-    #[cfg(not(target_os = "macos"))]
-    let modifiers = Modifiers::CONTROL | Modifiers::SHIFT;
-
-    let code_str = if key_upper.chars().all(|c| c.is_alphabetic()) {
-        format!("Key{}", key_upper)
-    } else {
-        format!("Digit{}", key_upper)
-    };
-
-    let code = code_str.parse::<Code>().map_err(|_| "Unsupported key")?;
-    let shortcut = Shortcut::new(Some(modifiers), code);
+    // parse and create shortcut object
+    let hotkey = parse_shortcut(&shortcut)?;
 
     // unregister shortcut
-    app.global_shortcut().unregister(shortcut)?;
+    app.global_shortcut().unregister(hotkey)?;
 
     // remove from registry
     {
         let mut registered = REGISTERED_SHORTCUTS.lock()?;
-        registered.remove(&shortcut_str);
+        registered.remove(&hotkey.id);
     }
 
     Ok(())
 }
 
-/// Check if global shortcut CmdOrCtrl+Shift+<key> is registered.
+/// Check if global shortcut is registered.
 #[tauri::command]
-pub fn is_shortcut_registered(key: String) -> Result<bool, AppError> {
-    // validate input parameters
-    if key.len() != 1 || !key.chars().all(|c| c.is_alphanumeric()) {
-        return Err("Shortcut key must be a single letter or digit".into());
+pub fn is_shortcut_registered(shortcut: String) -> Result<bool, AppError> {
+    // check registration status by checking values
+    let registered = REGISTERED_SHORTCUTS.lock()?;
+    let is_registered = registered.values().any(|v| v == &shortcut);
+    Ok(is_registered)
+}
+
+/// Parse a shortcut string and create a Shortcut object.
+/// Supported formats:
+/// - "Meta+A", "Control+A", "Alt+A", "Shift+A"
+/// - "Control+Shift+A", "Meta+Alt+A", etc.
+fn parse_shortcut(shortcut: &str) -> Result<Shortcut, AppError> {
+    // split by '+'
+    let keys: Vec<&str> = shortcut.split('+').collect();
+    if keys.is_empty() {
+        return Err("Empty shortcut string".into());
     }
 
-    let key_upper = key.to_uppercase();
-    let shortcut_str = format!("CmdOrCtrl+Shift+{}", key_upper);
+    // parse modifiers
+    let mut modifiers = Modifiers::empty();
+    for modifier in &keys[..keys.len() - 1] {
+        match modifier.to_lowercase().as_str() {
+            "meta" => modifiers |= Modifiers::META,
+            "control" => modifiers |= Modifiers::CONTROL,
+            "alt" => modifiers |= Modifiers::ALT,
+            "shift" => modifiers |= Modifiers::SHIFT,
+            _ => return Err(format!("Unsupported modifier: {}", modifier).into()),
+        }
+    }
 
-    // check registration status
-    let registered = REGISTERED_SHORTCUTS.lock()?;
-    let is_registered = registered.contains_key(&shortcut_str);
+    // parse key code
+    let code_str = keys.last().ok_or("Missing key code")?;
+    let code = code_str
+        .parse::<Code>()
+        .map_err(|_| format!("Unsupported key code: {}", code_str))?;
 
-    Ok(is_registered)
+    Ok(Shortcut::new(Some(modifiers), code))
 }

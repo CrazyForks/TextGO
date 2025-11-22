@@ -1,21 +1,14 @@
 <script lang="ts">
-  import { enhance } from '$app/forms';
-  import { alert, Button, confirm, List, Modal, Rule, Shortcut } from '$lib/components';
+  import { alert, Button, confirm, List, Recorder, Binder, Shortcut } from '$lib/components';
   import { MODEL_MARK, PROMPT_MARK, REGEXP_MARK, SCRIPT_MARK } from '$lib/constants';
-  import { buildFormSchema } from '$lib/constraint';
   import { JavaScript, LMStudio, NoData, Ollama, Python, Regexp, Tensorflow } from '$lib/icons';
   import { m } from '$lib/paraglide/messages';
   import { prompts, scripts, shortcuts } from '$lib/stores.svelte';
-  import { type } from '@tauri-apps/plugin-os';
   import {
     ArrowArcRight,
     ArrowFatLineRight,
-    ArrowFatUp,
     Browser,
-    Command,
-    Control,
     FingerprintSimple,
-    Info,
     Sparkle,
     StackPlus,
     Trash,
@@ -24,76 +17,37 @@
   import { onMount, tick } from 'svelte';
   import { fly } from 'svelte/transition';
 
-  // operating system type
-  const osType = type();
-
   // total number of rules
   let totalRules = $derived(Object.values(shortcuts.current).reduce((sum, arr) => sum + arr.length, 0));
 
-  // key to register
-  let key: string = $state('');
+  // shortcut recorder
+  let recorder: Recorder;
 
-  // key registration modal
-  let keyModal: Modal;
-
-  // rule manager modal
-  let ruleManager: Rule | null = $state(null);
-
-  // whether in input method composition state
-  let compositing: boolean = false;
-
-  // form validation rules
-  const schema = buildFormSchema(({ text }) => ({
-    key: text()
-      .maxlength(1)
-      .pattern('^[a-zA-Z0-9]$')
-      .oninvalid((event) => {
-        if ((event.target as HTMLInputElement)?.value) {
-          oninvalid(m.key_not_supported());
-        }
-      })
-  }));
+  // rule binder
+  let binder: Binder | null = $state(null);
 
   /**
-   * Handle invalid input.
+   * Register new shortcut.
    *
-   * @param message - prompt message
+   * @param shortcut - shortcut string to register
    */
-  function oninvalid(message: string) {
-    // clear input
-    key = '';
-    // show prompt
-    alert({ level: 'error', message: message });
-  }
-
-  /**
-   * Check for duplicates.
-   *
-   * @param value - input value
-   */
-  function checkDuplicate(value: string) {
-    if (value && shortcuts.current[value.toUpperCase()]) {
-      oninvalid(m.key_already_registered());
-      return false;
-    }
-    return true;
-  }
-
-  /**
-   * Submit registration.
-   */
-  async function submit() {
-    // take only first character and convert to uppercase
-    const newKey = key.charAt(0).toUpperCase();
-    if (!checkDuplicate(newKey)) {
+  async function register(shortcut: string) {
+    if (!shortcut) {
       return;
     }
-    shortcuts.current[newKey] = [];
-    keyModal.close();
-    key = '';
+
+    // check duplicate
+    if (shortcuts.current[shortcut]) {
+      alert({ level: 'error', message: m.shortcut_already_registered() });
+      return;
+    }
+
+    // register new shortcut
+    shortcuts.current[shortcut] = [];
+
     // wait for DOM update then scroll to newly registered shortcut position
     await tick();
-    const element = document.querySelector(`[data-shortcut-key="${newKey}"]`);
+    const element = document.querySelector(`[data-shortcut="${shortcut}"]`);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
@@ -136,7 +90,7 @@
         <span class="text-xs tracking-wider opacity-50">({m.rules_count({ count: totalRules })})</span>
       {/if}
     </span>
-    <button class="btn text-sm btn-sm btn-submit" onclick={() => keyModal.show()}>
+    <button class="btn text-sm btn-sm btn-submit" onclick={() => recorder.showModal()}>
       <StackPlus class="size-5" />{m.register_shortcut()}
     </button>
   </div>
@@ -145,25 +99,25 @@
       <NoData class="m-auto size-64 pl-4 opacity-10" />
     </div>
   {/if}
-  {#each Object.keys(shortcuts.current).sort() as key (key)}
-    <div data-shortcut-key={key} in:fly={{ x: -100, duration: 200 }} out:fly={{ x: 100, duration: 200 }}>
+  {#each Object.keys(shortcuts.current).sort() as shortcut (shortcut)}
+    <div data-shortcut={shortcut} in:fly={{ x: -15, duration: 150 }} out:fly={{ x: 15, duration: 150 }}>
       <div class="flex items-center justify-between pt-8 pb-2">
-        <Shortcut {key} />
+        <Shortcut {shortcut} />
         <Button
           icon={Trash}
           class="text-emphasis"
           text={m.delete_shortcut()}
           onclick={() => {
             const clear = () => {
-              for (const item of shortcuts.current[key] || []) {
-                ruleManager?.unregister(item);
+              for (const item of shortcuts.current[shortcut] || []) {
+                binder?.unregister(item);
               }
-              delete shortcuts.current[key];
+              delete shortcuts.current[shortcut];
             };
             // delete directly if rule is empty, otherwise need confirmation
-            if (shortcuts.current[key].length > 0) {
+            if (shortcuts.current[shortcut].length > 0) {
               confirm({
-                title: m.delete_shortcut_title({ key }),
+                title: m.delete_shortcut_title({ shortcut }),
                 message: m.delete_confirm_message(),
                 onconfirm: clear
               });
@@ -176,23 +130,23 @@
       <List
         name={m.rule()}
         hint={m.rule_hint()}
-        bind:data={shortcuts.current[key]}
-        oncreate={() => ruleManager?.showModal(key)}
-        ondelete={(item) => ruleManager?.unregister(item)}
+        bind:data={shortcuts.current[shortcut]}
+        oncreate={() => binder?.showModal(shortcut)}
+        ondelete={(item) => binder?.unregister(item)}
       >
         {#snippet title()}
           <Sparkle class="mx-1 size-4 opacity-60" />
           <span class="text-sm tracking-wide opacity-60">
-            {#if shortcuts.current[key].length > 0}
-              {m.rules_count({ count: shortcuts.current[key].length })}
+            {#if shortcuts.current[shortcut].length > 0}
+              {m.rules_count({ count: shortcuts.current[shortcut].length })}
             {:else}
               {m.rules_empty()}
             {/if}
           </span>
         {/snippet}
         {#snippet row(item)}
-          {@const { label: caseLabel, icon: caseIcon } = ruleManager?.getCaseOption(item.case) ?? {}}
-          {@const { label: actionLabel, icon: actionIcon } = ruleManager?.getActionOption(item.action) ?? {}}
+          {@const { label: caseLabel, icon: caseIcon } = binder?.getCaseOption(item.case) ?? {}}
+          {@const { label: actionLabel, icon: actionIcon } = binder?.getActionOption(item.action) ?? {}}
           <div class="list-col-grow flex items-center gap-4 pl-4">
             <div class="flex w-1/2 items-center gap-1.5 truncate" title={caseLabel}>
               {#if item.case === ''}
@@ -258,43 +212,6 @@
   {/each}
 </div>
 
-<Modal maxWidth="22rem" icon={StackPlus} title={m.register_shortcut()} bind:this={keyModal}>
-  <form
-    method="post"
-    use:enhance={({ cancel }) => {
-      cancel();
-      submit();
-    }}
-  >
-    <fieldset class="fieldset">
-      <div class="flex items-center justify-center gap-4 py-2">
-        <kbd class="kbd h-10 w-12">
-          {#if osType === 'macos'}
-            <Command class="size-6" />
-          {:else}
-            <Control class="size-6" />
-          {/if}
-        </kbd>
-        <span class="text-2xl font-bold opacity-50">+</span>
-        <kbd class="kbd h-10 w-12"><ArrowFatUp class="size-6" /></kbd>
-        <span class="text-2xl font-bold opacity-50">+</span>
-        <input
-          class="autofocus input h-10 w-12 text-xl"
-          {...schema.key}
-          bind:value={key}
-          oninput={(event) => !compositing && (event.target as HTMLInputElement)?.form?.requestSubmit()}
-          oncompositionstart={() => (compositing = true)}
-          oncompositionend={(event) => (
-            (compositing = false),
-            (event.target as HTMLInputElement)?.form?.requestSubmit()
-          )}
-        />
-      </div>
-      <div class="flex items-center justify-center gap-1 text-xs tracking-wider opacity-30">
-        <Info class="size-4" />{m.register_key_tip()}
-      </div>
-    </fieldset>
-  </form>
-</Modal>
+<Recorder bind:this={recorder} onrecord={register} />
 
-<Rule bind:this={ruleManager} />
+<Binder bind:this={binder} />

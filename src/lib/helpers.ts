@@ -1,7 +1,68 @@
 import { getLocale } from '$lib/paraglide/runtime';
+import { type } from '@tauri-apps/plugin-os';
 import type { ActionReturn } from 'svelte/action';
 import type { Instance, Props } from 'tippy.js';
 import tippy from 'tippy.js';
+
+// operating system type
+const osType = type();
+
+// mapping of special key names to their display representations
+const DISPLAY_KEY_MAP: Record<string, string> = {
+  // modifier keys
+  Meta: osType === 'macos' ? '⌘' : 'Win',
+  Control: '⌃',
+  Alt: osType === 'macos' ? '⌥' : 'Alt',
+  Shift: '⇧',
+  // whitespace keys
+  Enter: '↵',
+  Tab: '⇥',
+  // navigation keys
+  ArrowUp: '↑',
+  ArrowDown: '↓',
+  ArrowLeft: '←',
+  ArrowRight: '→',
+  PageUp: 'PgUp',
+  PageDown: 'PgDn',
+  // editing keys
+  Backspace: '⌫',
+  Delete: 'Del',
+  Insert: 'Ins',
+  // UI keys
+  Escape: 'Esc',
+  // symbol keys
+  Backquote: '`',
+  Minus: '-',
+  Equal: '=',
+  BracketLeft: '[',
+  BracketRight: ']',
+  Backslash: '\\',
+  Semicolon: ';',
+  Quote: "'",
+  Comma: ',',
+  Period: '.',
+  Slash: '/'
+};
+
+/**
+ * Get display representation of a keyboard key code.
+ *
+ * @param code - keyboard key code
+ * @returns display representation
+ */
+export function getKeyDisplay(code: string): string {
+  const display = DISPLAY_KEY_MAP[code];
+  if (display) {
+    return display;
+  }
+  if (code.startsWith('Key')) {
+    return code.slice(3);
+  }
+  if (code.startsWith('Digit')) {
+    return code.slice(5);
+  }
+  return code;
+}
 
 /**
  * Create tooltip using Tippy.js.

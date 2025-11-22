@@ -21,7 +21,7 @@ pub static ENIGO: LazyLock<Mutex<Result<Enigo, enigo::NewConError>>> =
     LazyLock::new(|| Mutex::new(Enigo::new(&Settings::default())));
 
 // global registered shortcuts mapping
-pub static REGISTERED_SHORTCUTS: LazyLock<Mutex<HashMap<String, String>>> =
+pub static REGISTERED_SHORTCUTS: LazyLock<Mutex<HashMap<u32, String>>> =
     LazyLock::new(|| Mutex::new(HashMap::new()));
 
 /// Application setup function.
@@ -93,20 +93,26 @@ fn handle_run_event(app: &tauri::AppHandle, event: RunEvent) {
 }
 
 /// Global shortcut handler function.
-fn handle_shortcut_event(app: &tauri::AppHandle, shortcut: &Shortcut, event: ShortcutEvent) {
+fn handle_shortcut_event(app: &tauri::AppHandle, hotkey: &Shortcut, event: ShortcutEvent) {
     if event.state() == ShortcutState::Pressed {
-        // extract last character from shortcut.key formatted string
-        let key_str = format!("{}", shortcut.key);
-        let key_char = key_str.chars().last().unwrap_or('?').to_string();
+        // get shortcut string
+        let shortcut = {
+            let registered = REGISTERED_SHORTCUTS.lock().unwrap();
+            registered
+                .get(&hotkey.id)
+                .cloned()
+                .unwrap_or_else(|| "Unknown".to_string())
+        };
 
+        // clone app and shortcut for async move
         let app_clone = app.clone();
-        let key_char_clone = key_char.clone();
+        let shortcut_clone = shortcut.clone();
 
         // asynchronously get selected text and emit event to frontend
         tauri::async_runtime::spawn(async move {
             if let Ok(selection) = get_selection(app_clone.clone()).await {
                 let event_data = serde_json::json!({
-                    "key": key_char_clone,
+                    "shortcut": shortcut_clone,
                     "selection": selection
                 });
                 let _ = app_clone.emit("shortcut-triggered", event_data);

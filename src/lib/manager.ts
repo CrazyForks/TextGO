@@ -22,8 +22,8 @@ export class Manager {
       try {
         // listen for shortcut triggered events from Rust backend
         await listen('shortcut-triggered', async (event) => {
-          const payload = event.payload as { key: string; selection: string };
-          await this.handleShortcutEvent(payload.key, payload.selection);
+          const payload = event.payload as { shortcut: string; selection: string };
+          await this.handleShortcutEvent(payload.shortcut, payload.selection);
         });
       } catch (error) {
         console.error(`Failed to initialize shortcut event listener: ${error}`);
@@ -34,13 +34,13 @@ export class Manager {
   /**
    * Handle shortcut event.
    *
-   * @param key - triggered shortcut key
+   * @param shortcut - triggered shortcut string
    * @param selection - selected text
    */
-  private async handleShortcutEvent(key: string, selection: string): Promise<void> {
+  private async handleShortcutEvent(shortcut: string, selection: string): Promise<void> {
     try {
-      // get all rules bound to this key
-      const rules = shortcuts.current[key];
+      // get all rules bound to this shortcut
+      const rules = shortcuts.current[shortcut];
       if (!rules || rules.length === 0) {
         return;
       }
@@ -70,13 +70,13 @@ export class Manager {
   async register(rule: Rule): Promise<void> {
     try {
       // check if backend shortcut is registered
-      const isRegistered = await invoke('is_shortcut_registered', { key: rule.key });
+      const isRegistered = await invoke('is_shortcut_registered', { shortcut: rule.shortcut });
       if (!isRegistered) {
-        // register backend shortcut
-        await invoke('register_shortcut', { key: rule.key });
+        // register backend shortcut with full shortcut string
+        await invoke('register_shortcut', { shortcut: rule.shortcut });
       }
       // save rule to frontend registry
-      const rules = shortcuts.current[rule.key];
+      const rules = shortcuts.current[rule.shortcut];
       if (rules && !rules.find((r) => r.id === rule.id)) {
         rules.push(rule);
       }
@@ -94,7 +94,7 @@ export class Manager {
   async unregister(rule: Rule): Promise<void> {
     try {
       // remove rule from frontend registry
-      const rules = shortcuts.current[rule.key];
+      const rules = shortcuts.current[rule.shortcut];
       if (rules) {
         const index = rules.findIndex((r) => r.id === rule.id);
         if (index !== -1) {
@@ -102,7 +102,7 @@ export class Manager {
         }
         // unregister backend shortcut when no remaining rules
         if (rules.length === 0) {
-          await invoke('unregister_shortcut', { key: rule.key });
+          await invoke('unregister_shortcut', { shortcut: rule.shortcut });
         }
       }
     } catch (error) {

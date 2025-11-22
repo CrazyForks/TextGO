@@ -37,7 +37,7 @@
   let scrollElement: HTMLElement | null = $state(null);
 
   // scroll timer
-  let scrollInterval: ReturnType<typeof setInterval> | null = $state(null);
+  let scrollTimer: ReturnType<typeof setInterval> | null = $state(null);
 
   /**
    * Start conversation.
@@ -104,11 +104,11 @@
    * Start auto scroll.
    */
   function startAutoScroll() {
-    if (scrollInterval) {
-      clearInterval(scrollInterval);
+    if (scrollTimer) {
+      clearInterval(scrollTimer);
     }
     autoScroll = true;
-    scrollInterval = setInterval(() => {
+    scrollTimer = setInterval(() => {
       if (autoScroll && scrollElement) {
         scrollElement.scrollTo({
           top: scrollElement.scrollHeight,
@@ -122,11 +122,11 @@
    * Stop auto scroll.
    */
   function stopAutoScroll() {
-    if (scrollInterval) {
-      clearInterval(scrollInterval);
+    if (scrollTimer) {
+      clearInterval(scrollTimer);
     }
     autoScroll = false;
-    scrollInterval = null;
+    scrollTimer = null;
   }
 
   /**

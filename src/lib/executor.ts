@@ -237,7 +237,7 @@ export async function execute(rule: Rule, selection: string): Promise<void> {
   // generate record
   const entry: Entry = {
     id: crypto.randomUUID(),
-    key: rule.key,
+    shortcut: rule.shortcut,
     caseLabel: rule.caseLabel,
     // actionLabel: rule.actionLabel,
     datetime: data.datetime,

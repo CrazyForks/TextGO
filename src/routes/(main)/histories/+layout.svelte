@@ -40,7 +40,7 @@
           {@const active = deLocalizeHref(page.url.pathname) === href}
           <li animate:flip={{ duration: 200 }}>
             <a {href} class="group gap-1 rounded-md px-1.5 {active ? 'glass bg-emphasis text-neutral-content' : ''}">
-              <kbd class="kbd kbd-sm text-primary/80">{entry.key}</kbd>
+              <kbd class="kbd kbd-sm text-primary/80">{entry.shortcut}</kbd>
               <span class="truncate py-1 text-xs tracking-wider opacity-60">
                 {entry.selection.trim() || formatISO8601(entry.datetime)}
               </span>
