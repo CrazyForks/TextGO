@@ -73,15 +73,18 @@ fn send_copy_keys() -> Result<(), AppError> {
     let mut enigo_guard = ENIGO.lock()?;
     let enigo = enigo_guard.as_mut()?;
 
+    // release modifier keys to avoid interference
+    enigo.key(Key::Meta, Direction::Release)?;
+    enigo.key(Key::Control, Direction::Release)?;
+    enigo.key(Key::Alt, Direction::Release)?;
+    enigo.key(Key::Shift, Direction::Release)?;
+
+    // send Cmd+C or Ctrl+C
     #[cfg(target_os = "macos")]
     let modifier = Key::Meta;
     #[cfg(not(target_os = "macos"))]
     let modifier = Key::Control;
 
-    // release shift key
-    enigo.key(Key::Shift, Direction::Release)?;
-
-    // send Cmd+C or Ctrl+C
     enigo.key(modifier, Direction::Press)?;
     enigo.key(Key::Unicode('c'), Direction::Click)?;
     enigo.key(modifier, Direction::Release)?;

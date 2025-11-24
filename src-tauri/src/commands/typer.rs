@@ -27,11 +27,11 @@ pub async fn enter_text(app: tauri::AppHandle, text: String) -> Result<(), AppEr
             let _ = send_paste_keys();
         });
 
+        // delay 100 ms to ensure paste operation completes
+        sleep(Duration::from_millis(100)).await;
+
         // if cursor position is editable, try to select entered text
         if platform::is_cursor_editable()? {
-            // delay 100 ms to ensure paste operation completes
-            sleep(Duration::from_millis(100)).await;
-
             // first try using native API to select text
             if platform::select_backward_chars(chars).is_err() {
                 // if native API call fails and char count is <= 50, use keyboard simulation
@@ -58,15 +58,18 @@ fn send_paste_keys() -> Result<(), AppError> {
     let mut enigo_guard = ENIGO.lock()?;
     let enigo = enigo_guard.as_mut()?;
 
+    // release modifier keys to avoid interference
+    enigo.key(Key::Meta, Direction::Release)?;
+    enigo.key(Key::Control, Direction::Release)?;
+    enigo.key(Key::Alt, Direction::Release)?;
+    enigo.key(Key::Shift, Direction::Release)?;
+
+    // send Cmd+V or Ctrl+V
     #[cfg(target_os = "macos")]
     let modifier = Key::Meta;
     #[cfg(not(target_os = "macos"))]
     let modifier = Key::Control;
 
-    // release shift key
-    enigo.key(Key::Shift, Direction::Release)?;
-
-    // send Cmd+V or Ctrl+V
     enigo.key(modifier, Direction::Press)?;
     enigo.key(Key::Unicode('v'), Direction::Click)?;
     enigo.key(modifier, Direction::Release)?;
