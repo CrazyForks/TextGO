@@ -28,13 +28,25 @@ jobs:
 
       - name: generate changelog
         id: changelog
-        uses: requarks/changelog-action@v1
+        uses: mikepenz/release-changelog-builder-action@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.ref_name }}
-          restrictToTypes: 'feat,fix'
-          useGitmojis: false
-          writeToFile: false
+          mode: COMMIT
+          configurationJson: |
+            {
+              "categories": [
+                {
+                  "title": "### :sparkles: New Features",
+                  "labels": ["feat"]
+                },
+                {
+                  "title": "### :hammer: Bug Fixes",
+                  "labels": ["fix"]
+                }
+              ],
+              "commit_template": "- [#{{TITLE}}](https://github.com/C5H12O5/TextGO/commit/#{{MERGE_SHA}}) (by [@#{{AUTHOR}}](https://github.com/#{{AUTHOR}}))"
+            }
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: setup node
         uses: actions/setup-node@v4
@@ -59,7 +71,7 @@ jobs:
         with:
           tagName: 'v__VERSION__'
           releaseName: 'v__VERSION__'
-          releaseBody: ${{ steps.changelog.outputs.changes }}
+          releaseBody: ${{ steps.changelog.outputs.changelog }}
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
