@@ -43,7 +43,7 @@ jobs:
                   "labels": ["fix"]
                 }
               ],
-              "commit_template": "- [#{{TITLE}}](https://github.com/C5H12O5/TextGO/commit/#{{MERGE_SHA}}) (by [@#{{AUTHOR}}](https://github.com/#{{AUTHOR}}))"
+              "commit_template": "- #{{TITLE}} (by [@#{{AUTHOR}}](https://github.com/#{{AUTHOR}}))"
             }
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
