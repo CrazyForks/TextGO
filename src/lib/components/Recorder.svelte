@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { Modal } from '$lib/components';
-  import { getKeyDisplay } from '$lib/helpers';
+  import { Kbd, Modal } from '$lib/components';
   import { m } from '$lib/paraglide/messages';
   import { Lightbulb, StackPlus } from 'phosphor-svelte';
   import { onMount } from 'svelte';
@@ -161,12 +160,12 @@
       <div class="flex min-h-10 min-w-40 items-center justify-center gap-1 rounded-box border-2 border-primary px-3">
         {#if pressedModifiers.length > 0}
           {#each pressedModifiers as modifier (modifier)}
-            <kbd class="kbd min-w-8 text-lg">{getKeyDisplay(modifier)}</kbd>
+            <Kbd key={modifier} />
             <span class="text-lg font-bold opacity-50">+</span>
           {/each}
         {/if}
         {#if pressedKey}
-          <kbd class="kbd min-w-8">{getKeyDisplay(pressedKey)}</kbd>
+          <Kbd key={pressedKey} />
         {:else}
           <span class="text-sm opacity-50">{m.recording_keys()}</span>
         {/if}

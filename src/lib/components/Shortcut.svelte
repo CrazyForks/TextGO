@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getKeyDisplay } from '$lib/helpers';
+  import { Kbd } from '$lib/components';
 
   const { shortcut, class: _class }: { shortcut: string; class?: string } = $props();
 
@@ -8,14 +8,13 @@
 </script>
 
 <div class="flex items-center gap-0.5 text-primary/80 {_class}">
-  {#each keys as code, index (code)}
-    {@const key = getKeyDisplay(code)}
+  {#each keys as key, index (key)}
     {@const modifier = index < keys.length - 1}
     {#if modifier}
-      <kbd class="kbd min-w-8 text-lg">{key}</kbd>
+      <Kbd {key} />
       <span class="text-sm opacity-30">+</span>
     {:else}
-      <kbd class="kbd min-w-8">{key}</kbd>
+      <Kbd {key} />
     {/if}
   {/each}
 </div>

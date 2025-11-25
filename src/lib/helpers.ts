@@ -7,8 +7,8 @@ import tippy from 'tippy.js';
 // operating system type
 const osType = type();
 
-// mapping of special key names to their display representations
-const DISPLAY_KEY_MAP: Record<string, string> = {
+// mapping of special key codes to display representations
+const KBD_LABEL_MAP: Record<string, string> = {
   // modifier keys
   Meta: osType === 'macos' ? '⌘' : 'Win',
   Control: '⌃',
@@ -50,10 +50,10 @@ const DISPLAY_KEY_MAP: Record<string, string> = {
  * @param code - keyboard key code
  * @returns display representation
  */
-export function getKeyDisplay(code: string): string {
-  const display = DISPLAY_KEY_MAP[code];
-  if (display) {
-    return display;
+export function getKbdLabel(code: string): string {
+  const label = KBD_LABEL_MAP[code];
+  if (label) {
+    return label;
   }
   if (code.startsWith('Key')) {
     return code.slice(3);
@@ -62,6 +62,36 @@ export function getKeyDisplay(code: string): string {
     return code.slice(5);
   }
   return code;
+}
+
+/**
+ * Format keyboard shortcut string.
+ *
+ * @param shortcut - keyboard shortcut string (e.g., "Meta+Shift+KeyA")
+ * @returns formatted shortcut string (e.g., "⌘+⇧+A" on macOS)
+ */
+export function formatShortcut(shortcut: string): string {
+  return shortcut
+    .split('+')
+    .map((code) => getKbdLabel(code))
+    .join('+');
+}
+
+/**
+ * Format ISO8601 datetime string.
+ *
+ * @param str - ISO8601 format datetime string
+ * @returns formatted datetime string
+ */
+export function formatISO8601(str: string | null | undefined): string {
+  if (!str) {
+    return '';
+  }
+  const datetime = new Date(str);
+  return datetime.toLocaleString(getLocale(), {
+    dateStyle: 'medium',
+    timeStyle: 'medium'
+  });
 }
 
 /**
@@ -106,21 +136,4 @@ export function tooltip(target: HTMLElement, props: Partial<Props>): ActionRetur
       }
     }
   };
-}
-
-/**
- * Format ISO8601 datetime string.
- *
- * @param str - ISO8601 format datetime string
- * @returns formatted datetime string
- */
-export function formatISO8601(str: string | null | undefined): string {
-  if (!str) {
-    return '';
-  }
-  const datetime = new Date(str);
-  return datetime.toLocaleString(getLocale(), {
-    dateStyle: 'medium',
-    timeStyle: 'medium'
-  });
 }

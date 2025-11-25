@@ -1,4 +1,5 @@
 export { default as Binder } from './Binder.svelte';
+export { default as Kbd } from './Kbd.svelte';
 export { default as Button } from './Button.svelte';
 export { default as CodeMirror } from './CodeMirror.svelte';
 export { default as Label } from './Label.svelte';

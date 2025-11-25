@@ -2,8 +2,7 @@
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
-  import { Button, Title } from '$lib/components';
-  import { formatISO8601 } from '$lib/helpers';
+  import { Button, Shortcut, Title } from '$lib/components';
   import { m } from '$lib/paraglide/messages';
   import { deLocalizeHref } from '$lib/paraglide/runtime';
   import { entries } from '$lib/stores.svelte';
@@ -40,13 +39,10 @@
           {@const active = deLocalizeHref(page.url.pathname) === href}
           <li animate:flip={{ duration: 200 }}>
             <a {href} class="group gap-1 rounded-md px-1.5 {active ? 'glass bg-emphasis text-neutral-content' : ''}">
-              <kbd class="kbd kbd-sm text-primary/80">{entry.shortcut}</kbd>
-              <span class="truncate py-1 text-xs tracking-wider opacity-60">
-                {entry.selection.trim() || formatISO8601(entry.datetime)}
-              </span>
+              <Shortcut shortcut={entry.shortcut} />
               <Button
                 icon={Trash}
-                class="hidden border-0 shadow-none group-hover:inline-flex {active ? 'hover:bg-base-300' : ''}"
+                class="ml-auto hidden border-0 shadow-none group-hover:inline-flex {active ? 'hover:bg-base-300' : ''}"
                 onclick={(event) => {
                   event.stopPropagation();
                   event.preventDefault();

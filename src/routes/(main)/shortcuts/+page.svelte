@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { alert, Button, confirm, List, Recorder, Binder, Shortcut } from '$lib/components';
+  import { alert, Binder, Button, confirm, List, Recorder, Shortcut } from '$lib/components';
   import { MODEL_MARK, PROMPT_MARK, REGEXP_MARK, SCRIPT_MARK } from '$lib/constants';
+  import { formatShortcut } from '$lib/helpers';
   import { JavaScript, LMStudio, NoData, Ollama, Python, Regexp, Tensorflow } from '$lib/icons';
   import { m } from '$lib/paraglide/messages';
   import { prompts, scripts, shortcuts } from '$lib/stores.svelte';
@@ -117,7 +118,7 @@
             // delete directly if rule is empty, otherwise need confirmation
             if (shortcuts.current[shortcut].length > 0) {
               confirm({
-                title: m.delete_shortcut_title({ shortcut }),
+                title: m.delete_shortcut_title({ shortcut: formatShortcut(shortcut) }),
                 message: m.delete_confirm_message(),
                 onconfirm: clear
               });
