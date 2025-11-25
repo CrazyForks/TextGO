@@ -1,6 +1,6 @@
 # Third-Party License Notices
 
-> This document was automatically generated on November 21, 2025 at 01:24 PM GMT+8
+> This document was automatically generated on November 25, 2025 at 06:01 PM GMT+8
 
 ## Frontend Dependencies
 
@@ -54,10 +54,10 @@
 | [prettier-plugin-tailwindcss](https://github.com/tailwindlabs/prettier-plugin-tailwindcss) | 0.7.1   | MIT               | A Prettier plugin for sorting Tailwind CSS classes.                                                                                               |
 | [prettier](https://github.com/prettier/prettier)                                           | 3.6.2   | MIT               | Prettier is an opinionated code formatter                                                                                                         |
 | [svelte-check](https://github.com/sveltejs/language-tools)                                 | 4.3.4   | MIT               | Svelte Code Checker Terminal Interface                                                                                                            |
-| [svelte](https://github.com/sveltejs/svelte)                                               | 5.43.14 | MIT               | Cybernetically enhanced web apps                                                                                                                  |
+| [svelte](https://github.com/sveltejs/svelte)                                               | 5.44.0  | MIT               | Cybernetically enhanced web apps                                                                                                                  |
 | [tailwindcss](https://github.com/tailwindlabs/tailwindcss)                                 | 4.1.17  | MIT               | A utility-first CSS framework for rapidly building custom user interfaces.                                                                        |
 | [tippy.js](https://github.com/atomiks/tippyjs)                                             | 6.3.7   | MIT               | The complete tooltip, popover, dropdown, and menu solution for the web                                                                            |
-| [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint)                | 8.47.0  | MIT               | Tooling which enables you to use TypeScript with ESLint                                                                                           |
+| [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint)                | 8.48.0  | MIT               | Tooling which enables you to use TypeScript with ESLint                                                                                           |
 | [typescript](https://github.com/microsoft/TypeScript)                                      | 5.9.3   | Apache-2.0        | TypeScript is a language for application scale JavaScript development                                                                             |
 | [vite](https://github.com/vitejs/vite)                                                     | 7.2.4   | MIT               | Native-ESM powered web dev build tool                                                                                                             |
 
