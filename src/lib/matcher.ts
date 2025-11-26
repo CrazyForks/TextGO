@@ -21,52 +21,6 @@ import {
   TextT
 } from 'phosphor-svelte';
 
-// create programming language recognition model instance
-// configure custom loading function for Tauri environment
-const modelOperations = new ModelOperations({
-  // custom JSON model loader function
-  modelJsonLoaderFunc: async () => {
-    try {
-      const response = await fetch('/model.json');
-      if (!response.ok) {
-        throw new Error(`Unable to load model JSON file: ${response.status}`);
-      }
-      return await response.json();
-    } catch (error) {
-      console.error(`Failed to load model JSON file: ${error}`);
-      throw error;
-    }
-  },
-  // custom weights file loader function
-  weightsLoaderFunc: async () => {
-    try {
-      const response = await fetch('/group1-shard1of1.bin');
-      if (!response.ok) {
-        throw new Error(`Unable to load model weights file: ${response.status}`);
-      }
-      return await response.arrayBuffer();
-    } catch (error) {
-      console.error(`Failed to load model weights file: ${error}`);
-      throw error;
-    }
-  }
-});
-
-/**
- * Minimum expected confidence.
- */
-const MIN_CONFIDENCE = 0.2;
-
-/**
- * Initial confidence threshold.
- */
-const INITIAL_THRESHOLD = 0.5;
-
-/**
- * Relative confidence difference threshold.
- */
-const RELATIVE_THRESHOLD = 0.15;
-
 /**
  * General recognition options.
  */
@@ -291,6 +245,48 @@ const findBuiltinCase = memoize((_case: string) => [...GENERAL_CASES, ...TEXT_CA
 const findNaturalCase = memoize((_case: string) => NATURAL_CASES.find((c) => c.value === _case));
 const findProgrammingCase = memoize((_case: string) => PROGRAMMING_CASES.find((c) => c.value === _case));
 
+// natural language detection options for franc
+const FRANC_OPTIONS = { minLength: 2, only: NATURAL_CASES.map((c) => c.value as string) };
+
+// create programming language recognition model instance
+const MODEL_OPERATIONS = new ModelOperations({
+  // custom JSON model loader function
+  modelJsonLoaderFunc: async () => {
+    try {
+      const response = await fetch('/model.json');
+      if (!response.ok) {
+        throw new Error(`Unable to load model JSON file: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error(`Failed to load model JSON file: ${error}`);
+      throw error;
+    }
+  },
+  // custom weights file loader function
+  weightsLoaderFunc: async () => {
+    try {
+      const response = await fetch('/group1-shard1of1.bin');
+      if (!response.ok) {
+        throw new Error(`Unable to load model weights file: ${response.status}`);
+      }
+      return await response.arrayBuffer();
+    } catch (error) {
+      console.error(`Failed to load model weights file: ${error}`);
+      throw error;
+    }
+  }
+});
+
+// minimum expected confidence
+const MIN_CONFIDENCE = 0.2;
+
+// initial confidence threshold
+const INITIAL_THRESHOLD = 0.5;
+
+// relative confidence difference threshold
+const RELATIVE_THRESHOLD = 0.15;
+
 /**
  * Match the shortcut action to be executed based on the text type.
  *
@@ -326,7 +322,7 @@ export async function match(text: string, rules: Rule[]): Promise<Rule | null> {
     const natural = findNaturalCase(_case);
     if (natural) {
       try {
-        if (franc(text, { minLength: 2 }) === _case) {
+        if (franc(text, FRANC_OPTIONS) === _case) {
           console.debug(`Natural language detected: ${natural.label}`);
           rule.caseLabel = natural.label;
           return rule;
@@ -341,7 +337,7 @@ export async function match(text: string, rules: Rule[]): Promise<Rule | null> {
     if (programming) {
       try {
         if (!langDetected) {
-          langDetectedResult = await modelOperations.runModel(text);
+          langDetectedResult = await MODEL_OPERATIONS.runModel(text);
           langDetected = true;
           console.debug(`Programming language detection result: ${JSON.stringify(langDetectedResult)}`);
         }
