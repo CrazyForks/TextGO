@@ -1,6 +1,52 @@
 use crate::error::AppError;
-use crate::REGISTERED_SHORTCUTS;
+use crate::{REGISTERED_SHORTCUTS, SHORTCUT_PAUSED};
 use tauri_plugin_global_shortcut::{Code, GlobalShortcutExt, Modifiers, Shortcut};
+
+/// Pause shortcut event handling by unregistering all shortcuts.
+#[tauri::command]
+pub fn pause_shortcut_handling(app: tauri::AppHandle) -> Result<(), AppError> {
+    // set paused flag to true
+    {
+        let mut paused = SHORTCUT_PAUSED.lock()?;
+        *paused = true;
+    }
+
+    // unregister all shortcuts
+    let shortcuts: Vec<String> = {
+        let registered = REGISTERED_SHORTCUTS.lock()?;
+        registered.values().cloned().collect()
+    };
+
+    for shortcut in shortcuts {
+        let hotkey = parse_shortcut(&shortcut)?;
+        app.global_shortcut().unregister(hotkey).ok();
+    }
+
+    Ok(())
+}
+
+/// Resume shortcut event handling by re-registering all shortcuts.
+#[tauri::command]
+pub fn resume_shortcut_handling(app: tauri::AppHandle) -> Result<(), AppError> {
+    // re-register all shortcuts
+    let shortcuts: Vec<String> = {
+        let registered = REGISTERED_SHORTCUTS.lock()?;
+        registered.values().cloned().collect()
+    };
+
+    for shortcut in shortcuts {
+        let hotkey = parse_shortcut(&shortcut)?;
+        app.global_shortcut().register(hotkey).ok();
+    }
+
+    // set paused flag to false
+    {
+        let mut paused = SHORTCUT_PAUSED.lock()?;
+        *paused = false;
+    }
+
+    Ok(())
+}
 
 /// Register global shortcut.
 #[tauri::command]

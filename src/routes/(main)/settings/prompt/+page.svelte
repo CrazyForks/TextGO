@@ -33,7 +33,7 @@
         <LMStudio class="h-5" />
       {/if}
       <div class="list-col-grow flex items-center gap-4 truncate" title={item.id}>
-        <span class="truncate text-base font-light">{item.id}</span>
+        <span class="min-w-8 truncate text-base font-light">{item.id}</span>
         <span class="badge badge-ghost badge-sm">
           <Cube class="size-4 shrink-0 opacity-50" />
           {item.model}

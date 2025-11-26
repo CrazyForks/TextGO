@@ -24,6 +24,9 @@ pub static ENIGO: LazyLock<Mutex<Result<Enigo, enigo::NewConError>>> =
 pub static REGISTERED_SHORTCUTS: LazyLock<Mutex<HashMap<u32, String>>> =
     LazyLock::new(|| Mutex::new(HashMap::new()));
 
+// global flag to pause shortcut event processing
+pub static SHORTCUT_PAUSED: LazyLock<Mutex<bool>> = LazyLock::new(|| Mutex::new(false));
+
 /// Application setup function.
 fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     let app_handle = app.app_handle().clone();
@@ -95,6 +98,13 @@ fn handle_run_event(app: &tauri::AppHandle, event: RunEvent) {
 /// Global shortcut handler function.
 fn handle_shortcut_event(app: &tauri::AppHandle, hotkey: &Shortcut, event: ShortcutEvent) {
     if event.state() == ShortcutState::Pressed {
+        // check if shortcut processing is paused
+        if let Ok(paused) = SHORTCUT_PAUSED.lock() {
+            if *paused {
+                return;
+            }
+        }
+
         // get shortcut string
         let shortcut = {
             let registered = REGISTERED_SHORTCUTS.lock().unwrap();
@@ -155,6 +165,8 @@ pub fn run() {
             register_shortcut,
             unregister_shortcut,
             is_shortcut_registered,
+            pause_shortcut_handling,
+            resume_shortcut_handling,
             get_selection,
             get_clipboard_text,
             execute_python,

@@ -3,6 +3,7 @@
   import { m } from '$lib/paraglide/messages';
   import { Lightbulb, StackPlus } from 'phosphor-svelte';
   import { onMount } from 'svelte';
+  import { invoke } from '@tauri-apps/api/core';
 
   const { onrecord }: { onrecord?: (value: string) => void } = $props();
 
@@ -32,6 +33,7 @@
   function startRecording() {
     stopRecording();
     recording = true;
+    invoke('pause_shortcut_handling');
   }
 
   /**
@@ -42,6 +44,7 @@
     pressedModifiers = [];
     pressedKey = '';
     recording = false;
+    invoke('resume_shortcut_handling');
   }
 
   /**
