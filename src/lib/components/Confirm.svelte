@@ -66,7 +66,7 @@
    */
   function pretty(title: string): string {
     title = escape(title);
-    return title.replace(/\[([^\]]+)\]/g, '<span class="truncate font-normal opacity-60">$1</span>');
+    return title.replace(/\[([^\]]+)\]/g, '<span class="truncate font-normal font-kbd opacity-60">$1</span>');
   }
 </script>
 

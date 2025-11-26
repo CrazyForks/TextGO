@@ -74,7 +74,7 @@ export function formatShortcut(shortcut: string): string {
   return shortcut
     .split('+')
     .map((code) => getKbdLabel(code))
-    .join('+');
+    .join(' + ');
 }
 
 /**
