@@ -1,8 +1,8 @@
 import { manager } from '$lib/manager';
-import type { Entry, Rule, Model, Prompt, Regexp, Script } from '$lib/types';
+import type { Entry, Model, Prompt, Regexp, Rule, Script } from '$lib/types';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { LazyStore } from '@tauri-apps/plugin-store';
-import { untrack } from 'svelte';
+import { tick, untrack } from 'svelte';
 
 // create a global LazyStore instance
 const store = new LazyStore('.settings.dat');
@@ -27,66 +27,63 @@ type Options<T> = {
  */
 function persisted<T>(key: string, initial: T, options?: Options<T>) {
   let state = $state(initial);
-  let initialized = $state(false);
+  let initialized = false;
+  let syncing = false;
 
   // load data from store
-  store
-    .get<T>(key)
-    .then((item) => {
-      if (item !== undefined) {
-        untrack(() => {
-          state = item;
-        });
-        options?.onload?.(item);
-        options?.onchange?.(item);
-      }
-      initialized = true;
-    })
-    .catch((error) => {
-      console.error(`Failed to load persisted data: ${error}`);
-      initialized = true;
-    });
+  store.get<T>(key).then((item) => {
+    if (item !== undefined) {
+      state = item;
+      options?.onload?.(item);
+      options?.onchange?.(item);
+    }
+    // mark as initialized in next tick to avoid saving loaded data back to store
+    tick().then(() => (initialized = true));
+  });
 
-  // save data to store
+  // watch for state changes and persist to store
   $effect.root(() => {
     $effect(() => {
-      if (!initialized) {
-        return;
-      }
       // get snapshot of current state
       const snapshot = $state.snapshot(state);
-      store
-        .set(key, snapshot)
-        .then(() => {
-          // save to local file
-          store.save();
-        })
-        .then(() => {
-          options?.onchange?.(snapshot);
-        })
-        .catch((error) => {
-          console.error(`Failed to save persisted data: ${error}`);
-        });
 
-      // sync to localStorage
-      if (snapshot) {
-        localStorage.setItem(key, JSON.stringify(snapshot));
-      } else {
-        localStorage.removeItem(key);
-      }
+      untrack(() => {
+        if (!initialized || syncing) {
+          return;
+        }
+        // persist to store
+        store.set(key, snapshot).then(() => {
+          options?.onchange?.(snapshot);
+          // use localStorage to notify other windows
+          const currentWindow = getCurrentWindow().label;
+          localStorage.removeItem(key);
+          localStorage.setItem(key, currentWindow);
+          console.info(`[${currentWindow}] Persisted key "${key}" to store.`);
+        });
+      });
     });
+
     // ensure it won't be cleaned up
     return () => {};
   });
 
   // listen for localStorage changes to implement cross-window sync
   window.addEventListener('storage', (event) => {
-    if (event.key === key) {
-      if (event.newValue) {
-        state = JSON.parse(event.newValue);
-      } else {
-        state = initial;
-      }
+    if (!initialized) {
+      return;
+    }
+    // only handle changes for the specific key and ignore changes from the same window
+    const currentWindow = getCurrentWindow().label;
+    if (event.key === key && event.newValue && event.newValue !== currentWindow) {
+      console.info(`[${currentWindow}] Detected external change for key "${key}", reloading from store.`);
+      syncing = true;
+      store.get<T>(key).then((item) => {
+        if (item !== undefined) {
+          state = item;
+          options?.onchange?.(item);
+        }
+        tick().then(() => (syncing = false));
+      });
     }
   });
 
@@ -111,6 +108,22 @@ export const theme = persisted<string>('theme', 'light', {
   }
 });
 
+// shortcut group
+export const shortcuts = persisted<Record<string, Rule[]>>(
+  'shortcuts',
+  {},
+  {
+    onload: async (shortcuts) => {
+      // register all shortcut groups when main window initializes
+      if (getCurrentWindow().label === 'main') {
+        for (const rule of Object.values(shortcuts).flat()) {
+          await manager.register(rule);
+        }
+      }
+    }
+  }
+);
+
 // auto start setting
 export const autoStart = persisted<boolean>('autoStart', false);
 
@@ -132,21 +145,8 @@ export const ollamaHost = persisted<string>('ollamaHost', '');
 // number of history records to retain
 export const historySize = persisted<number>('historySize', 5);
 
-// shortcut group
-export const shortcuts = persisted<Record<string, Rule[]>>(
-  'shortcuts',
-  {},
-  {
-    onload: async (shortcuts) => {
-      // register all shortcut groups when main window initializes
-      if (getCurrentWindow().label === 'main') {
-        for (const rule of Object.values(shortcuts).flat()) {
-          await manager.register(rule);
-        }
-      }
-    }
-  }
-);
+// trigger record
+export const entries = persisted<Entry[]>('entries', []);
 
 // classification model
 export const models = persisted<Model[]>('models', []);
@@ -159,6 +159,3 @@ export const scripts = persisted<Script[]>('scripts', []);
 
 // prompt
 export const prompts = persisted<Prompt[]>('prompts', []);
-
-// trigger record
-export const entries = persisted<Entry[]>('entries', []);
