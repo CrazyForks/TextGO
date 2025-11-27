@@ -1,10 +1,10 @@
 # Third-Party License Notices
 
-> This document was automatically generated on November 25, 2025 at 06:01 PM GMT+8
+> This document was automatically generated on November 28, 2025 at 10:29 AM GMT+8
 
 ## Frontend Dependencies
 
-> **52** packages included
+> **53** packages included
 
 | Package                                                                                    | Version | License           | Description                                                                                                                                       |
 | ------------------------------------------------------------------------------------------ | ------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -23,6 +23,7 @@
 | [@eslint/js](https://github.com/eslint/eslint)                                             | 9.39.1  | MIT               | ESLint JavaScript language implementation                                                                                                         |
 | [@fontsource-variable/noto-sans-sc](https://github.com/fontsource/font-files)              | 5.2.9   | OFL-1.1           | Self-host the Noto Sans SC font in a neatly bundled NPM package.                                                                                  |
 | [@fontsource-variable/noto-sans](https://github.com/fontsource/font-files)                 | 5.2.10  | OFL-1.1           | Self-host the Noto Sans font in a neatly bundled NPM package.                                                                                     |
+| [@fontsource/pretendard](https://github.com/fontsource/font-files)                         | 5.2.5   | OFL-1.1           | Self-host the Pretendard font in a neatly bundled NPM package.                                                                                    |
 | [@inlang/paraglide-js](https://github.com/opral/inlang-paraglide-js)                       | 2.5.0   | MIT               | [![Inlang-ecosystem compatibility badge](https://cdn.jsdelivr.net/gh/opral/monorepo@main/inlang/assets/md-badges/inlang.svg)](https://inlang.com) |
 | [@sveltejs/adapter-static](https://github.com/sveltejs/kit)                                | 3.0.10  | MIT               | Adapter for SvelteKit apps that prerenders your entire site as a collection of static files                                                       |
 | [@sveltejs/kit](https://github.com/sveltejs/kit)                                           | 2.49.0  | MIT               | SvelteKit is the fastest way to build Svelte apps                                                                                                 |
@@ -54,7 +55,7 @@
 | [prettier-plugin-tailwindcss](https://github.com/tailwindlabs/prettier-plugin-tailwindcss) | 0.7.1   | MIT               | A Prettier plugin for sorting Tailwind CSS classes.                                                                                               |
 | [prettier](https://github.com/prettier/prettier)                                           | 3.6.2   | MIT               | Prettier is an opinionated code formatter                                                                                                         |
 | [svelte-check](https://github.com/sveltejs/language-tools)                                 | 4.3.4   | MIT               | Svelte Code Checker Terminal Interface                                                                                                            |
-| [svelte](https://github.com/sveltejs/svelte)                                               | 5.44.0  | MIT               | Cybernetically enhanced web apps                                                                                                                  |
+| [svelte](https://github.com/sveltejs/svelte)                                               | 5.45.2  | MIT               | Cybernetically enhanced web apps                                                                                                                  |
 | [tailwindcss](https://github.com/tailwindlabs/tailwindcss)                                 | 4.1.17  | MIT               | A utility-first CSS framework for rapidly building custom user interfaces.                                                                        |
 | [tippy.js](https://github.com/atomiks/tippyjs)                                             | 6.3.7   | MIT               | The complete tooltip, popover, dropdown, and menu solution for the web                                                                            |
 | [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint)                | 8.48.0  | MIT               | Tooling which enables you to use TypeScript with ESLint                                                                                           |
