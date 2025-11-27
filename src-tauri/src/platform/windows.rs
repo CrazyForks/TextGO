@@ -5,10 +5,42 @@ use windows::Win32::System::Com::{
 };
 use windows::Win32::UI::Accessibility::{
     CUIAutomation, IUIAutomation, IUIAutomationElement, IUIAutomationLegacyIAccessiblePattern,
-    IUIAutomationTextPattern, IUIAutomationTextRangeArray, IUIAutomationValuePattern,
+    IUIAutomationTextPattern, IUIAutomationTextRange, IUIAutomationValuePattern,
     TextPatternRangeEndpoint_Start, TextUnit_Character, UIA_DocumentControlTypeId,
     UIA_EditControlTypeId, UIA_LegacyIAccessiblePatternId, UIA_TextPatternId, UIA_ValuePatternId,
 };
+
+// import SafeArray functions from oleaut32.dll
+#[link(name = "oleaut32")]
+unsafe extern "system" {
+    unsafe fn SafeArrayAccessData(
+        psa: *mut std::ffi::c_void,
+        ppv_data: *mut *mut std::ffi::c_void,
+    ) -> i32;
+
+    unsafe fn SafeArrayUnaccessData(psa: *mut std::ffi::c_void) -> i32;
+
+    unsafe fn SafeArrayGetLBound(
+        psa: *mut std::ffi::c_void,
+        n_dim: u32,
+        pl_lbound: *mut i32,
+    ) -> i32;
+
+    unsafe fn SafeArrayGetUBound(
+        psa: *mut std::ffi::c_void,
+        n_dim: u32,
+        pl_ubound: *mut i32,
+    ) -> i32;
+}
+
+// bounds validation constants
+const MIN_VALID_WIDTH: f64 = 1.0;
+const MAX_VALID_HEIGHT: f64 = 100.0;
+const MAX_VALID_COORDINATE: f64 = 10000.0;
+
+// editable legacy control roles
+const ROLE_SYSTEM_TEXT: u32 = 42;
+const ROLE_SYSTEM_COMBOBOX: u32 = 46;
 
 /// COM resource guard.
 struct ComGuard {
@@ -59,10 +91,8 @@ fn get_focused_element() -> Result<IUIAutomationElement, AppError> {
     }
 }
 
-/// Get selected text range array from given element.
-fn get_selected_text_ranges(
-    element: &IUIAutomationElement,
-) -> Result<IUIAutomationTextRangeArray, AppError> {
+/// Get first selected text range from given element.
+fn get_selected_range(element: &IUIAutomationElement) -> Result<IUIAutomationTextRange, AppError> {
     unsafe {
         // get text pattern from element
         let text_pattern: IUIAutomationTextPattern = element
@@ -79,7 +109,10 @@ fn get_selected_text_ranges(
             return Err("No text selection found".into());
         }
 
-        Ok(text_ranges)
+        // get first selection range
+        text_ranges
+            .GetElement(0)
+            .map_err(|_| "Failed to get first selection range".into())
     }
 }
 
@@ -92,16 +125,92 @@ pub fn get_selection() -> Result<String, AppError> {
         // get focused element
         let focused_element = get_focused_element()?;
 
-        // get currently selected text ranges
-        let text_ranges = get_selected_text_ranges(&focused_element)?;
+        // get first selected text range
+        let text_range = get_selected_range(&focused_element)?;
 
-        // get first selection range and extract text
-        let text = text_ranges
-            .GetElement(0)
-            .and_then(|e| e.GetText(-1))
+        // extract text from range
+        let text = text_range
+            .GetText(-1)
             .map_err(|_| "Failed to get text from selection")?;
 
         Ok(text.to_string())
+    }
+}
+
+/// Get the physical coordinates of the bottom-right corner of the selected text.
+pub fn get_selection_location() -> Result<(i32, i32), AppError> {
+    unsafe {
+        // initialize COM
+        let _com = ComGuard::new()?;
+
+        // get focused element
+        let focused_element = get_focused_element()?;
+
+        // get first selected text range
+        let text_range = get_selected_range(&focused_element)?;
+
+        // get bounding rectangles for the text range
+        let rect_array = text_range
+            .GetBoundingRectangles()
+            .map_err(|_| "Failed to get bounding rectangles")?;
+
+        // access the SafeArray data
+        let mut rect_ptr: *mut f64 = std::ptr::null_mut();
+        let hr = SafeArrayAccessData(rect_array as *mut _, &mut rect_ptr as *mut _ as *mut _);
+        if hr != 0 {
+            return Err("Failed to access SafeArray data".into());
+        }
+
+        // get array bounds
+        let mut lower_bound: i32 = 0;
+        let mut upper_bound: i32 = 0;
+        let hr = SafeArrayGetLBound(rect_array as *mut _, 1, &mut lower_bound);
+        if hr != 0 {
+            SafeArrayUnaccessData(rect_array as *mut _);
+            return Err("Failed to get lower bound".into());
+        }
+        let hr = SafeArrayGetUBound(rect_array as *mut _, 1, &mut upper_bound);
+        if hr != 0 {
+            SafeArrayUnaccessData(rect_array as *mut _);
+            return Err("Failed to get upper bound".into());
+        }
+
+        let rect_count = ((upper_bound - lower_bound + 1) / 4) as usize;
+        if rect_count == 0 {
+            SafeArrayUnaccessData(rect_array as *mut _);
+            return Err("No bounding rectangles found".into());
+        }
+
+        // find last valid rectangle and calculate coordinates
+        let mut result = Err("No valid rectangle found".into());
+        for i in (0..rect_count).rev() {
+            let rect_index = i * 4;
+            let left = *rect_ptr.add(rect_index);
+            let top = *rect_ptr.add(rect_index + 1);
+            let width = *rect_ptr.add(rect_index + 2);
+            let height = *rect_ptr.add(rect_index + 3);
+
+            // validate rectangle bounds
+            if width > MIN_VALID_WIDTH
+                && height > 0.0
+                && height < MAX_VALID_HEIGHT
+                && left >= 0.0
+                && top >= 0.0
+                && left < MAX_VALID_COORDINATE
+                && top < MAX_VALID_COORDINATE
+            {
+                // calculate bottom-right corner coordinates
+                let bottom_right_x = (left + width) as i32;
+                let bottom_right_y = (top + height) as i32;
+                result = Ok((bottom_right_x, bottom_right_y));
+                break;
+            }
+        }
+
+        // unaccess the SafeArray data
+        SafeArrayUnaccessData(rect_array as *mut _);
+
+        result
     }
 }
 
@@ -140,9 +249,7 @@ pub fn is_cursor_editable() -> Result<bool, AppError> {
             .and_then(|p| p.cast::<IUIAutomationLegacyIAccessiblePattern>())
             .and_then(|lp| lp.CurrentRole())
         {
-            // ROLE_SYSTEM_TEXT (42) means editable text
-            // ROLE_SYSTEM_COMBOBOX (46) means combo box
-            if role == 42 || role == 46 {
+            if role == ROLE_SYSTEM_TEXT || role == ROLE_SYSTEM_COMBOBOX {
                 return Ok(true);
             }
         }
@@ -160,13 +267,8 @@ pub fn select_backward_chars(chars: usize) -> Result<(), AppError> {
         // get focused element
         let focused_element = get_focused_element()?;
 
-        // get currently selected text ranges
-        let text_ranges = get_selected_text_ranges(&focused_element)?;
-
-        // get first selection range
-        let text_range = text_ranges
-            .GetElement(0)
-            .map_err(|_| "Failed to get selection range")?;
+        // get first selected text range
+        let text_range = get_selected_range(&focused_element)?;
 
         // move endpoint backward
         text_range

@@ -1,5 +1,6 @@
 use crate::commands::window::show_window;
 use crate::error::AppError;
+use crate::platform;
 use crate::ENIGO;
 use enigo::Mouse;
 use tauri::{Emitter, Manager};
@@ -16,11 +17,10 @@ const POPUP_SAFE_AREA_BOTTOM: i32 = 80;
 /// Show popup and position it near the mouse.
 #[tauri::command]
 pub fn show_popup(app: tauri::AppHandle, payload: String) -> Result<(), AppError> {
-    // get current mouse position
-    let (mouse_x, mouse_y) = {
-        let enigo_guard = ENIGO.lock()?;
-        let enigo = enigo_guard.as_ref()?;
-        enigo.location()?
+    // try to get selection location first, fall back to mouse position if failed
+    let (mouse_x, mouse_y) = match platform::get_selection_location() {
+        Ok(location) => location,
+        Err(_) => ENIGO.lock()?.as_ref()?.location()?,
     };
 
     // check if result window already exists
