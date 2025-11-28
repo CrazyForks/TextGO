@@ -1,7 +1,13 @@
 use crate::error::AppError;
+use clipboard_rs::ContentFormat;
 use clipboard_rs::{Clipboard, ClipboardContext};
 use log::warn;
 use std::sync::Arc;
+use std::sync::LazyLock;
+use tokio::sync::Mutex;
+
+// clipboard operation lock to prevent concurrent access
+static CLIPBOARD_LOCK: LazyLock<Mutex<()>> = LazyLock::new(|| Mutex::new(()));
 
 /// Get clipboard text content.
 #[tauri::command]
@@ -17,7 +23,7 @@ where
     F: FnOnce(Arc<ClipboardContext>) -> Fut,
     Fut: std::future::Future<Output = Result<T, AppError>>,
 {
-    use clipboard_rs::ContentFormat;
+    let _guard = CLIPBOARD_LOCK.lock().await;
 
     // create clipboard context
     let clipboard = Arc::new(
